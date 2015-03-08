@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res/by.vkatz.samples"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:textColor="#000"
+              android:textSize="30dp"
+              android:text="this is some text with default font"/>
+    <by.vkatz.widgets.AssetFontEditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:textSize="30dp"
+            android:layout_marginTop="30dp"
+            app:font="@string/font"
+            android:text="this is edit text with custom font from xml"/>
+    <by.vkatz.widgets.AssetFontTextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textColor="#000"
+            android:textSize="30dp"
+            android:layout_marginTop="30dp"
+            app:font="@string/font"
+            android:background="@drawable/some_bg"
+            android:clickable="true"
+            app:backgroundColorFilter="@color/sample_color_filter"
+            android:text="this is some text with custom font from xml, click on me pls"/>
+</LinearLayout>

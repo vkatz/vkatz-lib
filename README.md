@@ -10,7 +10,7 @@ If u like it - you may say thanks via WebMoney:
 
 
 ### About me and lib
-My name is Viachaslau, work as android developer sinse 2000 year(start from android 1.6)
+My name is Viachaslau, work as android developer sinse 2010 year(start from android 1.6)
 
 For a loong time i hate to declare each screen as activity, also i dont loke  the way to config activity transfer animation and screens history managment. Many usefult and hard features(like lazy image, side menu, etc) is hard(for me not hard, but i realy dont like it) to implement. This all force me to write some simple library to personal usage.
 Lib contain a bunch of usefull widgets and utils and special ScreenLayout wich allow you to make screens without declaring them in manifest and simple navigation between them.
@@ -97,14 +97,16 @@ public class SplashScreen extends Screen {
 care: inside onHide method getContext  and getParent both null
 
 ##Navigation control
-Inside screnn you may get a ScreenLayout with getParent() call
+Inside scren you may get a ScreenLayout with getParent() call
 ScreenLayout contain bunch of navigation methods, main is:
 * go(Screen screen) - simple go to next screen, store currnet in history
-* go(Screen screen, boolean storeInHistory) - we may say to not store next screnn in history,
+* go(Screen screen, boolean storeInHistory) - we may say to not store next scren in history,
 after we go out of those screen - it will be destroyed and released (usefult to splash screens)
 * go(Screen screen, boolean storeInHistory, String name) - additiona,y we may specify screen name( easy to back to this screen, like homescreen)
 * back() - back to previos screen
 * backTo(String name) - back to screen with specifyed name(or first if not found)
+ 
+ On back press will be called back(), but u can override it in screens.
  
 You also able to clear history
 * clearHistory() - clear whole history (active screen is not in history)
@@ -180,7 +182,7 @@ SerializableUtils - utils to make serialization easyer.
 Hint: serialVersionUID might be created veeery simple and unik with
 ```java
     public class Settings implements Serializable {
-        private static long serialVersionUID = SerializableUtils.generateSerialVersionUID(Settings.class);
+        private static final long serialVersionUID = SerializableUtils.generateSerialVersionUID(Settings.class);
     }
 ```
 #Widgets
@@ -200,7 +202,7 @@ ColorFilteredImageView - same color filer as for text, but for image. You may si
 
 LazyImage - obvios
 
-LoadingView - android 5.0 preview like loading view. Contain clolor,thiknes, direction and rotation params. Also might be swithet to determinate mode (progress 0 - indeterminate, >0 - determinate)
+LoadingView - android 5.0 preview like loading view. Contain clolor,thiknes, direction and rotation params. Also might be swithed to determinate mode (progress 0 - indeterminate, >0 - determinate)
 
 RoundRectLayout - clip corners of childe content. String reccoment not to use without necessary cause it use some memory.
 

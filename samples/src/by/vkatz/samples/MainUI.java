@@ -1,15 +1,14 @@
 package by.vkatz.samples;
 
-import android.app.Activity;
-import android.os.Bundle;
+import by.vkatz.utils.AnimationBuilder;
+import by.vkatz.utils.VkatzActivity;
 
-public class MainUI extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
+public class MainUI extends VkatzActivity {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+    protected void init() {
+        init(R.layout.main, R.id.screen_layout);
+        getScreensLayout().setData("settings", Settings.load(this));
+        getScreensLayout().setAlternativeGoAnimations(AnimationBuilder.alpha(0, 1, 250), null);
+        getScreensLayout().go(new SplashScreen(), false);
     }
 }

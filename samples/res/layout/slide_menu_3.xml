@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<by.vkatz.widgets.SlideMenuLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res/by.vkatz.samples"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:slideFrom="right"
+        app:expanded="true">
+    <TextView android:layout_width="200dp"
+              android:layout_height="fill_parent"
+              app:layout_static="true"
+              android:textColor="#000"
+              android:background="#f00"
+              android:textSize="30dp"
+              android:gravity="center"
+              android:text="i am menu"/>
+    <TextView android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:textColor="#000"
+              android:background="#fff"
+              android:textSize="30dp"
+              android:gravity="center"
+              android:text="i am content"/>
+
+    <!--kinda max slide size-->
+    <View android:layout_width="200dp"
+          android:layout_height="fill_parent"
+          android:layout_alignParentRight="true"
+          app:layout_slidable="true"/>
+</by.vkatz.widgets.SlideMenuLayout>

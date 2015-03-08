@@ -58,8 +58,8 @@ public class SlideMenuLayout extends RelativeLayout {
     }
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         View slideView = null;
         for (int i = 0; i < getChildCount(); i++)
             if (((LayoutParams) getChildAt(i).getLayoutParams()).isSlidable) {
@@ -73,7 +73,7 @@ public class SlideMenuLayout extends RelativeLayout {
             else if (slideFrom == RIGHT) slideSize = getMeasuredWidth() - slideView.getLeft();
             else if (slideFrom == LEFT) slideSize = -slideView.getRight();
             else slideSize = 0;
-            if (!onScreen && !expanded) {
+            if (!onScreen) {
                 scroller.startScroll(0, 0, isHorizontal() ? slideSize : 0, isHorizontal() ? 0 : slideSize, 0);
                 invalidate();
             }

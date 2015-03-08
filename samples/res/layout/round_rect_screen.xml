@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res/by.vkatz.samples"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <by.vkatz.widgets.RoundRectLayout android:layout_width="fill_parent"
+                                      android:layout_height="fill_parent"
+                                      android:layout_margin="50dp"
+                                      android:padding="10dp"
+                                      app:roundSize="30dp"
+                                      android:background="#0f0">
+        <ImageView android:layout_width="fill_parent"
+                   android:layout_height="fill_parent"
+                   android:src="@drawable/ic_launcher"
+                   android:scaleType="fitXY"
+                   android:background="#f00"/>
+    </by.vkatz.widgets.RoundRectLayout>
+</LinearLayout>

@@ -34,8 +34,6 @@ public class RoundRectLayout extends FrameLayout {
     private void init() {
         paint = new Paint();
         paint.setAntiAlias(true);
-        setWillNotDraw(false);
-        rect = new RectF();
     }
 
     public void setCornersRoundSize(float cornersRoundSize) {
@@ -45,8 +43,7 @@ public class RoundRectLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        rect.set(getPaddingLeft() - cornersRoundSize, getPaddingTop() - cornersRoundSize, getWidth() - getPaddingRight() + cornersRoundSize, getHeight() - getPaddingBottom() + cornersRoundSize);
-        paint.setStrokeWidth(cornersRoundSize * 2);
+        rect = new RectF(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
         if (image != null) image.recycle();
         image = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         imageCanvas = new Canvas(image);
@@ -64,11 +61,10 @@ public class RoundRectLayout extends FrameLayout {
     protected void dispatchDraw(Canvas canvas) {
         imageCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         super.dispatchDraw(imageCanvas);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        imageCanvas.drawRoundRect(rect, 2 * cornersRoundSize, 2 * cornersRoundSize, paint);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+        paint.setColor(Color.WHITE);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+        canvas.drawRoundRect(rect, cornersRoundSize, cornersRoundSize, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(image, 0, 0, paint);
     }
 }

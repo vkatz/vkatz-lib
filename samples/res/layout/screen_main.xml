@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/asset_font"
+                android:text="Asset font example"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lazy_image"
+                android:text="Lazy image example"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/color_filter"
+                android:text="Color filtered example"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/loading"
+                android:text="Loading view example"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/round_rect"
+                android:text="RoundRect example"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/slide_menu_1"
+                android:text="Slide menu example 1"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/slide_menu_2"
+                android:text="Slide menu example 2"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/slide_menu_3"
+                android:text="Slide menu example 3"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/alternative_go_animation"
+                android:text="Alternative screen go animation"/>
+    </LinearLayout>
+</ScrollView>
