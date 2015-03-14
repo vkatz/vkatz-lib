@@ -199,6 +199,14 @@ public class SlideMenuLayout extends RelativeLayout {
         return true;
     }
 
+    private float clamp(float val, float a, float b) {
+        float max = Math.max(a, b);
+        float min = Math.min(a, b);
+        if (val < min) return min;
+        if (val > max) return max;
+        return val;
+    }
+
     @Override
     protected void dispatchDraw(Canvas canvas) {
         onScreen = true;
@@ -208,8 +216,12 @@ public class SlideMenuLayout extends RelativeLayout {
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (lp.isContent) continue;
             if (lp.isMovable || lp.isMenu) {
-                child.setTranslationX(scroller.getCurrX());
-                child.setTranslationY(scroller.getCurrY());
+                float dx = scroller.getCurrX();
+                float dy = scroller.getCurrY();
+                if (isHorizontal()) dx = clamp(dx, 0, slideSize);
+                else dy = clamp(dy, 0, slideSize);
+                child.setTranslationX(dx);
+                child.setTranslationY(dy);
             }
         }
         super.dispatchDraw(canvas);
