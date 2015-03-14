@@ -60,18 +60,20 @@ public class SlideMenuLayout extends RelativeLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        View slideView = null;
+        View menu = null;
+        boolean hasMenu = false;
         for (int i = 0; i < getChildCount(); i++)
-            if (((LayoutParams) getChildAt(i).getLayoutParams()).isSlidable) {
-                slideView = getChildAt(i);
-                break;
+            if (((LayoutParams) getChildAt(i).getLayoutParams()).isMenu) {
+                menu = getChildAt(i);
+                if (hasMenu) throw new RuntimeException("Should not contain more than 1 menu");
+                hasMenu = true;
             }
-        if (slideView == null) slideSize = 0;
+        if (menu == null) slideSize = 0;
         else {
-            if (slideFrom == BOTTOM) slideSize = getMeasuredHeight() - slideView.getTop();
-            else if (slideFrom == TOP) slideSize = -slideView.getBottom();
-            else if (slideFrom == RIGHT) slideSize = getMeasuredWidth() - slideView.getLeft();
-            else if (slideFrom == LEFT) slideSize = -slideView.getRight();
+            if (slideFrom == BOTTOM) slideSize = getMeasuredHeight() - menu.getTop();
+            else if (slideFrom == TOP) slideSize = -menu.getBottom();
+            else if (slideFrom == RIGHT) slideSize = getMeasuredWidth() - menu.getLeft();
+            else if (slideFrom == LEFT) slideSize = -menu.getRight();
             else slideSize = 0;
             if (!onScreen && !expanded) {
                 scroller.startScroll(0, 0, isHorizontal() ? slideSize : 0, isHorizontal() ? 0 : slideSize, 0);
@@ -85,12 +87,17 @@ public class SlideMenuLayout extends RelativeLayout {
     }
 
     private boolean isEventInsideChild(float x, float y) {
-        int cx = (int) (x - scroller.getCurrX());
-        int cy = (int) (y - scroller.getCurrY());
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (!lp.isStatic && cx >= child.getLeft() && cy >= child.getTop() && cx <= child.getRight() && cy <= child.getBottom()) return true;
+            if (lp.isContent) continue;
+            int cx = (int) x;
+            int cy = (int) y;
+            if (lp.isMovable || lp.isMenu) {
+                cx -= scroller.getCurrX();
+                cy -= scroller.getCurrY();
+            }
+            if (cx >= child.getLeft() && cy >= child.getTop() && cx <= child.getRight() && cy <= child.getBottom()) return true;
         }
         return false;
     }
@@ -141,7 +148,6 @@ public class SlideMenuLayout extends RelativeLayout {
         }
         return false;
     }
-
 
     public void expand() {
         expand(true);
@@ -200,7 +206,8 @@ public class SlideMenuLayout extends RelativeLayout {
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (!lp.isStatic) {
+            if (lp.isContent) continue;
+            if (lp.isMovable || lp.isMenu) {
                 child.setTranslationX(scroller.getCurrX());
                 child.setTranslationY(scroller.getCurrY());
             }
@@ -231,7 +238,7 @@ public class SlideMenuLayout extends RelativeLayout {
 
     @Override
     protected LayoutParams generateDefaultLayoutParams() {
-        return new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, false, false);
+        return new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, false, true, false);
     }
 
     @Override
@@ -248,21 +255,24 @@ public class SlideMenuLayout extends RelativeLayout {
     }
 
     public static class LayoutParams extends RelativeLayout.LayoutParams {
-        protected boolean isSlidable;
-        protected boolean isStatic;
+        protected boolean isMenu;
+        protected boolean isMovable;
+        protected boolean isContent;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.SlideMenuLayout_Layout, 0, 0);
-            isSlidable = a.getBoolean(R.styleable.SlideMenuLayout_Layout_layout_slidable, false);
-            isStatic = a.getBoolean(R.styleable.SlideMenuLayout_Layout_layout_static, false);
+            isMenu = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isMenu, false);
+            isMovable = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isMovable, true);
+            isContent = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isContent, false);
             a.recycle();
         }
 
-        public LayoutParams(int width, int height, boolean isSlidable, boolean isStatic) {
-            super(width, height);
-            this.isSlidable = isSlidable;
-            this.isStatic = isStatic;
+        public LayoutParams(int w, int h, boolean isMenu, boolean isMovable, boolean isContent) {
+            super(w, h);
+            this.isMenu = isMenu;
+            this.isMovable = isMovable;
+            this.isContent = isContent;
         }
     }
 }

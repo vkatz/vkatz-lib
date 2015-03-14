@@ -47,8 +47,9 @@
         <attr name="startScrollDistance" format="dimension|reference"/>
     </declare-styleable>
     <declare-styleable name="SlideMenuLayout_Layout">
-        <attr name="layout_slidable" format="boolean|reference"/>
-        <attr name="layout_static" format="boolean|reference"/>
+        <attr name="isMenu" format="boolean|reference"/>
+        <attr name="isMovable" format="boolean|reference"/>
+        <attr name="isContent" format="boolean|reference"/>
     </declare-styleable>
 
 </resources>
