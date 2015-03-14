@@ -33,7 +33,8 @@ public class SlideMenuLayout extends RelativeLayout {
     private int slideSize;
     private float startScrollDistance;
     private Scroller scroller;
-    private OnExpandStateChangedListener onExpandStateChangedListener;
+    private OnExpandStateChangeListener onExpandStateChangeListener;
+    private OnSlideChangeListener onSlideChangeListener;
 
     public SlideMenuLayout(Context context) {
         this(context, null);
@@ -179,7 +180,7 @@ public class SlideMenuLayout extends RelativeLayout {
                     boolean isExpanded;
                     if (isHorizontal()) isExpanded = scroller.getCurrX() == 0;
                     else isExpanded = scroller.getCurrY() == 0;
-                    if (isExpanded != expanded && onExpandStateChangedListener != null) onExpandStateChangedListener.onExpandStateChanged(SlideMenuLayout.this, isExpanded);
+                    if (isExpanded != expanded && onExpandStateChangeListener != null) onExpandStateChangeListener.onExpandStateChanged(SlideMenuLayout.this, isExpanded);
                     expanded = isExpanded;
                     autoScroll = false;
                 }
@@ -210,7 +211,10 @@ public class SlideMenuLayout extends RelativeLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         onScreen = true;
+        int scroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
         scroller.computeScrollOffset();
+        int updatedScroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
+        if (onSlideChangeListener != null && scroll != updatedScroll) onSlideChangeListener.onScrollSizeChangeListener(SlideMenuLayout.this, updatedScroll);
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -243,6 +247,14 @@ public class SlideMenuLayout extends RelativeLayout {
         return expanded;
     }
 
+    public int getMinSlide() {
+        return Math.min(0, slideSize);
+    }
+
+    public int getMaxSlide() {
+        return Math.max(0, slideSize);
+    }
+
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
@@ -258,12 +270,20 @@ public class SlideMenuLayout extends RelativeLayout {
         return p instanceof LayoutParams;
     }
 
-    public void setOnExpandStateChangedListener(OnExpandStateChangedListener onExpandStateChangedListener) {
-        this.onExpandStateChangedListener = onExpandStateChangedListener;
+    public void setOnExpandStateChangeListener(OnExpandStateChangeListener onExpandStateChangeListener) {
+        this.onExpandStateChangeListener = onExpandStateChangeListener;
     }
 
-    public static interface OnExpandStateChangedListener {
+    public void setOnSlideChangeListener(OnSlideChangeListener onSlideChangeListener) {
+        this.onSlideChangeListener = onSlideChangeListener;
+    }
+
+    public static interface OnExpandStateChangeListener {
         public void onExpandStateChanged(SlideMenuLayout view, boolean expanded);
+    }
+
+    public static interface OnSlideChangeListener {
+        public void onScrollSizeChangeListener(SlideMenuLayout view, int slide);
     }
 
     public static class LayoutParams extends RelativeLayout.LayoutParams {
