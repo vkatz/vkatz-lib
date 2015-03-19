@@ -21,8 +21,6 @@ import java.util.concurrent.Executor;
  * Usage<br>
  * Cache will be stored in {@link android.content.Context#getExternalCacheDir()}
  * <br>
- * Custom cache folder may be set by call {@link by.vkatz.widgets.LazyImage.Options#setDefaultCacheDir(java.io.File)}<br>
- * <br>
  * Cache data(info about cached images) will be stored as CacheData.sr in {@link android.content.Context#getExternalFilesDir(String) Context.getExternalFilesDir("")}
  * <br>
  * <br>
@@ -69,6 +67,7 @@ public class LazyImage extends ImageView {
         this.options = options;
         executor.execute(new Runnable() {
             @Override
+            @SuppressWarnings("ResultOfMethodCallIgnored")
             public void run() {
                 String file = null;
                 boolean success = false;
@@ -92,8 +91,9 @@ public class LazyImage extends ImageView {
                 }
                 try {
                     Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(options.url).openStream()), options.cacheWidth, options.cacheHeight, true);
-                    File folder = getCacheFolder(getContext());
-                    File cacheFile = File.createTempFile("li-", ".png", getCacheFolder(getContext()));
+                    File folder = options.getCacheDir() == null ? getDefaultCacheFolder(getContext()) : options.getCacheDir();
+                    folder.mkdirs();
+                    File cacheFile = File.createTempFile("li-", ".png", folder);
                     cacheBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(cacheFile));
                     final Bitmap showBitmap = scaleBitmap(cacheBitmap, options.width, options.height, true);
                     String filename = cacheFile.getAbsolutePath();
@@ -124,6 +124,10 @@ public class LazyImage extends ImageView {
             }
         });
 
+    }
+
+    public Options getCurrentOptions() {
+        return options;
     }
 
     private static Bitmap scaleBitmap(Bitmap in, int outWidth, int outHeight, boolean rececleOld) {
@@ -159,9 +163,8 @@ public class LazyImage extends ImageView {
         }
     }
 
-    public static File getCacheFolder(Context context) {
-        if (Options.cacheDir != null) return Options.cacheDir;
-        else return context.getExternalCacheDir();
+    public static File getDefaultCacheFolder(Context context) {
+        return context.getExternalCacheDir();
     }
 
     public static ArrayList<Pair<String, File>> getCachedFiles(Context context) {
@@ -181,16 +184,17 @@ public class LazyImage extends ImageView {
     }
 
     public static class Options {
-        private static File cacheDir;
         private String url;
         private int width, height;
         private int cacheWidth, cacheHeight;
+        private File cacheDir;
 
         private Options(String url) {
             width = -1;
             height = -1;
             cacheWidth = -1;
             cacheHeight = -1;
+            cacheDir = null;
             this.url = url;
         }
 
@@ -219,12 +223,37 @@ public class LazyImage extends ImageView {
             return this;
         }
 
-        public static Options create(String url) {
-            return new Options(url);
+        public Options setCacheDir(File dir) {
+            cacheDir = dir;
+            return this;
         }
 
-        public static void setDefaultCacheDir(File dir) {
-            cacheDir = dir;
+        public String getUrl() {
+            return url;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getCacheWidth() {
+            return cacheWidth;
+        }
+
+        public int getCacheHeight() {
+            return cacheHeight;
+        }
+
+        public File getCacheDir() {
+            return cacheDir;
+        }
+
+        public static Options create(String url) {
+            return new Options(url);
         }
     }
 }
