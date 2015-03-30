@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class SlideMenuLayout extends RelativeLayout {
         expanded = a.getBoolean(R.styleable.SlideMenuLayout_expanded, false);
         enabled = a.getBoolean(R.styleable.SlideMenuLayout_enabled, true);
         startScrollDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_startScrollDistance, 25);
+        a.recycle();
         scroller = new Scroller(context);
         scroll = false;
         autoScroll = false;
@@ -91,7 +93,7 @@ public class SlideMenuLayout extends RelativeLayout {
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.isContent) continue;
+            if (!lp.isTouchable || child.getVisibility() == GONE) continue;
             int cx = (int) x;
             int cy = (int) y;
             if (lp.isMovable || lp.isMenu) {
@@ -218,7 +220,6 @@ public class SlideMenuLayout extends RelativeLayout {
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.isContent) continue;
             if (lp.isMovable || lp.isMenu) {
                 float dx = scroller.getCurrX();
                 float dy = scroller.getCurrY();
@@ -278,33 +279,33 @@ public class SlideMenuLayout extends RelativeLayout {
         this.onSlideChangeListener = onSlideChangeListener;
     }
 
-    public static interface OnExpandStateChangeListener {
-        public void onExpandStateChanged(SlideMenuLayout view, boolean expanded);
+    public interface OnExpandStateChangeListener {
+        void onExpandStateChanged(SlideMenuLayout view, boolean expanded);
     }
 
-    public static interface OnSlideChangeListener {
-        public void onScrollSizeChangeListener(SlideMenuLayout view, int slide);
+    public interface OnSlideChangeListener {
+        void onScrollSizeChangeListener(SlideMenuLayout view, int slide);
     }
 
     public static class LayoutParams extends RelativeLayout.LayoutParams {
         protected boolean isMenu;
         protected boolean isMovable;
-        protected boolean isContent;
+        protected boolean isTouchable;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.SlideMenuLayout_Layout, 0, 0);
             isMenu = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isMenu, false);
             isMovable = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isMovable, true);
-            isContent = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isContent, false);
+            isTouchable = a.getBoolean(R.styleable.SlideMenuLayout_Layout_isTouchable, true);
             a.recycle();
         }
 
-        public LayoutParams(int w, int h, boolean isMenu, boolean isMovable, boolean isContent) {
+        public LayoutParams(int w, int h, boolean isMenu, boolean isMovable, boolean isTouchable) {
             super(w, h);
             this.isMenu = isMenu;
             this.isMovable = isMovable;
-            this.isContent = isContent;
+            this.isTouchable = isTouchable;
         }
     }
 }

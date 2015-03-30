@@ -27,7 +27,7 @@ public class ScreensLayout extends RelativeLayout {
 
     private static final int DEFAULT_ANIMATION_DURATION = 300;
 
-    public static enum LayersOrdering {Default, ComingOnTop, ExistOnTop}
+    public enum LayersOrdering {Default, ComingOnTop, ExistOnTop}
 
     private RelativeLayout layer1, layer2;
     private Stack<Pair<Screen, String>> history;
@@ -109,6 +109,7 @@ public class ScreensLayout extends RelativeLayout {
         }
     }
 
+    @SuppressWarnings("All")
     private void animate(Screen to, boolean storeInHistory, String name, final boolean isForward) {
         if (isLocked()) return;
         lock++;

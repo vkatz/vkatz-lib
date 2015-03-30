@@ -6,8 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.util.AttributeSet;
-import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.RadioButton;
 import by.vkatz.R;
 import by.vkatz.utils.FontsManager;

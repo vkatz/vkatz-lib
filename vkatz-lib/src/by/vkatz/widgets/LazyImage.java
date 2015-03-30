@@ -177,10 +177,10 @@ public class LazyImage extends ImageView {
         return files;
     }
 
-    public static interface OnImageLoadListener {
-        public void onLoadingStart(LazyImage imageView, String url);
+    public interface OnImageLoadListener {
+        void onLoadingStart(LazyImage imageView, String url);
 
-        public void onLoadingComplete(LazyImage imageView, String url, Bitmap bitmap);
+        void onLoadingComplete(LazyImage imageView, String url, Bitmap bitmap);
     }
 
     public static class Options {

@@ -7,7 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.util.AttributeSet;
 import android.widget.EditText;
-import android.widget.TextView;
 import by.vkatz.R;
 import by.vkatz.utils.FontsManager;
 
@@ -17,7 +16,7 @@ import by.vkatz.utils.FontsManager;
  * Time: 19:02
  */
 @SuppressWarnings("all")
-public class AssetFontEditText extends EditText{
+public class AssetFontEditText extends EditText {
 
     //    private int bgColorFilter = 0;
     private ColorStateList bgColorFilter;
