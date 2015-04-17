@@ -3,7 +3,7 @@ package by.vkatz.widgets;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.widget.RadioButton;
+import android.widget.CheckBox;
 import by.vkatz.R;
 import by.vkatz.utils.FontsManager;
 
@@ -13,17 +13,17 @@ import by.vkatz.utils.FontsManager;
  * Time: 19:02
  */
 @SuppressWarnings("all")
-public class AssetFontRadioButton extends RadioButton {
-    public AssetFontRadioButton(Context context) {
+public class AssetFontCheckBox extends CheckBox {
+    public AssetFontCheckBox(Context context) {
         super(context);
     }
 
-    public AssetFontRadioButton(Context context, AttributeSet attrs) {
+    public AssetFontCheckBox(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0);
     }
 
-    public AssetFontRadioButton(Context context, AttributeSet attrs, int defStyle) {
+    public AssetFontCheckBox(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs, defStyle);
     }

@@ -74,7 +74,7 @@ public class LoadingView extends View {
         int w = getMeasuredWidth() - pl - pr;
         int h = getMeasuredHeight() - pt - pb;
         int s = Math.min(w, h);
-        drawRect.set(pl + (w - s) / 2 + thickness / 2, pt + (h - s) / 2 + thickness / 2, pl + (w + s) / 2 - thickness / 2, pt + (h + s) / 2 - thickness / 2);
+        drawRect.set(pl + (w - s) / 2 + thickness / 2 + 1, pt + (h - s) / 2 + thickness / 2 + 1, pl + (w + s) / 2 - thickness / 2 - 1, pt + (h + s) / 2 - thickness / 2 - 1);
     }
 
     private int resolveSize(int spec) {

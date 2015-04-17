@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="font" format="string|reference"/>
-    <attr name="backgroundColorFilter" format="color|reference"/>
 
     <declare-styleable name="AssetFontTextView">
         <attr name="font"/>
-        <attr name="backgroundColorFilter"/>
     </declare-styleable>
 
     <declare-styleable name="AssetFontEditText">
         <attr name="font"/>
-        <attr name="backgroundColorFilter"/>
     </declare-styleable>
 
     <declare-styleable name="AssetFontRadioButton">
         <attr name="font"/>
-        <attr name="backgroundColorFilter"/>
     </declare-styleable>
 
     <declare-styleable name="ColorFilteredImageView">
         <attr name="colorFilter" format="color|reference"/>
-        <attr name="backgroundColorFilter"/>
+        <attr name="backgroundColorFilter" format="color|reference"/>
     </declare-styleable>
 
     <declare-styleable name="LoadingView">
@@ -51,5 +47,4 @@
         <attr name="isMovable" format="boolean|reference"/>
         <attr name="isTouchable" format="boolean|reference"/>
     </declare-styleable>
-
 </resources>

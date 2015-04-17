@@ -26,6 +26,5 @@
             app:font="@string/font"
             android:background="@drawable/some_bg"
             android:clickable="true"
-            app:backgroundColorFilter="@color/sample_color_filter"
-            android:text="this is some text with custom font from xml, click on me pls"/>
+            android:text="this is some text with custom font from xml with background"/>
 </LinearLayout>

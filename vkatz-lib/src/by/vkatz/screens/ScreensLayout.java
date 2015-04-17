@@ -137,6 +137,7 @@ public class ScreensLayout extends RelativeLayout {
         else outAnim = isForward ? fOut : bOut;
         useAlternativeAnimation = false;
         aIn = aOut = null;
+        if (currentView != null && currentScreen != null) currentScreen.first.onHide(currentView);
         to.onShow(view);
         Handler handler = new Handler() {
             Screen screen = currentScreen == null ? null : currentScreen.first;
@@ -146,15 +147,13 @@ public class ScreensLayout extends RelativeLayout {
             public void handleMessage(Message msg) {
                 if (!isLocked()) {
                     outLayer.removeAllViews();
-                    if (screen != null && view != null) screen.onHide(view);
                     if (screen != null && !isForward) {
                         screen.setParent(null);
                         screen.release();
                     }
                     if (execute != null) {
-                        Runnable r = execute;
+                        execute.run();
                         execute = null;
-                        r.run();
                     }
                 }
             }

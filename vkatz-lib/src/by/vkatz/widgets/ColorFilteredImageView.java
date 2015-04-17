@@ -37,6 +37,12 @@ public class ColorFilteredImageView extends ImageView {
         bgColorFilter = a.getColorStateList(R.styleable.ColorFilteredImageView_backgroundColorFilter);
         a.recycle();
         refreshDrawableState();
+        post(new Runnable() {
+            @Override
+            public void run() {
+                refreshDrawableState();
+            }
+        });
     }
 
     @Override

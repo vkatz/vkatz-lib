@@ -3,6 +3,7 @@ package by.vkatz.widgets;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.widget.ImageView;
@@ -33,6 +34,8 @@ public class LazyImage extends ImageView {
     private static final Object synk = new Object();
     private static HashMap<String, String> cache;
     private static Executor executor = new SelfKillerExecutor();
+    private static Handler handler = new Handler();
+
     private OnImageLoadListener onImageLoadListener;
     private Options options;
 
@@ -50,10 +53,6 @@ public class LazyImage extends ImageView {
 
     public void setOnImageLoadListener(OnImageLoadListener onImageLoadListener) {
         this.onImageLoadListener = onImageLoadListener;
-    }
-
-    private String optionsToKey(Options options) {
-        return "" + options.cacheWidth + "x" + options.cacheHeight + "|" + options.url;
     }
 
     public void setImage(String url) {
@@ -74,20 +73,25 @@ public class LazyImage extends ImageView {
                 synchronized (synk) {
                     if (cache.containsKey(optionsToKey(options))) file = cache.get(optionsToKey(options));
                 }
-                if (file != null && new File(file).exists()) {
-                    final Bitmap bitmap = scaleBitmap(BitmapFactory.decodeFile(file), options.width, options.height, true);
-                    post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (LazyImage.this.options == options) {
-                                if (onImageLoadListener != null) onImageLoadListener.onLoadingComplete(LazyImage.this, options.url, bitmap);
-                                setImageBitmap(bitmap);
+                if (file != null) {
+                    Bitmap originalBitmap = BitmapFactory.decodeFile(file);
+                    if (originalBitmap != null) {
+                        final Bitmap bitmap = scaleBitmap(originalBitmap, options.width, options.height, true);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (LazyImage.this.options == options) {
+                                    setImageBitmap(bitmap);
+                                    if (onImageLoadListener != null) onImageLoadListener.onLoadingComplete(LazyImage.this, options.url, bitmap);
+                                }
                             }
-                        }
-                    });
-                    return;
-                } else synchronized (synk) {
-                    cache.remove(options.url);
+                        });
+                        return;
+                    } else synchronized (synk) {
+                        if (new File(file).exists()) new File(file).delete();
+                        cache.remove(options.url);
+                        saveCacheData(getContext());
+                    }
                 }
                 try {
                     Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(options.url).openStream()), options.cacheWidth, options.cacheHeight, true);
@@ -101,7 +105,7 @@ public class LazyImage extends ImageView {
                         cache.put(optionsToKey(options), filename);
                         saveCacheData(getContext());
                     }
-                    post(new Runnable() {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (LazyImage.this.options == options) {
@@ -113,7 +117,7 @@ public class LazyImage extends ImageView {
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
-                    post(new Runnable() {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (LazyImage.this.options == options && onImageLoadListener != null)
@@ -123,21 +127,63 @@ public class LazyImage extends ImageView {
                 }
             }
         });
-
     }
 
     public Options getCurrentOptions() {
         return options;
     }
 
-    private static Bitmap scaleBitmap(Bitmap in, int outWidth, int outHeight, boolean rececleOld) {
+    //do not call in ui thread
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static boolean cacheImage(Context context, final Options options, boolean force) {
+        loadCacheData(context);
+        String file = null;
+        synchronized (synk) {
+            if (cache.containsKey(optionsToKey(options))) file = cache.get(optionsToKey(options));
+        }
+        if (file != null) {
+            Bitmap image = BitmapFactory.decodeFile(file);
+            if (image != null) {
+                image.recycle();
+                return true;
+            } else synchronized (synk) {
+                if (new File(file).exists()) new File(file).delete();
+                cache.remove(options.url);
+                saveCacheData(context);
+            }
+        }
+        try {
+            Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(options.url).openStream()), options.cacheWidth, options.cacheHeight, true);
+            File folder = options.getCacheDir() == null ? getDefaultCacheFolder(context) : options.getCacheDir();
+            folder.mkdirs();
+            File cacheFile = File.createTempFile("li-", ".png", folder);
+            cacheBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(cacheFile));
+            cacheBitmap.recycle();
+            String filename = cacheFile.getAbsolutePath();
+            synchronized (synk) {
+                cache.put(optionsToKey(options), filename);
+                saveCacheData(context);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    private static String optionsToKey(Options options) {
+        return "" + options.cacheWidth + "x" + options.cacheHeight + "|" + options.url;
+    }
+
+    private static Bitmap scaleBitmap(Bitmap in, int outWidth, int outHeight, boolean recycleOld) {
         if (outHeight <= 0 && outWidth <= 0) return in;
         float scale;
         if (outWidth <= 0 && outHeight > 0) scale = 1f * outHeight / in.getHeight();
         else if (outWidth > 0 && outHeight <= 0) scale = 1f * outWidth / in.getWidth();
         else scale = Math.min(1f * outWidth / in.getWidth(), 1f * outHeight / in.getHeight());
         Bitmap result = Bitmap.createScaledBitmap(in, (int) (in.getWidth() * scale), (int) (in.getHeight() * scale), true);
-        if (rececleOld && result != in) in.recycle();
+        if (recycleOld && result != in) in.recycle();
         return result;
     }
 

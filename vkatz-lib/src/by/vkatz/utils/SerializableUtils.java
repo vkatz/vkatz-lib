@@ -34,6 +34,11 @@ public class SerializableUtils {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T restoreOrThrow(File file, Class<T> T) throws Exception {
+        return (T) new ObjectInputStream(new FileInputStream(file)).readObject();
+    }
+
     public static <T> long generateSerialVersionUID(Class<T> t) {
         long val = 5611235136846231L;
         String fullName = t.getName();
