@@ -47,4 +47,5 @@
         <attr name="isMovable" format="boolean|reference"/>
         <attr name="isTouchable" format="boolean|reference"/>
     </declare-styleable>
+
 </resources>

@@ -68,7 +68,7 @@ public class RoundRectLayout extends FrameLayout {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         imageCanvas.drawRoundRect(rect, 2 * cornersRoundSize, 2 * cornersRoundSize, paint);
         paint.setStyle(Paint.Style.FILL);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+        paint.setXfermode(null);
         canvas.drawBitmap(image, 0, 0, paint);
     }
 }
