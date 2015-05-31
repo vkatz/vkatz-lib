@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<by.vkatz.widgets.SlideMenuLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:slideFrom="right"
+        app:expanded="true">
+    <View android:layout_width="200dp"
+          android:layout_height="fill_parent"
+          android:layout_alignParentRight="true"
+          app:isMenu="true"/>
+    <TextView android:layout_width="200dp"
+              android:layout_height="fill_parent"
+              app:isMovable="false"
+              android:textColor="#000"
+              android:background="#f00"
+              android:textSize="30dp"
+              android:gravity="center"
+              android:text="i am fake menu"/>
+    <TextView android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:textColor="#000"
+              android:background="#fff"
+              android:textSize="30dp"
+              android:gravity="center"
+              android:text="i am content"/>
+</by.vkatz.widgets.SlideMenuLayout>
