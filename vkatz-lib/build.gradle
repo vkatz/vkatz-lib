@@ -7,10 +7,14 @@ buildscript {
     }
 }
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
 
 repositories {
     jcenter()
 }
+
+def libVersion = 1;
+def libVersionName = "1.1"
 
 android {
     compileSdkVersion 22
@@ -19,8 +23,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode libVersion
+        versionName libVersionName
     }
     buildTypes {
         release {
@@ -30,5 +34,16 @@ android {
     }
 }
 
+uploadArchives {
+    repositories.mavenDeployer {
+        def deployPath = file('/maven/')
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.project {
+            groupId 'by.vkatz'
+            artifactId 'vkatz-lib'
+            version libVersionName
+        }
+    }
+}
 dependencies {
 }
