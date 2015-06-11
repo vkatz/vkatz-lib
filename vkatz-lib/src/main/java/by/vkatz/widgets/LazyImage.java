@@ -3,6 +3,7 @@ package by.vkatz.widgets;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Pair;
@@ -31,6 +32,8 @@ import java.util.concurrent.Executor;
  */
 @SuppressWarnings("unused")
 public class LazyImage extends ImageView {
+    private static final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%";
+
     private static final Object synk = new Object();
     private static HashMap<String, String> cache;
     private static Executor executor = new SelfKillerExecutor();
@@ -94,7 +97,7 @@ public class LazyImage extends ImageView {
                     }
                 }
                 try {
-                    Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(options.url).openStream()), options.cacheWidth, options.cacheHeight, true);
+                    Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(Uri.encode(options.url, ALLOWED_URI_CHARS)).openStream()), options.cacheWidth, options.cacheHeight, true);
                     File folder = options.getCacheDir() == null ? getDefaultCacheFolder(getContext()) : options.getCacheDir();
                     folder.mkdirs();
                     File cacheFile = File.createTempFile("li-", ".png", folder);
@@ -153,7 +156,7 @@ public class LazyImage extends ImageView {
             }
         }
         try {
-            Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(options.url).openStream()), options.cacheWidth, options.cacheHeight, true);
+            Bitmap cacheBitmap = scaleBitmap(BitmapFactory.decodeStream(new URL(Uri.encode(options.url, ALLOWED_URI_CHARS)).openStream()), options.cacheWidth, options.cacheHeight, true);
             File folder = options.getCacheDir() == null ? getDefaultCacheFolder(context) : options.getCacheDir();
             folder.mkdirs();
             File cacheFile = File.createTempFile("li-", ".png", folder);
