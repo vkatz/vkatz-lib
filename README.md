@@ -17,9 +17,22 @@ Lib contain a bunch of usefull widgets and utils and special ScreenLayout wich a
 
 ### How to install
 
+#### Defaul
 * Download and copy [vkatz-lib](https://github.com/vkatz/vkatz-lib/tree/master/vkatz-lib)
 * Add this project as module 
 * Add dependence to you core module. Should looks like this: [in intellij idea](https://drive.google.com/file/d/0B6z8oML8UiXtcHJ6ZnhHc3d3NXc/view?usp=sharing)
+
+####Gradle
+```xml
+repositories {
+    mavenCentral()
+    maven { url "https://raw.githubusercontent.com/vkatz/vkatz-lib/master/vkatz-lib/maven" }
+}
+
+dependencies {
+    compile 'by.vkatz:vkatz-lib:1.1'
+}
+```
 
 In case you plane yo use ScreenLayout:
 * Make your activity extends of VkatzActivity
