@@ -3,6 +3,7 @@ package by.vkatz.samples;
 import android.view.View;
 import android.view.animation.AnimationSet;
 import android.widget.Toast;
+
 import by.vkatz.screens.Screen;
 import by.vkatz.utils.AnimationBuilder;
 import by.vkatz.utils.ContextUtils;
@@ -112,6 +113,17 @@ public class MainScreen extends Screen {
                 getParent().setAlternativeGoAnimations(animation, AnimationBuilder.alpha(1, 0, 500));
                 getParent().go(new MainScreen());
                 getParent().clearHistory(); // to not duplicate this screen
+            }
+        });
+        view.findViewById(R.id.compound_drawables).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new Screen() {
+                    @Override
+                    public View getView() {
+                        return ContextUtils.getView(getContext(), R.layout.screen_compund_images);
+                    }
+                });
             }
         });
     }

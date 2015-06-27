@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="font" format="string|reference"/>
+    <attr name="compoundDrawableWidth" format="dimension|reference"/>
+    <attr name="compoundDrawableHeight" format="dimension|reference"/>
 
-    <declare-styleable name="AssetFontTextView">
+    <declare-styleable name="ExtendTextView">
         <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
     </declare-styleable>
 
-    <declare-styleable name="AssetFontEditText">
+    <declare-styleable name="ExtendEditText">
         <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
     </declare-styleable>
 
-    <declare-styleable name="AssetFontRadioButton">
+    <declare-styleable name="ExtendRadioButton">
         <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExtendCheckBox">
+        <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
     </declare-styleable>
 
     <declare-styleable name="ColorFilteredImageView">

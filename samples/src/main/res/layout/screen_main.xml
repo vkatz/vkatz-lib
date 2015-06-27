@@ -41,5 +41,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/alternative_go_animation"
                 android:text="Alternative screen go animation"/>
+        <Button android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/compound_drawables"
+                android:text="ExtendText compund drawables size"/>
     </LinearLayout>
 </ScrollView>

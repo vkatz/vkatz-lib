@@ -137,8 +137,15 @@ public class LazyImage extends ImageView {
     }
 
     //do not call in ui thread
+    public static boolean cacheImage(Context context, Options options) {
+        Bitmap bitmap = cacheImageForBitmap(context, options);
+        if (bitmap != null) bitmap.recycle();
+        return bitmap == null;
+    }
+
+    //do not call in ui thread
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static boolean cacheImage(Context context, final Options options) {
+    public static Bitmap cacheImageForBitmap(Context context, Options options) {
         loadCacheData(context);
         String file = null;
         synchronized (synk) {
@@ -147,8 +154,7 @@ public class LazyImage extends ImageView {
         if (file != null) {
             Bitmap image = BitmapFactory.decodeFile(file);
             if (image != null) {
-                image.recycle();
-                return true;
+                return image;
             } else synchronized (synk) {
                 if (new File(file).exists()) new File(file).delete();
                 cache.remove(options.url);
@@ -161,19 +167,17 @@ public class LazyImage extends ImageView {
             folder.mkdirs();
             File cacheFile = File.createTempFile("li-", ".png", folder);
             cacheBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(cacheFile));
-            cacheBitmap.recycle();
             String filename = cacheFile.getAbsolutePath();
             synchronized (synk) {
                 cache.put(optionsToKey(options), filename);
                 saveCacheData(context);
             }
-            return true;
+            return cacheBitmap;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
-
 
     private static String optionsToKey(Options options) {
         return "" + options.cacheWidth + "x" + options.cacheHeight + "|" + options.url;

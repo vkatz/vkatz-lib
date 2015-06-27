@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.1'
+        classpath 'com.android.tools.build:gradle:1.2.3'
     }
 }
 apply plugin: 'com.android.library'
@@ -13,8 +13,8 @@ repositories {
     jcenter()
 }
 
-def libVersion = 1;
-def libVersionName = "1.1"
+def libVersion = 2;
+def libVersionName = "1.2"
 
 android {
     compileSdkVersion 22

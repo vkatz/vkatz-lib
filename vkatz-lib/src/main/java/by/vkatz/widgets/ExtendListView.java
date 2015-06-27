@@ -39,7 +39,7 @@ public class ExtendListView extends ListView {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (onScrollListener != null) onScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-                if (onExtendScrollListener != null) {
+                if (onExtendScrollListener != null && getChildCount() > 0) {
                     if (firstVisibleItem != activeItem) {
                         if (activeItem - firstVisibleItem < 0) onExtendScrollListener.onScrollDown(ExtendListView.this);
                         else onExtendScrollListener.onScrollUp(ExtendListView.this);
@@ -63,7 +63,7 @@ public class ExtendListView extends ListView {
         this.onScrollListener = l;
     }
 
-    public void setOnExtedScrollListener(OnExtendScrollListener l) {
+    public void setOnExtendScrollListener(OnExtendScrollListener l) {
         this.onExtendScrollListener = l;
     }
 
@@ -76,11 +76,10 @@ public class ExtendListView extends ListView {
     }
 
     public void setState(long state) {
-        if (state != 0) {
-            int pos = (int) (state >> 32);
-            int offset = (int) (state & 0xFFFFFFFFL);
-            smoothScrollToPositionFromTop(pos, offset, 0);
-        }
+        int pos = (int) (state >> 32);
+        int offset = (int) (state & 0xFFFFFFFFL);
+        setSelection(pos);
+        smoothScrollToPositionFromTop(pos, offset, 0);
     }
 
     public interface OnExtendScrollListener {
