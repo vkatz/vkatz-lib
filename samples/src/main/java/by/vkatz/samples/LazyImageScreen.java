@@ -2,24 +2,23 @@ package by.vkatz.samples;
 
 import android.util.Pair;
 import android.view.View;
-import by.vkatz.screens.Screen;
-import by.vkatz.utils.ContextUtils;
-import by.vkatz.widgets.LazyImage;
 
 import java.io.File;
+
+import by.vkatz.widgets.LazyImage;
 
 /**
  * Created by vKatz on 08.03.2015.
  */
-public class LazyImageScreen extends Screen {
+public class LazyImageScreen extends BaseScreen {
     @Override
-    public View getView() {
-        return ContextUtils.getView(getContext(), R.layout.lazy_image_screen);
+    public View createView() {
+        return View.inflate(getContext(), R.layout.lazy_image_screen, null);
     }
 
     @Override
-    public void onShow(View view) {
-        super.onShow(view);
+    public void initView(View view) {
+        super.initView(view);
         view.findViewById(R.id.clear_cache).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

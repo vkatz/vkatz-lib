@@ -1,14 +1,32 @@
 package by.vkatz.samples;
 
-import by.vkatz.screens.ScreensLayoutActivity;
-import by.vkatz.utils.AnimationBuilder;
+import android.widget.Toast;
 
-public class MainUI extends ScreensLayoutActivity {
+import by.vkatz.screens.ScreensActivity;
+
+public class MainUI extends ScreensActivity {
+    private boolean exit = false;
+
     @Override
-    protected void init() {
+    public void init() {
         init(R.layout.main, R.id.screen_layout);
-        getScreensLayout().setData("settings", Settings.load(this));
-        getScreensLayout().setAlternativeGoAnimations(AnimationBuilder.alpha(0, 1, 250), null);
-        getScreensLayout().go(new SplashScreen(), false);
+        setData("settings", Settings.load(this));
+        go(new SplashScreen());
+    }
+
+
+    @Override
+    public void backPressed() {
+        if (exit) super.backPressed();
+        else {
+            exit = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            postDelayer(3000, new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            });
+        }
     }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+              android:layout_height="fill_parent"
+              android:orientation="vertical">
     <!--some content-->
-    <by.vkatz.screens.ScreensLayout android:layout_width="fill_parent"
-                                    android:layout_height="fill_parent"
-                                    android:id="@+id/screen_layout"/>
+    <FrameLayout android:id="@+id/screen_layout"
+                 android:layout_width="fill_parent"
+                 android:layout_height="fill_parent"/>
     <!--some content-->
 </LinearLayout>
 

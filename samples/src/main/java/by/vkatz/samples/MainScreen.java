@@ -1,25 +1,28 @@
 package by.vkatz.samples;
 
 import android.view.View;
-import android.view.animation.AnimationSet;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import by.vkatz.screens.Screen;
-import by.vkatz.utils.AnimationBuilder;
-import by.vkatz.utils.ContextUtils;
 
 /**
  * Created by vKatz on 08.03.2015.
  */
-public class MainScreen extends Screen {
+public class MainScreen extends BaseScreen {
+    private boolean initiated = false;
+    private View view;
+
     @Override
-    public View getView() {
-        return ContextUtils.getView(getContext(), R.layout.screen_main);
+    public View createView() {
+        if (view != null && view.getParent() != null) ((ViewGroup) view.getParent()).removeView(view);
+        return view != null ? view : (view = View.inflate(getContext(), R.layout.screen_main, null));
     }
 
     @Override
-    public void onShow(View view) {
-        super.onShow(view);
+    public void initView(View view) {
+        super.initView(view);
+        if (initiated) return;
+        else initiated = true;
         Settings settings = getParent().getData("settings", Settings.class);
         if (settings.isFirstLaunch()) {
             Toast.makeText(getContext(), "Hi, it is first launch", Toast.LENGTH_SHORT).show();
@@ -29,10 +32,10 @@ public class MainScreen extends Screen {
         view.findViewById(R.id.asset_font).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.screen_font);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.screen_font, null);
                     }
                 });
             }
@@ -46,10 +49,10 @@ public class MainScreen extends Screen {
         view.findViewById(R.id.color_filter).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.color_filter_screen);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.color_filter_screen, null);
                     }
                 });
             }
@@ -63,10 +66,10 @@ public class MainScreen extends Screen {
         view.findViewById(R.id.round_rect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.round_rect_screen);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.round_rect_screen, null);
                     }
                 });
             }
@@ -74,10 +77,10 @@ public class MainScreen extends Screen {
         view.findViewById(R.id.slide_menu_1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.slide_menu_1);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.slide_menu_1, null);
                     }
                 });
             }
@@ -85,10 +88,10 @@ public class MainScreen extends Screen {
         view.findViewById(R.id.slide_menu_2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.slide_menu_2);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.slide_menu_2, null);
                     }
                 });
             }
@@ -96,41 +99,46 @@ public class MainScreen extends Screen {
         view.findViewById(R.id.slide_menu_3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.slide_menu_3);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.slide_menu_3, null);
                     }
                 });
-            }
-        });
-        view.findViewById(R.id.alternative_go_animation).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AnimationSet animation = new AnimationSet(true);
-                animation.addAnimation(AnimationBuilder.rotate(0, 360, 500, false));
-                animation.addAnimation(AnimationBuilder.alpha(0, 1, 500));
-                getParent().setAlternativeGoAnimations(animation, AnimationBuilder.alpha(1, 0, 500));
-                getParent().go(new MainScreen());
-                getParent().clearHistory(); // to not duplicate this screen
             }
         });
         view.findViewById(R.id.compound_drawables).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getParent().go(new Screen() {
+                getParent().go(new BaseScreen() {
                     @Override
-                    public View getView() {
-                        return ContextUtils.getView(getContext(), R.layout.screen_compund_images);
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.screen_compund_images, null);
                     }
                 });
             }
         });
+        view.findViewById(R.id.data_passing_between_screens).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setTargetFragment(MainScreen.this, 0);
+                getParent().go(CallBackScreen.newInstance("Click me", new Runnable() {
+                    @Override
+                    public void run() {
+                        callMethod();
+                    }
+                }));
+            }
+        });
+    }
+
+    public void callMethod() {
+        ((TextView) view.findViewById(R.id.data_passing_between_screens)).setText("now it is another text here");
     }
 
     @Override
     public boolean onBackPressed() {
-        Toast.makeText(getContext(), "Buyyyy", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Back is pressed", Toast.LENGTH_SHORT).show();
         return super.onBackPressed();
     }
 }

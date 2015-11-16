@@ -1,8 +1,11 @@
 package by.vkatz.samples;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
+
 import by.vkatz.screens.Screen;
 
 /**
@@ -10,7 +13,7 @@ import by.vkatz.screens.Screen;
  */
 public class SplashScreen extends Screen {
     @Override
-    public View getView() {
+    public View createView() {
         TextView textView = new TextView(getContext());
         textView.setBackgroundColor(Color.WHITE);
         textView.setTextColor(Color.BLACK);
@@ -18,20 +21,19 @@ public class SplashScreen extends Screen {
     }
 
     @Override
-    public void onShow(View view) {
-        super.onShow(view);
-        getParent().executeWhenPossible(new Runnable() {
+    public void initView(View view) {
+        super.initView(view);
+        ((TextView) view).setText("Hi");
+        getParent().postDelayer(3000, new Runnable() {
             @Override
             public void run() {
-                getParent().back();
+                getParent().go(new MainScreen(), false);
             }
         });
-        ((TextView) view).setText("Hi");
-        getParent().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getParent().go(new MainScreen());
-            }
-        }, 3000);
+    }
+
+    @Override
+    public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
+        return ObjectAnimator.ofFloat(null, "alpha", enter ? 0 : 1, enter ? 1 : 0);
     }
 }

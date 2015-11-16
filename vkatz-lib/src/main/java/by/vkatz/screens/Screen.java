@@ -1,72 +1,66 @@
 package by.vkatz.screens;
 
+import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+
+import java.io.Serializable;
 
 /**
- * User: Katz
- * Date: 23.12.13
- * Time: 16:43
+ * Created by vKatz on 17.09.2015.
  */
-@SuppressWarnings("unused")
-public abstract class Screen {
-    private ScreensLayout parent;
-
-    public final Context getContext() {
-        return getParent() == null ? null : getParent().getContext();
+@SuppressWarnings({"unused", "unchecked"})
+public abstract class Screen extends Fragment {
+    @Override
+    public Context getContext() {
+        return getParent();
     }
 
-    public abstract View getView();
-
-    public void onShow(View view) {
+    @Override
+    public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = createView();
+        initView(view);
+        return view;
     }
 
-    public void onHide(View view) {
+    public <Activity extends ScreensActivity> Activity getParent() {
+        try {
+            return (Activity) getActivity();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    public void release() {
+    public abstract View createView();
+
+    public void initView(View view) {
     }
 
-    public void onActivityResult(View view, int requestCode, int resultCode, Intent data) {
+    public final <This extends Screen, Data extends Serializable> This withData(String key, Data data) {
+        if (getArguments() == null) setArguments(new Bundle());
+        getArguments().putSerializable(key, data);
+        return (This) this;
+    }
+
+    public final <This extends Screen, Data extends Parcelable> This withData(String key, Data data) {
+        if (getArguments() == null) setArguments(new Bundle());
+        getArguments().putParcelable(key, data);
+        return (This) this;
+    }
+
+    public Object getRawData(String key) {
+        return getArguments().get(key);
+    }
+
+    public final <T> T getData(String key) {
+        return (T) getRawData(key);
     }
 
     public boolean onBackPressed() {
         return false;
-    }
-
-    public boolean onMenuPressed() {
-        return false;
-    }
-
-    public void onActivityNewIntent(Intent intent) {
-    }
-
-    public void onActivityResume() {
-    }
-
-    public void onActivityPause() {
-    }
-
-    public void onActivityDestroy() {
-    }
-
-    public void onActivitySaveInstanceState(Bundle outState) {
-    }
-
-    public void onActivityLowMemory() {
-    }
-
-    public void onActivityConfigurationChanged(Configuration newConfig) {
-    }
-
-    public final ScreensLayout getParent() {
-        return parent;
-    }
-
-    void setParent(ScreensLayout parent) {
-        this.parent = parent;
     }
 }

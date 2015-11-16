@@ -45,6 +45,17 @@
         <attr name="roundSize" format="dimension|reference"/>
     </declare-styleable>
 
+    <declare-styleable name="FlowLayout">
+        <attr name="offsetHorizontal" format="dimension|reference"/>
+        <attr name="offsetVertical" format="dimension|reference"/>
+        <attr name="lineHeight" format="dimension|reference"/>
+        <attr name="lineGravity" format="enum">
+            <enum name="center" value="0"/>
+            <enum name="top" value="1"/>
+            <enum name="bot" value="2"/>
+        </attr>
+    </declare-styleable>
+
     <declare-styleable name="SlideMenuLayout">
         <attr name="slideFrom" format="enum">
             <enum name="left" value="1"/>

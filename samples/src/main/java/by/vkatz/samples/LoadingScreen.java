@@ -2,24 +2,23 @@ package by.vkatz.samples;
 
 import android.os.Handler;
 import android.view.View;
-import by.vkatz.screens.Screen;
-import by.vkatz.utils.ContextUtils;
+
 import by.vkatz.widgets.LoadingView;
 
 /**
  * Created by vKatz on 08.03.2015.
  */
-public class LoadingScreen extends Screen {
+public class LoadingScreen extends BaseScreen {
     int pr = 0;
 
     @Override
-    public View getView() {
-        return ContextUtils.getView(getContext(), R.layout.loading_screen);
+    public View createView() {
+        return View.inflate(getContext(), R.layout.loading_screen, null);
     }
 
     @Override
-    public void onShow(View view) {
-        super.onShow(view);
+    public void initView(View view) {
+        super.initView(view);
         final LoadingView loadingView = (LoadingView) view.findViewById(R.id.progress);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
