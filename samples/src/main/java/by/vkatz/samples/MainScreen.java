@@ -107,6 +107,28 @@ public class MainScreen extends BaseScreen {
                 });
             }
         });
+        view.findViewById(R.id.slide_menu_4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new BaseScreen() {
+                    @Override
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.slide_menu_4, null);
+                    }
+                });
+            }
+        });
+        view.findViewById(R.id.extend_relative_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new BaseScreen() {
+                    @Override
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.extend_relative_layout, null);
+                    }
+                });
+            }
+        });
         view.findViewById(R.id.compound_drawables).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

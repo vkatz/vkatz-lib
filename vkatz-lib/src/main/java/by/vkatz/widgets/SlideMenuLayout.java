@@ -8,15 +8,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Scroller;
+
 import by.vkatz.R;
 
 /**
  * Created by vKatz on 18.02.2015.
  */
 @SuppressWarnings("unused")
-public class SlideMenuLayout extends RelativeLayout {
+public class SlideMenuLayout extends ExtendRelativeLayout {
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
     public static final int TOP = 3;
@@ -286,7 +286,7 @@ public class SlideMenuLayout extends RelativeLayout {
         void onScrollSizeChangeListener(SlideMenuLayout view, int slide);
     }
 
-    public static class LayoutParams extends RelativeLayout.LayoutParams {
+    public static class LayoutParams extends ExtendRelativeLayout.LayoutParams {
         protected boolean isMenu;
         protected boolean isMovable;
         protected boolean isTouchable;

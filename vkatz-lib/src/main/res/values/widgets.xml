@@ -56,6 +56,15 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ExtendRelativeLayout_Layout">
+        <attr name="extend_width" format="string|reference"/>
+        <attr name="extend_height" format="string|reference"/>
+        <attr name="extend_left" format="string|reference"/>
+        <attr name="extend_right" format="string|reference"/>
+        <attr name="extend_top" format="string|reference"/>
+        <attr name="extend_bottom" format="string|reference"/>
+    </declare-styleable>
+
     <declare-styleable name="SlideMenuLayout">
         <attr name="slideFrom" format="enum">
             <enum name="left" value="1"/>
