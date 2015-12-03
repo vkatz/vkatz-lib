@@ -6,6 +6,6 @@ repositories {
 }
 
 dependencies {
-    compile 'by.vkatz:vkatz-lib:1.3'
+    compile 'by.vkatz:vkatz-lib:3.1'
 }
 ```
