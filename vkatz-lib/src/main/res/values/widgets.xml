@@ -34,8 +34,8 @@
     </declare-styleable>
 
     <declare-styleable name="LoadingView">
-        <attr name="color" format="color|reference"/>
-        <attr name="thickness" format="dimension|reference"/>
+        <attr name="spinner_color" format="color|reference"/>
+        <attr name="spinner_thickness" format="dimension|reference"/>
         <attr name="progress" format="integer"/>
         <attr name="flip" format="boolean|reference"/>
         <attr name="rotate" format="integer|reference"/>
@@ -56,6 +56,9 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ExtendRelativeLayout">
+        <attr name="allowChildIds" format="boolean"/>
+    </declare-styleable>
     <declare-styleable name="ExtendRelativeLayout_Layout">
         <attr name="extend_width" format="string|reference"/>
         <attr name="extend_height" format="string|reference"/>

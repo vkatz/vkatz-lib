@@ -4,6 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>by.vkatz</groupId>
   <artifactId>vkatz-lib</artifactId>
-  <version>1.1</version>
+  <version>3.2</version>
   <packaging>aar</packaging>
 </project>

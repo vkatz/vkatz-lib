@@ -2,7 +2,8 @@
 <by.vkatz.widgets.ExtendRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                        xmlns:app="http://schemas.android.com/apk/res-auto"
                                        android:layout_width="match_parent"
-                                       android:layout_height="match_parent">
+                                       android:layout_height="match_parent"
+                                       app:allowChildIds="true">
     <View android:layout_width="2px"
           android:layout_height="match_parent"
           android:layout_centerInParent="true"
@@ -114,5 +115,29 @@
           android:background="#009"
           app:extend_height="10%h"
           app:extend_top="90%"
+          app:extend_width="10%h"/>
+    <by.vkatz.widgets.ExtendRelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#8f00"
+        app:extend_height="20%"
+        app:extend_left="10%"
+        app:extend_top="10%"
+        app:extend_width="80%">
+        <View android:id="@+id/id3"
+              android:layout_width="0dp"
+              android:layout_height="0dp"
+              android:background="#377"
+              app:extend_height="50%h"
+              app:extend_left="80%"
+              app:extend_top="25%"
+              app:extend_width="50%h"/>
+    </by.vkatz.widgets.ExtendRelativeLayout>
+    <View android:layout_width="0dp"
+          android:layout_height="0dp"
+          android:layout_below="@id/id3"
+          android:layout_toLeftOf="@id/id3"
+          android:background="#dc126d"
+          app:extend_height="10%h"
           app:extend_width="10%h"/>
 </by.vkatz.widgets.ExtendRelativeLayout>

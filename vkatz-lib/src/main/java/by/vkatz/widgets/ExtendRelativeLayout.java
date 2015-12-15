@@ -14,16 +14,31 @@ import by.vkatz.R;
  * Created by vKatz on 02.12.2015.
  */
 public class ExtendRelativeLayout extends RelativeLayout {
+    private static final int ATTRIBUTE_LEFT = 0;
+    private static final int ATTRIBUTE_RIGHT = 1;
+    private static final int ATTRIBUTE_TOP = 2;
+    private static final int ATTRIBUTE_BOTTOM = 3;
+
+    private boolean allowChildIds;
+
     public ExtendRelativeLayout(Context context) {
         super(context);
     }
 
     public ExtendRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context, attrs, 0);
     }
 
     public ExtendRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr);
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ExtendRelativeLayout);
+        allowChildIds = a.getBoolean(R.styleable.ExtendRelativeLayout_allowChildIds, false);
+        a.recycle();
     }
 
     @Override
@@ -106,66 +121,66 @@ public class ExtendRelativeLayout extends RelativeLayout {
             anchor1 = getChildById(rules[RelativeLayout.LEFT_OF]);
             if (anchor1 != null) {
                 directionFromLeft = false;
-                cr = anchor1.getLeft();
+                cr = getChildAttribute(anchor1, ATTRIBUTE_LEFT);
             }
             anchor1 = getChildById(rules[RelativeLayout.RIGHT_OF]);
             if (anchor1 != null) {
                 directionFromLeft = true;
-                cl = anchor1.getRight();
+                cl = getChildAttribute(anchor1, ATTRIBUTE_RIGHT);
             }
             anchor1 = getChildById(rules[RelativeLayout.BELOW]);
             if (anchor1 != null) {
                 directionFromTop = true;
-                ct = anchor1.getBottom();
+                ct = getChildAttribute(anchor1, ATTRIBUTE_BOTTOM);
             }
             anchor1 = getChildById(rules[RelativeLayout.ABOVE]);
             if (anchor1 != null) {
                 directionFromTop = false;
-                cb = anchor1.getTop();
+                cb = getChildAttribute(anchor1, ATTRIBUTE_TOP);
             }
             anchor1 = getChildById(rules[RelativeLayout.ALIGN_LEFT]);
             if (anchor1 != null) {
                 directionFromLeft = true;
-                cl = anchor1.getLeft();
+                cl = getChildAttribute(anchor1, ATTRIBUTE_LEFT);
             }
             anchor1 = getChildById(rules[RelativeLayout.ALIGN_RIGHT]);
             if (anchor1 != null) {
                 directionFromLeft = false;
-                cr = anchor1.getRight();
+                cr = getChildAttribute(anchor1, ATTRIBUTE_RIGHT);
             }
             anchor1 = getChildById(rules[RelativeLayout.ALIGN_TOP]);
             if (anchor1 != null) {
                 directionFromTop = true;
-                ct = anchor1.getTop();
+                ct = getChildAttribute(anchor1, ATTRIBUTE_TOP);
             }
             anchor1 = getChildById(rules[RelativeLayout.ALIGN_BOTTOM]);
             if (anchor1 != null) {
                 directionFromTop = false;
-                cb = anchor1.getBottom();
+                cb = getChildAttribute(anchor1, ATTRIBUTE_BOTTOM);
             }
             anchor1 = getChildById(rules[RelativeLayout.LEFT_OF]);
             anchor2 = getChildById(rules[RelativeLayout.RIGHT_OF]);
             if (anchor1 != null && anchor2 != null) {
                 directionFromLeft = true;
-                cl = (anchor1.getLeft() + anchor2.getRight() - w) / 2;
+                cl = (getChildAttribute(anchor1, ATTRIBUTE_LEFT) + getChildAttribute(anchor2, ATTRIBUTE_RIGHT) - w) / 2;
             }
             anchor1 = getChildById(rules[RelativeLayout.ALIGN_LEFT]);
             anchor2 = getChildById(rules[RelativeLayout.ALIGN_RIGHT]);
             if (anchor1 != null && anchor2 != null) {
                 directionFromLeft = true;
-                cl = (anchor1.getLeft() + anchor2.getRight() - w) / 2;
+                cl = (getChildAttribute(anchor1, ATTRIBUTE_LEFT) + getChildAttribute(anchor2, ATTRIBUTE_RIGHT) - w) / 2;
             }
             anchor1 = getChildById(rules[RelativeLayout.BELOW]);
             anchor2 = getChildById(rules[RelativeLayout.ABOVE]);
             if (anchor1 != null && anchor2 != null) {
                 directionFromTop = true;
-                ct = (anchor1.getBottom() + anchor2.getTop() - h) / 2;
+                ct = (getChildAttribute(anchor1, ATTRIBUTE_BOTTOM) + getChildAttribute(anchor2, ATTRIBUTE_TOP) - h) / 2;
             }
             anchor1 = getChildById(rules[RelativeLayout.ALIGN_BOTTOM]);
             anchor2 = getChildById(rules[RelativeLayout.ALIGN_TOP]);
             if (anchor1 != null && anchor2 != null) {
                 directionFromTop = true;
-                ct = (anchor1.getBottom() + anchor2.getTop() - h) / 2;
+                ct = (getChildAttribute(anchor1, ATTRIBUTE_BOTTOM) + getChildAttribute(anchor2, ATTRIBUTE_TOP) - h) / 2;
             }
             int ll = directionFromLeft ? (cl + ml) : (cr - w - mr);
             int lt = directionFromTop ? (ct + mt) : (cb - h - mb);
@@ -173,13 +188,46 @@ public class ExtendRelativeLayout extends RelativeLayout {
         }
     }
 
-    public View getChildById(int id) {
+    private View getChildById(int id) {
         if (id == 0) return null;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             if (child.getId() == id) return child;
         }
-        return null;
+        return allowChildIds ? findViewById(id) : null;
+    }
+
+    private int getChildAttribute(View child, int attribute) {
+        int value = 0;
+        switch (attribute) {
+            case ATTRIBUTE_LEFT:
+                value += child.getLeft() + child.getTranslationX();
+                break;
+            case ATTRIBUTE_RIGHT:
+                value += child.getRight() + child.getTranslationX();
+                break;
+            case ATTRIBUTE_TOP:
+                value += child.getTop() + child.getTranslationY();
+                break;
+            case ATTRIBUTE_BOTTOM:
+                value += child.getBottom() + child.getTranslationY();
+                break;
+        }
+        View view = (View) child.getParent();
+        while (view != this) {
+            switch (attribute) {
+                case ATTRIBUTE_LEFT:
+                case ATTRIBUTE_RIGHT:
+                    value += view.getLeft() + view.getTranslationX();
+                    break;
+                case ATTRIBUTE_TOP:
+                case ATTRIBUTE_BOTTOM:
+                    value += view.getTop() + view.getTranslationY();
+                    break;
+            }
+            view = (View) view.getParent();
+        }
+        return value;
     }
 
     public static class LayoutParams extends RelativeLayout.LayoutParams {

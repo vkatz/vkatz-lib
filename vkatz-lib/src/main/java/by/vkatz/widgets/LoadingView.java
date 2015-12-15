@@ -43,8 +43,8 @@ public class LoadingView extends View {
     public LoadingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingView, 0, 0);
-        color = a.getColor(R.styleable.LoadingView_color, Color.WHITE);
-        thickness = a.getDimension(R.styleable.LoadingView_thickness, 5);
+        color = a.getColor(R.styleable.LoadingView_spinner_color, Color.WHITE);
+        thickness = a.getDimension(R.styleable.LoadingView_spinner_thickness, 5);
         progress = a.getInt(R.styleable.LoadingView_progress, 0);
         rotate = a.getInt(R.styleable.LoadingView_rotate, 0);
         flip = a.getBoolean(R.styleable.LoadingView_flip, false);

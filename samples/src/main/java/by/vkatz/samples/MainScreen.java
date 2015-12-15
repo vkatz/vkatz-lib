@@ -118,6 +118,17 @@ public class MainScreen extends BaseScreen {
                 });
             }
         });
+        view.findViewById(R.id.slide_menu_5).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new BaseScreen() {
+                    @Override
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.slide_menu_5, null);
+                    }
+                });
+            }
+        });
         view.findViewById(R.id.extend_relative_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

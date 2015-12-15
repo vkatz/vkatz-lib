@@ -2,7 +2,6 @@ package by.vkatz.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +26,6 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
     private boolean enabled;
     private boolean scroll;
     private boolean autoScroll;
-    private boolean onScreen;
     private float pos;
     private int dPos;
     private int slideSize;
@@ -55,7 +53,6 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         scroller = new Scroller(context);
         scroll = false;
         autoScroll = false;
-        onScreen = false;
         setWillNotDraw(false);
     }
 
@@ -64,12 +61,16 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         super.onLayout(changed, l, t, r, b);
         View menu = null;
         boolean hasMenu = false;
-        for (int i = 0; i < getChildCount(); i++)
-            if (((LayoutParams) getChildAt(i).getLayoutParams()).isMenu) {
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (lp.isMenu) {
                 menu = getChildAt(i);
                 if (hasMenu) throw new RuntimeException("Should not contain more than 1 menu");
                 hasMenu = true;
             }
+        }
+        int oldSlideSize = slideSize;
         if (menu == null) slideSize = 0;
         else {
             if (slideFrom == BOTTOM) slideSize = getMeasuredHeight() - menu.getTop();
@@ -77,10 +78,20 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
             else if (slideFrom == RIGHT) slideSize = getMeasuredWidth() - menu.getLeft();
             else if (slideFrom == LEFT) slideSize = -menu.getRight();
             else slideSize = 0;
-            if (!onScreen && !expanded) {
-                scroller.startScroll(0, 0, isHorizontal() ? slideSize : 0, isHorizontal() ? 0 : slideSize, 0);
-                invalidate();
+            if (oldSlideSize != slideSize) {
+                if (expanded) expand(false);
+                else collapse(false);
             }
+        }
+        int dx = 0;
+        int dy = 0;
+        if (isHorizontal()) dx = (int) clamp(scroller.getCurrX(), 0, slideSize);
+        else dy = (int) clamp(scroller.getCurrY(), 0, slideSize);
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (lp.isMovable || lp.isMenu)
+                child.layout(child.getLeft() + dx, child.getTop() + dy, child.getRight() + dx, child.getBottom() + dy);
         }
     }
 
@@ -93,12 +104,8 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
             View child = getChildAt(i);
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (!lp.isTouchable || child.getVisibility() == GONE) continue;
-            int cx = (int) x;
-            int cy = (int) y;
-            if (lp.isMovable || lp.isMenu) {
-                cx -= scroller.getCurrX();
-                cy -= scroller.getCurrY();
-            }
+            int cx = (int) (x - child.getTranslationX());
+            int cy = (int) (y - child.getTranslationY());
             if (cx >= child.getLeft() && cy >= child.getTop() && cx <= child.getRight() && cy <= child.getBottom()) return true;
         }
         return false;
@@ -128,7 +135,7 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
                     scroller.startScroll(0, scroller.getCurrY(), 0, scroll, 0);
                 }
                 pos = curPos;
-                invalidate();
+                update();
                 return true;
             } else {
                 if (Math.abs(pos - curPos) > startScrollDistance) {
@@ -158,7 +165,7 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
     public void expand(boolean anim) {
         scroller.startScroll(scroller.getCurrX(), scroller.getCurrY(), -scroller.getCurrX(), -scroller.getCurrY(), anim ? 250 : 0);
         autoScroll = true;
-        runInvalidates();
+        update();
     }
 
     public void collapse() {
@@ -168,14 +175,27 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
     public void collapse(boolean anim) {
         scroller.startScroll(scroller.getCurrX(), scroller.getCurrY(), (isHorizontal() ? slideSize : 0) - scroller.getCurrX(), (isHorizontal() ? 0 : slideSize) - scroller.getCurrY(), anim ? 250 : 0);
         autoScroll = true;
-        runInvalidates();
+        update();
     }
 
-    private void runInvalidates() {
+    public void toggle() {
+        toggle(true);
+    }
+
+    public void toggle(boolean anim) {
+        if (isExpanded()) collapse(anim);
+        else expand(anim);
+    }
+
+    private void update() {
         new Runnable() {
             @Override
             public void run() {
-                invalidate();
+                int scroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
+                scroller.computeScrollOffset();
+                int updatedScroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
+                if (onSlideChangeListener != null && scroll != updatedScroll) onSlideChangeListener.onScrollSizeChangeListener(SlideMenuLayout.this, updatedScroll);
+                requestLayout();
                 if (!scroller.isFinished()) post(this);
                 else {
                     boolean isExpanded;
@@ -207,28 +227,6 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         if (val < min) return min;
         if (val > max) return max;
         return val;
-    }
-
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        onScreen = true;
-        int scroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
-        scroller.computeScrollOffset();
-        int updatedScroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
-        if (onSlideChangeListener != null && scroll != updatedScroll) onSlideChangeListener.onScrollSizeChangeListener(SlideMenuLayout.this, updatedScroll);
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.isMovable || lp.isMenu) {
-                float dx = scroller.getCurrX();
-                float dy = scroller.getCurrY();
-                if (isHorizontal()) dx = clamp(dx, 0, slideSize);
-                else dy = clamp(dy, 0, slideSize);
-                child.setTranslationX(dx);
-                child.setTranslationY(dy);
-            }
-        }
-        super.dispatchDraw(canvas);
     }
 
     public boolean isEnabled() {

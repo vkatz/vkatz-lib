@@ -3,7 +3,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
     <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="match_parent"
+                  android:layout_height="wrap_content"
                   android:orientation="vertical">
         <Button android:id="@+id/asset_font"
                 android:layout_width="fill_parent"
@@ -41,6 +41,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Slide menu example 4"/>
+        <Button android:id="@+id/slide_menu_5"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Slide menu example 5"/>
         <Button android:id="@+id/compound_drawables"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
