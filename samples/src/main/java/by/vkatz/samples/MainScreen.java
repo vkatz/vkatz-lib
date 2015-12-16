@@ -2,7 +2,6 @@ package by.vkatz.samples;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -21,6 +20,8 @@ public class MainScreen extends BaseScreen {
     @Override
     public void initView(View view) {
         super.initView(view);
+        if (isBackTransaction() && hasResult())  //back + data
+            Toast.makeText(getContext(), (String) getResult().getData("RESULT"), Toast.LENGTH_SHORT).show();
         if (initiated) return;
         else initiated = true;
         Settings settings = getParent().getData("settings", Settings.class);
@@ -155,18 +156,9 @@ public class MainScreen extends BaseScreen {
             @Override
             public void onClick(View view) {
                 setTargetFragment(MainScreen.this, 0);
-                getParent().go(CallBackScreen.newInstance("Click me", new Runnable() {
-                    @Override
-                    public void run() {
-                        callMethod();
-                    }
-                }));
+                getParent().go(CallBackScreen.newInstance("Click me"));
             }
         });
-    }
-
-    public void callMethod() {
-        ((TextView) view.findViewById(R.id.data_passing_between_screens)).setText("now it is another text here");
     }
 
     @Override

@@ -6,7 +6,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -20,6 +22,7 @@ public abstract class ScreensActivity extends Activity {
     private Handler handler;
     private HashMap<String, Object> data;
     private TransactionType transactionType;
+    private TransactionBundle transactionBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,7 @@ public abstract class ScreensActivity extends Activity {
      * @param act            allow to perform specific actions before commit transition
      */
     public void go(Screen screen, boolean storeInHistory, String name, boolean add, TransactionAction act) {
+        transactionBundle = null;
         transactionType = TransactionType.New;
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         if (add) fragmentTransaction.add(containerId, screen, name);
@@ -90,14 +94,16 @@ public abstract class ScreensActivity extends Activity {
         fragmentTransaction.commit();
     }
 
-    public void back() {
+    public TransactionBundle back() {
         transactionType = TransactionType.Old;
         getFragmentManager().popBackStack();
+        return (transactionBundle = new TransactionBundle());
     }
 
-    public void backTo(String name) {
+    public TransactionBundle backTo(String name) {
         transactionType = TransactionType.Old;
         getFragmentManager().popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        return (transactionBundle = new TransactionBundle());
     }
 
     /**
@@ -152,7 +158,44 @@ public abstract class ScreensActivity extends Activity {
         return transactionType;
     }
 
+    public TransactionBundle getTransactionBundle() {
+        if (transactionBundle == null) return null;
+        else if (transactionBundle.getBundle().size() == 0) return null;
+        else return transactionBundle;
+    }
+
     public interface TransactionAction {
         void act(Screen screen, FragmentTransaction transaction);
+    }
+
+    public static class TransactionBundle {
+        private Bundle bundle;
+
+        public TransactionBundle() {
+            bundle = new Bundle();
+        }
+
+        public final <Data extends Serializable> TransactionBundle withData(String key, Data data) {
+            bundle.putSerializable(key, data);
+            return this;
+        }
+
+        public final <Data extends Parcelable> TransactionBundle withData(String key, Data data) {
+            bundle.putParcelable(key, data);
+            return this;
+        }
+
+        public Bundle getBundle() {
+            return bundle;
+        }
+
+        public Object getRawData(String key) {
+            return bundle.get(key);
+        }
+
+        @SuppressWarnings("unchecked")
+        public final <T> T getData(String key) {
+            return (T) getRawData(key);
+        }
     }
 }

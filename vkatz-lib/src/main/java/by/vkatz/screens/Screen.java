@@ -60,6 +60,30 @@ public abstract class Screen extends Fragment {
         return (T) getRawData(key);
     }
 
+    public ScreensActivity.TransactionType getTransactionType() {
+        return getParent().getTransactionType();
+    }
+
+    public boolean isBackTransaction() {
+        return getTransactionType() == ScreensActivity.TransactionType.Old;
+    }
+
+    public boolean isForwardTransaction() {
+        return getTransactionType() == ScreensActivity.TransactionType.New;
+    }
+
+    public boolean isTransitTransaction() {
+        return getTransactionType() == ScreensActivity.TransactionType.Transit;
+    }
+
+    public ScreensActivity.TransactionBundle getResult() {
+        return getParent().getTransactionBundle();
+    }
+
+    public boolean hasResult() {
+        return getResult() != null;
+    }
+
     public boolean onBackPressed() {
         return false;
     }

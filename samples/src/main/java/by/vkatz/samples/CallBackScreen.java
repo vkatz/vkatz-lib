@@ -8,12 +8,8 @@ import android.widget.TextView;
  */
 public class CallBackScreen extends BaseScreen {
 
-    private Runnable runable;
-
-    public static CallBackScreen newInstance(String text, Runnable runable) {
-        CallBackScreen screen = new CallBackScreen();
-        screen.runable = runable;
-        return screen.withData("key", text);
+    public static CallBackScreen newInstance(String text) {
+        return new CallBackScreen().withData("key", text);
     }
 
     @Override
@@ -28,8 +24,7 @@ public class CallBackScreen extends BaseScreen {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                runable.run();
-                getParent().back();
+                getParent().back().withData("RESULT", "some text");
             }
         });
     }
