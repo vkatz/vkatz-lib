@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 
 repositories {
     jcenter()
@@ -10,7 +9,7 @@ def libVersionName = "3.3"
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -26,16 +25,5 @@ android {
     }
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        def deployPath = file('/maven/')
-        repository(url: "file://${deployPath.absolutePath}")
-        pom.project {
-            groupId 'by.vkatz'
-            artifactId 'vkatz-lib'
-            version libVersionName
-        }
-    }
-}
 dependencies {
 }
