@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:slideFrom="left"
-        app:expanded="false">
+        app:isExpanded="false">
     <TextView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               app:isMovable="false"

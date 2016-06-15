@@ -10,24 +10,17 @@ import java.util.HashMap;
  * Date: 06.02.14
  * Time: 19:52
  */
+@SuppressWarnings("WeakerAccess")
 public class FontsManager {
     private static FontsManager _this;
+    private HashMap<String, Typeface> fonts = new HashMap<>();
+
+    private FontsManager() {
+    }
 
     public static FontsManager instance() {
         if (_this == null) _this = new FontsManager();
         return _this;
-    }
-
-    @SuppressWarnings("unused")
-    public static void release() {
-        _this = null;
-        System.gc();
-    }
-
-    private HashMap<String, Typeface> fonts = new HashMap<>();
-
-    public FontsManager() {
-        fonts = new HashMap<>();
     }
 
     public Typeface getFont(Context context, String fontName) {

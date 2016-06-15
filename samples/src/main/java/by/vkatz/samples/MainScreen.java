@@ -47,32 +47,10 @@ public class MainScreen extends BaseScreen {
                 getParent().go(new LazyImageScreen());
             }
         });
-        view.findViewById(R.id.color_filter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParent().go(new BaseScreen() {
-                    @Override
-                    public View createView() {
-                        return View.inflate(getContext(), R.layout.color_filter_screen, null);
-                    }
-                });
-            }
-        });
         view.findViewById(R.id.loading).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getParent().go(new LoadingScreen());
-            }
-        });
-        view.findViewById(R.id.round_rect).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParent().go(new BaseScreen() {
-                    @Override
-                    public View createView() {
-                        return View.inflate(getContext(), R.layout.round_rect_screen, null);
-                    }
-                });
             }
         });
         view.findViewById(R.id.slide_menu_1).setOnClickListener(new View.OnClickListener() {
@@ -115,17 +93,6 @@ public class MainScreen extends BaseScreen {
                     @Override
                     public View createView() {
                         return View.inflate(getContext(), R.layout.slide_menu_4, null);
-                    }
-                });
-            }
-        });
-        view.findViewById(R.id.slide_menu_5).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParent().go(new BaseScreen() {
-                    @Override
-                    public View createView() {
-                        return View.inflate(getContext(), R.layout.slide_menu_5, null);
                     }
                 });
             }

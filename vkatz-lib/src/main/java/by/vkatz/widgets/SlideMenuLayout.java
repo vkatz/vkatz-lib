@@ -14,20 +14,24 @@ import by.vkatz.R;
 /**
  * Created by vKatz on 18.02.2015.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class SlideMenuLayout extends ExtendRelativeLayout {
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
     public static final int TOP = 3;
     public static final int BOTTOM = 4;
 
+    public static final int FLAG_NEVER_FINISH = 0;
+    public static final int FLAG_ALWAYS_FINISH = 1;
+
     private int slideFrom;
-    private boolean expanded;
-    private boolean enabled;
+    private boolean isExpanded;
+    private boolean isMenuEnabled;
     private boolean scroll;
     private boolean autoScroll;
     private float pos;
     private int dPos;
+    private int flags;
     private int slideSize;
     private float startScrollDistance;
     private Scroller scroller;
@@ -46,9 +50,10 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlideMenuLayout, 0, 0);
         slideFrom = a.getInt(R.styleable.SlideMenuLayout_slideFrom, 2);
-        expanded = a.getBoolean(R.styleable.SlideMenuLayout_expanded, false);
-        enabled = a.getBoolean(R.styleable.SlideMenuLayout_enabled, true);
+        isExpanded = a.getBoolean(R.styleable.SlideMenuLayout_isExpanded, false);
+        isMenuEnabled = a.getBoolean(R.styleable.SlideMenuLayout_isMenuEnabled, true);
         startScrollDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_startScrollDistance, 25);
+        flags = a.getInt(R.styleable.SlideMenuLayout_scrollBehavior, FLAG_ALWAYS_FINISH);
         a.recycle();
         scroller = new Scroller(context);
         scroll = false;
@@ -57,8 +62,7 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
     }
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         View menu = null;
         boolean hasMenu = false;
         for (int i = 0; i < getChildCount(); i++) {
@@ -73,13 +77,14 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         int oldSlideSize = slideSize;
         if (menu == null) slideSize = 0;
         else {
-            if (slideFrom == BOTTOM) slideSize = getMeasuredHeight() - menu.getTop();
-            else if (slideFrom == TOP) slideSize = -menu.getBottom();
-            else if (slideFrom == RIGHT) slideSize = getMeasuredWidth() - menu.getLeft();
-            else if (slideFrom == LEFT) slideSize = -menu.getRight();
+            ExtendRelativeLayout.LayoutParams lp = (ExtendRelativeLayout.LayoutParams) menu.getLayoutParams();
+            if (slideFrom == BOTTOM) slideSize = getMeasuredHeight() - lp.mTop;
+            else if (slideFrom == TOP) slideSize = -lp.mBottom;
+            else if (slideFrom == RIGHT) slideSize = getMeasuredWidth() - lp.mLeft;
+            else if (slideFrom == LEFT) slideSize = -lp.mRight;
             else slideSize = 0;
             if (oldSlideSize != slideSize) {
-                if (expanded) expand(false);
+                if (isExpanded) expand(false);
                 else collapse(false);
             }
         }
@@ -89,13 +94,17 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         else dy = (int) clamp(scroller.getCurrY(), 0, slideSize);
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
+            if (child.getVisibility() == GONE) continue;
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.isMovable || lp.isMenu)
-                child.layout(child.getLeft() + dx, child.getTop() + dy, child.getRight() + dx, child.getBottom() + dy);
+            if (lp.isMovable || lp.isMenu) {
+                lp.dx = dx;
+                lp.dy = dy;
+            }
         }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    private boolean isHorizontal() {
+    public boolean isHorizontal() {
         return slideFrom == RIGHT || slideFrom == LEFT;
     }
 
@@ -122,18 +131,7 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
         } else if (ev.getAction() == MotionEvent.ACTION_MOVE) {
             if (scroll) {
                 dPos = (int) (curPos - pos);
-                int scroll = dPos;
-                if (isHorizontal()) {
-                    float fPos = scroller.getCurrX() + dPos;
-                    if (Math.abs(fPos) > Math.abs(slideSize)) scroll = slideSize - scroller.getCurrX();
-                    if (fPos * (slideFrom == LEFT ? -1 : 1) < 0) scroll = -scroller.getCurrX();
-                    scroller.startScroll(scroller.getCurrX(), 0, scroll, 0, 0);
-                } else {
-                    float fPos = scroller.getCurrY() + dPos;
-                    if (Math.abs(fPos) > Math.abs(slideSize)) scroll = slideSize - scroller.getCurrY();
-                    if (fPos * (slideFrom == TOP ? -1 : 1) < 0) scroll = -scroller.getCurrY();
-                    scroller.startScroll(0, scroller.getCurrY(), 0, scroll, 0);
-                }
+                scrollMenuBy(dPos);
                 pos = curPos;
                 update();
                 return true;
@@ -144,18 +142,54 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
                     return true;
                 } else return false;
             }
-        } else if (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP) {
-            if (scroll) {
-                if (isHorizontal()) {
-                    if ((dPos > 0 && slideFrom == LEFT) || (dPos < 0 && slideFrom == RIGHT)) expand();
-                    else collapse();
-                } else {
-                    if ((dPos > 0 && slideFrom == TOP) || (dPos < 0 && slideFrom == BOTTOM)) expand();
-                    else collapse();
-                }
-            }
-        }
+        } else if (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP)
+            if (scroll) finisMenuScroll();
         return false;
+    }
+
+    public int scrollMenuBy(int amount) {
+        if (amount == 0) return 0;
+        int scroll = amount;
+        if (isHorizontal()) {
+            float fPos = scroller.getCurrX() + amount;
+            if (Math.abs(fPos) > Math.abs(slideSize)) scroll = slideSize - scroller.getCurrX();
+            if (fPos * (slideFrom == LEFT ? -1 : 1) < 0) scroll = -scroller.getCurrX();
+            scroller.startScroll(scroller.getCurrX(), 0, scroll, 0, 0);
+        } else {
+            float fPos = scroller.getCurrY() + amount;
+            if (Math.abs(fPos) > Math.abs(slideSize)) scroll = slideSize - scroller.getCurrY();
+            if (fPos * (slideFrom == TOP ? -1 : 1) < 0) scroll = -scroller.getCurrY();
+            scroller.startScroll(0, scroller.getCurrY(), 0, scroll, 0);
+        }
+        dPos = amount;
+        update();
+        return scroll;
+    }
+
+    public void flingMenuBy(int velocity) {
+        if (isHorizontal()) scroller.fling(scroller.getCurrX(), scroller.getCurrY(), velocity, 0, Math.min(0, slideSize), Math.max(0, slideSize), 0, 0);
+        else scroller.fling(scroller.getCurrX(), scroller.getCurrY(), 0, velocity, 0, 0, Math.min(0, slideSize), Math.max(0, slideSize));
+        update();
+    }
+
+    public void finisMenuScroll() {
+        if (hasFlag(flags, FLAG_ALWAYS_FINISH)) { //finish scroll
+            if (getCurrentSlide() == getMinSlide() || getCurrentSlide() == getMaxSlide()) return;
+            if (isHorizontal()) {
+                if ((dPos > 0 && slideFrom == LEFT) || (dPos < 0 && slideFrom == RIGHT)) expand();
+                else collapse();
+            } else {
+                if ((dPos > 0 && slideFrom == TOP) || (dPos < 0 && slideFrom == BOTTOM)) expand();
+                else collapse();
+            }
+        } else { //do velocity scroll
+            int velocity = dPos * 50;
+            flingMenuBy(dPos * 50);
+        }
+    }
+
+    public boolean hasFlag(int what, int flag) {
+        return (what & flag) == flag;
     }
 
     public void expand() {
@@ -194,15 +228,18 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
                 int scroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
                 scroller.computeScrollOffset();
                 int updatedScroll = isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
-                if (onSlideChangeListener != null && scroll != updatedScroll) onSlideChangeListener.onScrollSizeChangeListener(SlideMenuLayout.this, updatedScroll);
+                if (onSlideChangeListener != null && scroll != updatedScroll) {
+                    float value = 1 - Math.abs(1f * updatedScroll / (getMaxSlide() - getMinSlide()));
+                    onSlideChangeListener.onScrollSizeChangeListener(SlideMenuLayout.this, value);
+                }
                 requestLayout();
                 if (!scroller.isFinished()) post(this);
                 else {
                     boolean isExpanded;
                     if (isHorizontal()) isExpanded = scroller.getCurrX() == 0;
                     else isExpanded = scroller.getCurrY() == 0;
-                    if (isExpanded != expanded && onExpandStateChangeListener != null) onExpandStateChangeListener.onExpandStateChanged(SlideMenuLayout.this, isExpanded);
-                    expanded = isExpanded;
+                    if (isExpanded != SlideMenuLayout.this.isExpanded && onExpandStateChangeListener != null) onExpandStateChangeListener.onExpandStateChanged(SlideMenuLayout.this, isExpanded);
+                    SlideMenuLayout.this.isExpanded = isExpanded;
                     autoScroll = false;
                 }
             }
@@ -211,30 +248,21 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return isEnabled() && dispatchTouch(ev, true);
+        return isMenuEnabled() && dispatchTouch(ev, true);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (!scroll && !isEventInsideChild(ev.getX(), ev.getY())) return false;
-        if (isEnabled()) dispatchTouch(ev, false);
+        if (isMenuEnabled()) dispatchTouch(ev, false);
         return true;
     }
 
-    private float clamp(float val, float a, float b) {
-        float max = Math.max(a, b);
-        float min = Math.min(a, b);
-        if (val < min) return min;
-        if (val > max) return max;
-        return val;
+    public boolean isMenuEnabled() {
+        return isMenuEnabled;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setMenuEnabled(boolean enabled) {
+        this.isMenuEnabled = enabled;
     }
 
     public int getSlideFrom() {
@@ -242,7 +270,7 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
     }
 
     public boolean isExpanded() {
-        return expanded;
+        return isExpanded;
     }
 
     public int getMinSlide() {
@@ -251,6 +279,18 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
 
     public int getMaxSlide() {
         return Math.max(0, slideSize);
+    }
+
+    public int getCurrentSlide() {
+        return isHorizontal() ? scroller.getCurrX() : scroller.getCurrY();
+    }
+
+    private float clamp(float val, float a, float b) {
+        float max = Math.max(a, b);
+        float min = Math.min(a, b);
+        if (val < min) return min;
+        if (val > max) return max;
+        return val;
     }
 
     @Override
@@ -281,7 +321,7 @@ public class SlideMenuLayout extends ExtendRelativeLayout {
     }
 
     public interface OnSlideChangeListener {
-        void onScrollSizeChangeListener(SlideMenuLayout view, int slide);
+        void onScrollSizeChangeListener(SlideMenuLayout view, float value);
     }
 
     public static class LayoutParams extends ExtendRelativeLayout.LayoutParams {

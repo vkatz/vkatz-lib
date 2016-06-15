@@ -1,10 +1,12 @@
 package by.vkatz.samples;
 
 import android.content.Context;
-import by.vkatz.utils.SerializableUtils;
 
 import java.io.File;
 import java.io.Serializable;
+
+import by.vkatz.utils.Functions;
+import by.vkatz.utils.SerializableUtils;
 
 /**
  * Created by vKatz on 08.03.2015.
@@ -18,6 +20,15 @@ public class Settings implements Serializable {
         firstLaunch = true;
     }
 
+    public static Settings load(Context context) {
+        return SerializableUtils.restore(new File(context.getExternalFilesDir(""), "data.sr"), new Functions.Func0<Settings>() {
+            @Override
+            public Settings execute() {
+                return new Settings();
+            }
+        });
+    }
+
     public boolean isFirstLaunch() {
         return firstLaunch;
     }
@@ -28,9 +39,5 @@ public class Settings implements Serializable {
 
     public void commit(Context context) {
         SerializableUtils.commit(new File(context.getExternalFilesDir(""), "data.sr"), this);
-    }
-
-    public static Settings load(Context context) {
-        return SerializableUtils.restore(new File(context.getExternalFilesDir(""), "data.sr"), Settings.class);
     }
 }

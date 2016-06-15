@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:slideFrom="right"
-        app:expanded="true">
+        app:isExpanded="true">
     <View android:layout_width="200dp"
           android:layout_height="fill_parent"
           android:layout_alignParentRight="true"

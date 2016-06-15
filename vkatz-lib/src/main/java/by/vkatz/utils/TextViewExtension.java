@@ -33,18 +33,18 @@ public class TextViewExtension {
         void setCompoundDrawableSize(int width, int height);
     }
 
-    public static class FixedSizeDrawable extends LayerDrawable {
+    private static class FixedSizeDrawable extends LayerDrawable {
         private int intrinsicWidth;
         private int intrinsicHeight;
         private Drawable child;
 
-        public FixedSizeDrawable(Drawable drawable, int width, int height) {
+        private FixedSizeDrawable(Drawable drawable, int width, int height) {
             super(new Drawable[]{drawable});
             child = drawable;
             setSize(width, height);
         }
 
-        public void setSize(int width, int height) {
+        private void setSize(int width, int height) {
             if (width > 0 && height > 0) {
                 intrinsicWidth = width;
                 intrinsicHeight = height;

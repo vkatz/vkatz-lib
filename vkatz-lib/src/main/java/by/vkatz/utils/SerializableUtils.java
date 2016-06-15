@@ -1,6 +1,10 @@
 package by.vkatz.utils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Created by vKatz
@@ -20,13 +24,13 @@ public class SerializableUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T restore(File file, Class<T> T) {
+    public static <T> T restore(File file, Functions.Func0<T> creator) {
         try {
             return (T) new ObjectInputStream(new FileInputStream(file)).readObject();
         } catch (Exception e) {
             e.printStackTrace();
             try {
-                return T.newInstance();
+                return creator.execute();
             } catch (Exception e1) {
                 e1.printStackTrace();
                 return null;
@@ -35,7 +39,7 @@ public class SerializableUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T restoreOrThrow(File file, Class<T> T) throws Exception {
+    public static <T> T restoreOrThrow(File file) throws Exception {
         return (T) new ObjectInputStream(new FileInputStream(file)).readObject();
     }
 

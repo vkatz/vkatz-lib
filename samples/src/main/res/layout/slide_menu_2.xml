@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:slideFrom="top"
-            app:expanded="true">
+            app:isExpanded="true">
         <TextView android:layout_width="fill_parent"
                   android:layout_height="100dp"
                   app:isMenu="true"
@@ -28,6 +28,7 @@
                   android:layout_below="@id/menu"
                   android:textColor="#000"
                   android:background="#0f0"
+                  app:isMovable="false"
                   android:textSize="20dp"
                   android:gravity="center"
                   android:text="i am movable slide zone"/>

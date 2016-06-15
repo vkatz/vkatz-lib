@@ -4,45 +4,25 @@
     <attr name="compoundDrawableWidth" format="dimension|reference"/>
     <attr name="compoundDrawableHeight" format="dimension|reference"/>
 
-    <declare-styleable name="ExtendTextView">
-        <attr name="font"/>
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendEditText">
-        <attr name="font"/>
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendRadioButton">
-        <attr name="font"/>
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-    </declare-styleable>
-
     <declare-styleable name="ExtendCheckBox">
         <attr name="font"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
     </declare-styleable>
-
-    <declare-styleable name="ColorFilteredImageView">
-        <attr name="colorFilter" format="color|reference"/>
-        <attr name="backgroundColorFilter" format="color|reference"/>
+    <declare-styleable name="ExtendEditText">
+        <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
     </declare-styleable>
-
-    <declare-styleable name="LoadingView">
-        <attr name="spinner_color" format="color|reference"/>
-        <attr name="spinner_thickness" format="dimension|reference"/>
-        <attr name="progress" format="integer"/>
-        <attr name="flip" format="boolean|reference"/>
-        <attr name="rotate" format="integer|reference"/>
+    <declare-styleable name="ExtendRadioButton">
+        <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
     </declare-styleable>
-
-    <declare-styleable name="RoundRectLazyImage">
-        <attr name="roundSize" format="dimension|reference"/>
+    <declare-styleable name="ExtendTextView">
+        <attr name="font"/>
+        <attr name="compoundDrawableWidth"/>
+        <attr name="compoundDrawableHeight"/>
     </declare-styleable>
 
     <declare-styleable name="FlowLayout">
@@ -56,16 +36,23 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ExtendRelativeLayout">
-        <attr name="allowChildIds" format="boolean"/>
+    <declare-styleable name="LoadingView">
+        <attr name="spinner_color" format="color|reference"/>
+        <attr name="spinner_thickness" format="dimension|reference"/>
+        <attr name="progress" format="integer"/>
+        <attr name="flip" format="boolean|reference"/>
+        <attr name="rotate" format="integer|reference"/>
     </declare-styleable>
+
     <declare-styleable name="ExtendRelativeLayout_Layout">
-        <attr name="extend_width" format="string|reference"/>
-        <attr name="extend_height" format="string|reference"/>
-        <attr name="extend_left" format="string|reference"/>
-        <attr name="extend_right" format="string|reference"/>
-        <attr name="extend_top" format="string|reference"/>
-        <attr name="extend_bottom" format="string|reference"/>
+        <attr name="extendWidth" format="string|reference"/>
+        <attr name="extendHeight" format="string|reference"/>
+        <attr name="extendLeft" format="string|reference"/>
+        <attr name="extendRight" format="string|reference"/>
+        <attr name="extendTop" format="string|reference"/>
+        <attr name="extendBottom" format="string|reference"/>
+        <attr name="extendDx" format="dimension|reference"/>
+        <attr name="extendDy" format="dimension|reference"/>
     </declare-styleable>
 
     <declare-styleable name="SlideMenuLayout">
@@ -75,8 +62,12 @@
             <enum name="top" value="3"/>
             <enum name="bottom" value="4"/>
         </attr>
-        <attr name="expanded" format="boolean|reference"/>
-        <attr name="enabled" format="boolean|reference"/>
+        <attr name="scrollBehavior">
+            <flag name="neverFinish" value="0"/>
+            <flag name="alwaysFinish" value="1"/>
+        </attr>
+        <attr name="isExpanded" format="boolean|reference"/>
+        <attr name="isMenuEnabled" format="boolean|reference"/>
         <attr name="startScrollDistance" format="dimension|reference"/>
     </declare-styleable>
     <declare-styleable name="SlideMenuLayout_Layout">
@@ -84,5 +75,4 @@
         <attr name="isMovable" format="boolean|reference"/>
         <attr name="isTouchable" format="boolean|reference"/>
     </declare-styleable>
-
 </resources>

@@ -14,31 +14,221 @@ import by.vkatz.R;
  * Created by vKatz on 02.12.2015.
  */
 public class ExtendRelativeLayout extends RelativeLayout {
-    private static final int ATTRIBUTE_LEFT = 0;
-    private static final int ATTRIBUTE_RIGHT = 1;
-    private static final int ATTRIBUTE_TOP = 2;
-    private static final int ATTRIBUTE_BOTTOM = 3;
-
-    private boolean allowChildIds;
-
     public ExtendRelativeLayout(Context context) {
         super(context);
     }
 
     public ExtendRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0);
     }
 
     public ExtendRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ExtendRelativeLayout);
-        allowChildIds = a.getBoolean(R.styleable.ExtendRelativeLayout_allowChildIds, false);
-        a.recycle();
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int myWidth = -1;
+        int myHeight = -1;
+        int width = 0;
+        int height = 0;
+        if (widthMode != MeasureSpec.UNSPECIFIED) myWidth = widthSize;
+        if (heightMode != MeasureSpec.UNSPECIFIED) myHeight = heightSize;
+        if (widthMode == MeasureSpec.EXACTLY) width = myWidth;
+        if (heightMode == MeasureSpec.EXACTLY) height = myHeight;
+        //start measure
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            //apply extends
+            lp.width = resolveExtendSize(lp.width, lp.extendWidth, width, height);
+            lp.height = resolveExtendSize(lp.height, lp.extendHeight, width, height);
+            lp.leftMargin = resolveExtendSize(lp.leftMargin, lp.extendLeft, width, height);
+            lp.rightMargin = resolveExtendSize(lp.rightMargin, lp.extendRight, width, height);
+            lp.topMargin = resolveExtendSize(lp.topMargin, lp.extendTop, width, myHeight);
+            lp.bottomMargin = resolveExtendSize(lp.bottomMargin, lp.extendBottom, width, height);
+            //measure child and fill lp measured params
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+            int mWidthSpec = measureHorizontal(child, width);
+            int mHeightSpec = measureVertical(child, height);
+            child.measure(mWidthSpec, mHeightSpec);
+        }
+        if (widthMode != MeasureSpec.EXACTLY) {
+            int measured = 0;
+            for (int i = 0; i < childCount; i++)
+                measured = Math.max(measured, ((LayoutParams) getChildAt(i).getLayoutParams()).mRight);
+            width = measured + getPaddingRight();
+        }
+        if (heightMode != MeasureSpec.EXACTLY) {
+            int measured = 0;
+            for (int i = 0; i < childCount; i++)
+                measured = Math.max(measured, ((LayoutParams) getChildAt(i).getLayoutParams()).mBottom);
+            height = measured + getPaddingBottom();
+        }
+        setMeasuredDimension(width, height);
+    }
+
+    private int measureHorizontal(View child, int parentWidth) {
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        int width = lp.width;
+        int[] rules = lp.getRules();
+        int measuredWidth = child.getMeasuredWidth();
+        int left = getPaddingLeft();
+        int right = parentWidth - getPaddingRight();
+        boolean directionFromLeft = true;
+        //no anchor rules
+        if (rules[ALIGN_PARENT_LEFT] == TRUE) directionFromLeft = true;
+        if (rules[ALIGN_PARENT_RIGHT] == TRUE) directionFromLeft = false;
+        if (rules[CENTER_IN_PARENT] == TRUE) {
+            directionFromLeft = true;
+            left = parentWidth / 2 - measuredWidth / 2;
+        }
+        //anchor rules
+        View anchorRightOf = getChildById(rules[RIGHT_OF]);
+        View anchorLeftOf = getChildById(rules[LEFT_OF]);
+        View anchorAlignRight = getChildById(rules[ALIGN_RIGHT]);
+        View anchorAlignLeft = getChildById(rules[ALIGN_LEFT]);
+        if (anchorAlignLeft != null) {
+            directionFromLeft = true;
+            LayoutParams clp = (LayoutParams) anchorAlignLeft.getLayoutParams();
+            left = clp.mLeft + clp.dx;
+        }
+        if (anchorRightOf != null) {
+            directionFromLeft = true;
+            LayoutParams clp = (LayoutParams) anchorRightOf.getLayoutParams();
+            left = clp.mRight + clp.dx;
+        }
+        if (anchorAlignRight != null) {
+            directionFromLeft = false;
+            LayoutParams clp = (LayoutParams) anchorAlignRight.getLayoutParams();
+            right = clp.mRight + clp.dx;
+        }
+        if (anchorLeftOf != null) {
+            directionFromLeft = false;
+            LayoutParams clp = (LayoutParams) anchorLeftOf.getLayoutParams();
+            right = clp.mLeft + clp.dx;
+        }
+        left += lp.leftMargin;
+        right -= lp.rightMargin;
+        int mLeft, mRight;
+        if (width > 0) { //ignore any clipping, view will be exact this size;
+            if (directionFromLeft) {
+                mLeft = left;
+                mRight = left + width;
+            } else {
+                mRight = right;
+                mLeft = right - width;
+            }
+        } else if (width == ViewGroup.LayoutParams.MATCH_PARENT) { //fill between left and right
+            mLeft = left;
+            mRight = right;
+        } else { //fill between left and right and not bigger than measured size
+            if (directionFromLeft) {
+                mLeft = left;
+                mRight = left + Math.min(right - left, measuredWidth);
+            } else {
+                mRight = right;
+                mLeft = right - Math.min(right - left, measuredWidth);
+            }
+        }
+        lp.mLeft = mLeft;
+        lp.mRight = mRight;
+        return MeasureSpec.makeMeasureSpec(mRight - mLeft, MeasureSpec.EXACTLY);
+    }
+
+    private int measureVertical(View child, int parentHeight) {
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        int height = lp.height;
+        int[] rules = lp.getRules();
+        int measuredHeight = child.getMeasuredHeight();
+        int top = getPaddingTop();
+        int bottom = parentHeight - getPaddingBottom();
+        boolean directionFromTop = true;
+        //no anchor rules
+        if (rules[ALIGN_PARENT_TOP] == TRUE) directionFromTop = true;
+        if (rules[ALIGN_PARENT_BOTTOM] == TRUE) directionFromTop = false;
+        if (rules[CENTER_IN_PARENT] == TRUE) {
+            directionFromTop = true;
+            top = parentHeight / 2 - measuredHeight / 2;
+        }
+        //anchor rules
+        View anchorBelow = getChildById(rules[BELOW]);
+        View anchorAbove = getChildById(rules[ABOVE]);
+        View anchorAlignTop = getChildById(rules[ALIGN_TOP]);
+        View anchorAlignBottom = getChildById(rules[ALIGN_BOTTOM]);
+        if (anchorAlignTop != null) {
+            directionFromTop = true;
+            LayoutParams clp = (LayoutParams) anchorAlignTop.getLayoutParams();
+            top = clp.mTop + clp.dy;
+        }
+        if (anchorBelow != null) {
+            directionFromTop = true;
+            LayoutParams clp = (LayoutParams) anchorBelow.getLayoutParams();
+            top = clp.mBottom + clp.dy;
+        }
+        if (anchorAlignBottom != null) {
+            directionFromTop = false;
+            LayoutParams clp = (LayoutParams) anchorAlignBottom.getLayoutParams();
+            bottom = clp.mBottom + clp.dy;
+        }
+        if (anchorAbove != null) {
+            directionFromTop = false;
+            LayoutParams clp = (LayoutParams) anchorAbove.getLayoutParams();
+            bottom = clp.mTop + clp.dy;
+        }
+
+        top += lp.topMargin;
+        bottom -= lp.bottomMargin;
+        int mTop, mBottom;
+        if (height > 0) { //ignore any clipping, view will be exact this size;
+            if (directionFromTop) {
+                mTop = top;
+                mBottom = top + height;
+            } else {
+                mBottom = bottom;
+                mTop = bottom - height;
+            }
+        } else if (height == ViewGroup.LayoutParams.MATCH_PARENT) { //fill between top and bot
+            mTop = top;
+            mBottom = bottom;
+        } else { //fill between top and bot and not bigger than measured size
+            if (directionFromTop) {
+                mTop = top;
+                mBottom = top + Math.min(bottom - top, measuredHeight);
+            } else {
+                mBottom = bottom;
+                mTop = bottom - Math.min(bottom - top, measuredHeight);
+            }
+        }
+        lp.mTop = mTop;
+        lp.mBottom = mBottom;
+        return MeasureSpec.makeMeasureSpec(mBottom - mTop, MeasureSpec.EXACTLY);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                child.layout(lp.mLeft + lp.dx, lp.mTop + lp.dy, lp.mRight + lp.dx, lp.mBottom + lp.dy);
+            }
+        }
+    }
+
+    private int resolveExtendSize(int original, LayoutParams.Data size, int w, int h) {
+        if (size != null) {
+            if (size.ofWidth && w >= 0) return (int) (w * size.value / 100);
+            if (!size.ofWidth && h >= 0) return (int) (h * size.value / 100);
+        }
+        return original;
     }
 
     @Override
@@ -56,192 +246,33 @@ public class ExtendRelativeLayout extends RelativeLayout {
         return p instanceof LayoutParams;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int w = resolveSize(0, widthMeasureSpec);
-        int h = resolveSize(0, heightMeasureSpec);
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.w != null) lp.width = (int) ((lp.w.ofWidth ? w : h) * lp.w.value / 100);
-            if (lp.h != null) lp.height = (int) ((lp.h.ofWidth ? w : h) * lp.h.value / 100);
-            if (lp.l != null) lp.leftMargin = (int) ((lp.l.ofWidth ? w : h) * lp.l.value / 100);
-            if (lp.r != null) lp.rightMargin = (int) ((lp.r.ofWidth ? w : h) * lp.r.value / 100);
-            if (lp.t != null) lp.topMargin = (int) ((lp.t.ofWidth ? w : h) * lp.t.value / 100);
-            if (lp.b != null) lp.bottomMargin = (int) ((lp.b.ofWidth ? w : h) * lp.b.value / 100);
-            int wSpec = getChildMeasureSpec(widthMeasureSpec, getPaddingLeft() + getPaddingRight(), child.getLayoutParams().width);
-            int hSpec = getChildMeasureSpec(heightMeasureSpec, getPaddingTop() + getPaddingBottom(), child.getLayoutParams().height);
-            if (lp.width >= 0) wSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
-            if (lp.height >= 0) hSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
-            child.measure(wSpec, hSpec);
-        }
-        //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            int[] rules = lp.getRules();
-            int w = child.getMeasuredWidth();
-            int h = child.getMeasuredHeight();
-            int ml = lp.leftMargin;
-            int mr = lp.rightMargin;
-            int mt = lp.topMargin;
-            int mb = lp.bottomMargin;
-            int cl = getPaddingLeft();
-            int ct = getPaddingTop();
-            int cr = getMeasuredWidth() - getPaddingRight();
-            int cb = getMeasuredHeight() - getPaddingBottom();
-            boolean directionFromLeft = true;
-            boolean directionFromTop = true;
-            if (rules[RelativeLayout.ALIGN_PARENT_LEFT] == TRUE) directionFromLeft = true;
-            if (rules[RelativeLayout.ALIGN_PARENT_RIGHT] == TRUE) directionFromLeft = false;
-            if (rules[RelativeLayout.ALIGN_PARENT_TOP] == TRUE) directionFromTop = true;
-            if (rules[RelativeLayout.ALIGN_PARENT_BOTTOM] == TRUE) directionFromTop = false;
-            if (rules[RelativeLayout.CENTER_HORIZONTAL] == TRUE) {
-                directionFromLeft = true;
-                cl = getMeasuredWidth() / 2 - w / 2;
-            }
-            if (rules[RelativeLayout.CENTER_VERTICAL] == TRUE) {
-                directionFromTop = true;
-                ct = getMeasuredHeight() / 2 - h / 2;
-            }
-            if (rules[RelativeLayout.CENTER_IN_PARENT] == TRUE) {
-                directionFromLeft = true;
-                cl = getMeasuredWidth() / 2 - w / 2;
-                directionFromTop = true;
-                ct = getMeasuredHeight() / 2 - h / 2;
-            }
-            View anchor1, anchor2;
-            //anchor1 dependencies
-            anchor1 = getChildById(rules[RelativeLayout.LEFT_OF]);
-            if (anchor1 != null) {
-                directionFromLeft = false;
-                cr = getChildAttribute(anchor1, ATTRIBUTE_LEFT);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.RIGHT_OF]);
-            if (anchor1 != null) {
-                directionFromLeft = true;
-                cl = getChildAttribute(anchor1, ATTRIBUTE_RIGHT);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.BELOW]);
-            if (anchor1 != null) {
-                directionFromTop = true;
-                ct = getChildAttribute(anchor1, ATTRIBUTE_BOTTOM);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ABOVE]);
-            if (anchor1 != null) {
-                directionFromTop = false;
-                cb = getChildAttribute(anchor1, ATTRIBUTE_TOP);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ALIGN_LEFT]);
-            if (anchor1 != null) {
-                directionFromLeft = true;
-                cl = getChildAttribute(anchor1, ATTRIBUTE_LEFT);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ALIGN_RIGHT]);
-            if (anchor1 != null) {
-                directionFromLeft = false;
-                cr = getChildAttribute(anchor1, ATTRIBUTE_RIGHT);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ALIGN_TOP]);
-            if (anchor1 != null) {
-                directionFromTop = true;
-                ct = getChildAttribute(anchor1, ATTRIBUTE_TOP);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ALIGN_BOTTOM]);
-            if (anchor1 != null) {
-                directionFromTop = false;
-                cb = getChildAttribute(anchor1, ATTRIBUTE_BOTTOM);
-            }
-            anchor1 = getChildById(rules[RelativeLayout.LEFT_OF]);
-            anchor2 = getChildById(rules[RelativeLayout.RIGHT_OF]);
-            if (anchor1 != null && anchor2 != null) {
-                directionFromLeft = true;
-                cl = (getChildAttribute(anchor1, ATTRIBUTE_LEFT) + getChildAttribute(anchor2, ATTRIBUTE_RIGHT) - w) / 2;
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ALIGN_LEFT]);
-            anchor2 = getChildById(rules[RelativeLayout.ALIGN_RIGHT]);
-            if (anchor1 != null && anchor2 != null) {
-                directionFromLeft = true;
-                cl = (getChildAttribute(anchor1, ATTRIBUTE_LEFT) + getChildAttribute(anchor2, ATTRIBUTE_RIGHT) - w) / 2;
-            }
-            anchor1 = getChildById(rules[RelativeLayout.BELOW]);
-            anchor2 = getChildById(rules[RelativeLayout.ABOVE]);
-            if (anchor1 != null && anchor2 != null) {
-                directionFromTop = true;
-                ct = (getChildAttribute(anchor1, ATTRIBUTE_BOTTOM) + getChildAttribute(anchor2, ATTRIBUTE_TOP) - h) / 2;
-            }
-            anchor1 = getChildById(rules[RelativeLayout.ALIGN_BOTTOM]);
-            anchor2 = getChildById(rules[RelativeLayout.ALIGN_TOP]);
-            if (anchor1 != null && anchor2 != null) {
-                directionFromTop = true;
-                ct = (getChildAttribute(anchor1, ATTRIBUTE_BOTTOM) + getChildAttribute(anchor2, ATTRIBUTE_TOP) - h) / 2;
-            }
-            int ll = directionFromLeft ? (cl + ml) : (cr - w - mr);
-            int lt = directionFromTop ? (ct + mt) : (cb - h - mb);
-            child.layout(ll, lt, ll + w, lt + h);
-        }
-    }
-
     private View getChildById(int id) {
         if (id == 0) return null;
-        for (int i = 0; i < getChildCount(); i++) {
+        int count = getChildCount();
+        for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
             if (child.getId() == id) return child;
         }
-        return allowChildIds ? findViewById(id) : null;
+        return null;
     }
 
-    private int getChildAttribute(View child, int attribute) {
-        int value = 0;
-        switch (attribute) {
-            case ATTRIBUTE_LEFT:
-                value += child.getLeft() + child.getTranslationX();
-                break;
-            case ATTRIBUTE_RIGHT:
-                value += child.getRight() + child.getTranslationX();
-                break;
-            case ATTRIBUTE_TOP:
-                value += child.getTop() + child.getTranslationY();
-                break;
-            case ATTRIBUTE_BOTTOM:
-                value += child.getBottom() + child.getTranslationY();
-                break;
-        }
-        View view = (View) child.getParent();
-        while (view != this) {
-            switch (attribute) {
-                case ATTRIBUTE_LEFT:
-                case ATTRIBUTE_RIGHT:
-                    value += view.getLeft() + view.getTranslationX();
-                    break;
-                case ATTRIBUTE_TOP:
-                case ATTRIBUTE_BOTTOM:
-                    value += view.getTop() + view.getTranslationY();
-                    break;
-            }
-            view = (View) view.getParent();
-        }
-        return value;
-    }
-
+    @SuppressWarnings("WeakerAccess")
     public static class LayoutParams extends RelativeLayout.LayoutParams {
-        private Data w, h, l, t, r, b;
+        protected int dx = 0, dy = 0;
+        protected int mLeft = 0, mTop = 0, mRight = 0, mBottom = 0;
+        private Data extendWidth, extendHeight, extendLeft, extendTop, extendRight, extendBottom;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.ExtendRelativeLayout_Layout, 0, 0);
-            w = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extend_width), true);
-            h = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extend_height), false);
-            l = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extend_left), true);
-            r = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extend_right), true);
-            t = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extend_top), false);
-            b = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extend_bottom), false);
+            extendWidth = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendWidth), true);
+            extendHeight = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendHeight), false);
+            extendLeft = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendLeft), true);
+            extendRight = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendRight), true);
+            extendTop = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendTop), false);
+            extendBottom = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendBottom), false);
+            dx = a.getDimensionPixelOffset(R.styleable.ExtendRelativeLayout_Layout_extendDx, 0);
+            dy = a.getDimensionPixelOffset(R.styleable.ExtendRelativeLayout_Layout_extendDy, 0);
             a.recycle();
         }
 

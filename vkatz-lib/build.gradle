@@ -4,8 +4,8 @@ repositories {
     jcenter()
 }
 
-def libVersion = 3;
-def libVersionName = "3.3"
+def libVersion = 4;
+def libVersionName = "4"
 
 android {
     compileSdkVersion 23

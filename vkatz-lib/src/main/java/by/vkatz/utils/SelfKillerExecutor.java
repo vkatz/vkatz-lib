@@ -6,6 +6,7 @@ import java.util.concurrent.Executor;
 /**
  * Created by vKatz on 27.02.2015.
  */
+@SuppressWarnings("unused")
 public class SelfKillerExecutor implements Executor {
     private final Object sync = new Object();
     private Thread thread = null;
@@ -13,21 +14,19 @@ public class SelfKillerExecutor implements Executor {
 
     @Override
     public void execute(Runnable runnable) {
+        tasks.push(runnable);
         synchronized (sync) {
-            tasks.push(runnable);
             if (thread == null) {
                 thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        while (true) {
-                            Runnable task;
-                            synchronized (sync) {
-                                if (tasks.empty()) {
-                                    thread = null;
-                                    return;
-                                } else task = tasks.pop();
-                            }
-                            task.run();
+                        while (!tasks.isEmpty()) try {
+                            tasks.pop().run();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        synchronized (sync) {
+                            thread = null;
                         }
                     }
                 });
