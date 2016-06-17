@@ -5,14 +5,14 @@ repositories {
 }
 
 def libVersion = 4;
-def libVersionName = "4"
+def libVersionName = "4.1"
 
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.3'
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 23
         versionCode libVersion
         versionName libVersionName

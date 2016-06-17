@@ -5,6 +5,10 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="vertical">
+        <Button android:id="@+id/activities"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Activities navigation"/>
         <Button android:id="@+id/asset_font"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

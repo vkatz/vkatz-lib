@@ -1,8 +1,13 @@
 package by.vkatz.samples;
 
+import android.app.ActivityOptions;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import by.vkatz.samples.activity.ActivityA;
+import by.vkatz.utils.ActivityNavigator;
 
 /**
  * Created by vKatz on 08.03.2015.
@@ -30,6 +35,28 @@ public class MainScreen extends BaseScreen {
             settings.setFirstLaunch(false);
             settings.commit(getContext());
         }
+        view.findViewById(R.id.activities).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ActivityNavigator.forActivity(getActivity()).go(ActivityA.class);
+
+                //ActivityNavigator.forActivity(getActivity()).withData("a", "b").withFillData(new Functions.Func1<Void, Bundle>() {
+                //    @Override
+                //    public Void execute(Bundle bundle) {
+                //        //todo fill data
+                //        return null;
+                //    }
+                //}).go(ActivityA.class);
+
+                //ActivityNavigator.forActivity(getActivity()).withData("a", "b").backWithResult(Activity.RESULT_OK);
+
+                //ActivityNavigator.forActivity(getActivity()).back();
+
+                Bundle bundle = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.idle, R.anim.idle).toBundle();
+                ActivityNavigator.forActivity(getActivity()).withData("a", "String from MainUI").go(ActivityA.class, bundle);
+
+            }
+        });
         view.findViewById(R.id.asset_font).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
