@@ -14,6 +14,7 @@ import java.io.Serializable;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ActivityNavigator<A extends Activity> {
     private A activity;
+    private int flags = 0;
     private Bundle bundle;
     private Functions.Func1<Void, Intent> intentConfigurator = null;
 
@@ -27,7 +28,26 @@ public class ActivityNavigator<A extends Activity> {
     }
 
     public static Bundle getData(Activity activity) {
-        return activity.getIntent().getExtras();
+        try {
+            return activity.getIntent().getExtras();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public ActivityNavigator noHistory() {
+        flags |= Intent.FLAG_ACTIVITY_NO_HISTORY;
+        return this;
+    }
+
+    public ActivityNavigator clearTop() {
+        flags |= Intent.FLAG_ACTIVITY_CLEAR_TOP;
+        return this;
+    }
+
+    public ActivityNavigator reorderToFront() {
+        flags |= Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
+        return this;
     }
 
     public ActivityNavigator withData(Bundle data) {
@@ -77,8 +97,9 @@ public class ActivityNavigator<A extends Activity> {
 
     private <T extends Activity> Intent getGoIntent(Class<T> activity) {
         Intent intent = new Intent(this.activity, activity);
-        if (intentConfigurator != null) intentConfigurator.execute(intent);
         intent.putExtras(bundle);
+        intent.addFlags(flags);
+        if (intentConfigurator != null) intentConfigurator.execute(intent);
         return intent;
     }
 

@@ -5,7 +5,7 @@ repositories {
 }
 
 def libVersion = 4;
-def libVersionName = "4.1"
+def libVersionName = "4.2"
 
 android {
     compileSdkVersion 23
