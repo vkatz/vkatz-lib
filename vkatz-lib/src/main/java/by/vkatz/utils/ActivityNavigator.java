@@ -15,6 +15,7 @@ import java.io.Serializable;
 public class ActivityNavigator<A extends Activity> {
     private A activity;
     private int flags = 0;
+    private int animationIn = -1, animationOut = -1;
     private Bundle bundle;
     private Functions.Func1<Void, Intent> intentConfigurator = null;
 
@@ -47,6 +48,12 @@ public class ActivityNavigator<A extends Activity> {
 
     public ActivityNavigator reorderToFront() {
         flags |= Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
+        return this;
+    }
+
+    public ActivityNavigator animation(int animationIn, int animationOut) {
+        this.animationIn = animationIn;
+        this.animationOut = animationOut;
         return this;
     }
 
@@ -103,12 +110,18 @@ public class ActivityNavigator<A extends Activity> {
         return intent;
     }
 
+    private void applyAnimation() {
+        if (animationIn != -1 || animationOut != -1)
+            this.activity.overridePendingTransition(animationIn, animationOut);
+    }
+
     public <T extends Activity> void go(Class<T> activity) {
         go(activity, null);
     }
 
     public <T extends Activity> void go(Class<T> activity, Bundle options) {
         this.activity.startActivity(getGoIntent(activity), options);
+        applyAnimation();
     }
 
     public <T extends Activity> void goForResult(Class<T> activity, int requestCode) {
@@ -117,10 +130,12 @@ public class ActivityNavigator<A extends Activity> {
 
     public <T extends Activity> void goForResult(Class<T> activity, int requestCode, Bundle options) {
         this.activity.startActivityForResult(getGoIntent(activity), requestCode, options);
+        applyAnimation();
     }
 
     public void back() {
         activity.finish();
+        applyAnimation();
     }
 
     public void backWithResult(int resultCode) {
