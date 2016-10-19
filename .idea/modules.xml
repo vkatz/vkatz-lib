@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/[vkatz-lib].iml" filepath="$PROJECT_DIR$/[vkatz-lib].iml" />
       <module fileurl="file://$PROJECT_DIR$/samples/samples.iml" filepath="$PROJECT_DIR$/samples/samples.iml" />
       <module fileurl="file://$PROJECT_DIR$/vkatz-lib/vkatz-lib.iml" filepath="$PROJECT_DIR$/vkatz-lib/vkatz-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vkatz-support-lib/vkatz-support-lib.iml" filepath="$PROJECT_DIR$/vkatz-support-lib/vkatz-support-lib.iml" />
     </modules>
   </component>
 </project>

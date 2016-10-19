@@ -45,12 +45,12 @@
     </declare-styleable>
 
     <declare-styleable name="ExtendRelativeLayout_Layout">
-        <attr name="extendWidth" format="string|reference"/>
-        <attr name="extendHeight" format="string|reference"/>
-        <attr name="extendLeft" format="string|reference"/>
-        <attr name="extendRight" format="string|reference"/>
-        <attr name="extendTop" format="string|reference"/>
-        <attr name="extendBottom" format="string|reference"/>
+        <attr name="percentWidth" format="string|reference"/>
+        <attr name="percentHeight" format="string|reference"/>
+        <attr name="percentLeft" format="string|reference"/>
+        <attr name="percentRight" format="string|reference"/>
+        <attr name="percentTop" format="string|reference"/>
+        <attr name="percentBottom" format="string|reference"/>
         <attr name="extendDx" format="dimension|reference"/>
         <attr name="extendDy" format="dimension|reference"/>
     </declare-styleable>
@@ -65,14 +65,18 @@
         <attr name="scrollBehavior">
             <flag name="neverFinish" value="0"/>
             <flag name="alwaysFinish" value="1"/>
+            <flag name="custom" value="2"/>
         </attr>
-        <attr name="isExpanded" format="boolean|reference"/>
-        <attr name="isMenuEnabled" format="boolean|reference"/>
+        <attr name="menuHidingSize" format="dimension|reference"/>
+        <attr name="menuVisibleSize" format="dimension|reference"/>
+        <attr name="menuPercentHidingSize" format="string|reference"/>
+        <attr name="menuPercentVisibleSize" format="string|reference"/>
+        <attr name="menuExpanded" format="boolean|reference"/>
+        <attr name="menuEnabled" format="boolean|reference"/>
         <attr name="startScrollDistance" format="dimension|reference"/>
     </declare-styleable>
     <declare-styleable name="SlideMenuLayout_Layout">
-        <attr name="isMenu" format="boolean|reference"/>
-        <attr name="isMovable" format="boolean|reference"/>
-        <attr name="isTouchable" format="boolean|reference"/>
+        <attr name="applyScroll" format="boolean|reference"/>
+        <attr name="interceptTouches" format="boolean|reference"/>
     </declare-styleable>
 </resources>

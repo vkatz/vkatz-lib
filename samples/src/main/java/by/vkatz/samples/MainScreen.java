@@ -38,23 +38,8 @@ public class MainScreen extends BaseScreen {
         view.findViewById(R.id.activities).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ActivityNavigator.forActivity(getActivity()).go(ActivityA.class);
-
-                //ActivityNavigator.forActivity(getActivity()).withData("a", "b").withFillData(new Functions.Func1<Void, Bundle>() {
-                //    @Override
-                //    public Void execute(Bundle bundle) {
-                //        //todo fill data
-                //        return null;
-                //    }
-                //}).go(ActivityA.class);
-
-                //ActivityNavigator.forActivity(getActivity()).withData("a", "b").backWithResult(Activity.RESULT_OK);
-
-                //ActivityNavigator.forActivity(getActivity()).back();
-
                 Bundle bundle = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.idle, R.anim.idle).toBundle();
                 ActivityNavigator.forActivity(getActivity()).withData("a", "String from MainUI").go(ActivityA.class, bundle);
-
             }
         });
         view.findViewById(R.id.asset_font).setOnClickListener(new View.OnClickListener() {
@@ -120,6 +105,34 @@ public class MainScreen extends BaseScreen {
                     @Override
                     public View createView() {
                         return View.inflate(getContext(), R.layout.slide_menu_4, null);
+                    }
+                });
+            }
+        });
+        view.findViewById(R.id.nested_slide_menu_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new NestedSlideMenuScreen());
+            }
+        });
+        view.findViewById(R.id.nested_slide_menu_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new BaseScreen() {
+                    @Override
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.nested_slide_menu_2, null);
+                    }
+                });
+            }
+        });
+        view.findViewById(R.id.nested_slide_menu_3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParent().go(new BaseScreen() {
+                    @Override
+                    public View createView() {
+                        return View.inflate(getContext(), R.layout.nested_slide_menu_3, null);
                     }
                 });
             }

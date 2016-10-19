@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NestedSlideMenuLayout">
+        <attr name="nestedScrollBehavior">
+            <flag name="expandFirst" value="1"/>
+            <flag name="expandLast" value="2"/>
+            <flag name="collapseFirst" value="4"/>
+            <flag name="collapseLast" value="8"/>
+        </attr>
+    </declare-styleable>
+</resources>

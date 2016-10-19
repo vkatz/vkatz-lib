@@ -223,7 +223,7 @@ public class ExtendRelativeLayout extends RelativeLayout {
         }
     }
 
-    private int resolveExtendSize(int original, LayoutParams.Data size, int w, int h) {
+    protected int resolveExtendSize(int original, ExtendedSize size, int w, int h) {
         if (size != null) {
             if (size.ofWidth && w >= 0) return (int) (w * size.value / 100);
             if (!size.ofWidth && h >= 0) return (int) (h * size.value / 100);
@@ -260,17 +260,17 @@ public class ExtendRelativeLayout extends RelativeLayout {
     public static class LayoutParams extends RelativeLayout.LayoutParams {
         protected int dx = 0, dy = 0;
         protected int mLeft = 0, mTop = 0, mRight = 0, mBottom = 0;
-        private Data extendWidth, extendHeight, extendLeft, extendTop, extendRight, extendBottom;
+        private ExtendedSize extendWidth, extendHeight, extendLeft, extendTop, extendRight, extendBottom;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.ExtendRelativeLayout_Layout, 0, 0);
-            extendWidth = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendWidth), true);
-            extendHeight = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendHeight), false);
-            extendLeft = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendLeft), true);
-            extendRight = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendRight), true);
-            extendTop = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendTop), false);
-            extendBottom = extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_extendBottom), false);
+            extendWidth = ExtendedSize.extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_percentWidth), true);
+            extendHeight = ExtendedSize.extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_percentHeight), false);
+            extendLeft = ExtendedSize.extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_percentLeft), true);
+            extendRight = ExtendedSize.extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_percentRight), true);
+            extendTop = ExtendedSize.extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_percentTop), false);
+            extendBottom = ExtendedSize.extract(a.getString(R.styleable.ExtendRelativeLayout_Layout_percentBottom), false);
             dx = a.getDimensionPixelOffset(R.styleable.ExtendRelativeLayout_Layout_extendDx, 0);
             dy = a.getDimensionPixelOffset(R.styleable.ExtendRelativeLayout_Layout_extendDy, 0);
             a.recycle();
@@ -280,22 +280,25 @@ public class ExtendRelativeLayout extends RelativeLayout {
             super(w, h);
         }
 
-        private Data extract(String data, boolean defaultOfWidth) {
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static class ExtendedSize {
+        public final float value;
+        public final boolean ofWidth;
+
+        public ExtendedSize(float value, boolean ofWidth) {
+            this.value = value;
+            this.ofWidth = ofWidth;
+        }
+
+        public static ExtendedSize extract(String data, boolean defaultOfWidth) {
             if (data == null) return null;
             else {
                 String parts[] = data.split("%");
-                return new Data(Float.valueOf(parts[0]), parts.length > 1 ? parts[1].equals("w") : defaultOfWidth);
+                return new ExtendedSize(Float.valueOf(parts[0]), parts.length > 1 ? parts[1].equals("w") : defaultOfWidth);
             }
         }
 
-        private static class Data {
-            public final float value;
-            public final boolean ofWidth;
-
-            public Data(float value, boolean ofWidth) {
-                this.value = value;
-                this.ofWidth = ofWidth;
-            }
-        }
     }
 }
