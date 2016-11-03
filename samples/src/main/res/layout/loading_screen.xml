@@ -17,11 +17,26 @@
         app:spinner_color="#00f"
         app:spinner_thickness="10dp"/>
     <by.vkatz.widgets.LoadingView
-        android:id="@+id/progress"
+        android:id="@+id/progress1"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="#000"
+        android:padding="15dp"
+        app:progress="0"
+        app:rotate="-90"
+        app:spinner_colorCenter="#0f0"
+        app:spinner_colorEnd="#f00"
+        app:spinner_colorStart="#00f"
+        app:spinner_thickness="10dp"/>
+    <by.vkatz.widgets.LoadingView
+        android:id="@+id/progress2"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:background="#000"
         android:padding="15dp"
         app:rotate="-90"
-        app:spinner_color="#ff0"/>
+        app:spinner_colorCenter="#0f0"
+        app:spinner_colorEnd="#f00"
+        app:spinner_colorStart="#00f"/>
+
 </LinearLayout>

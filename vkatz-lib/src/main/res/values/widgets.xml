@@ -38,6 +38,9 @@
 
     <declare-styleable name="LoadingView">
         <attr name="spinner_color" format="color|reference"/>
+        <attr name="spinner_colorStart" format="color|reference"/>
+        <attr name="spinner_colorCenter" format="color|reference"/>
+        <attr name="spinner_colorEnd" format="color|reference"/>
         <attr name="spinner_thickness" format="dimension|reference"/>
         <attr name="progress" format="integer"/>
         <attr name="flip" format="boolean|reference"/>

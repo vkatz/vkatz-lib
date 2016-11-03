@@ -19,13 +19,15 @@ public class LoadingScreen extends BaseScreen {
     @Override
     public void initView(View view) {
         super.initView(view);
-        final LoadingView loadingView = (LoadingView) view.findViewById(R.id.progress);
+        final LoadingView loadingView1 = (LoadingView) view.findViewById(R.id.progress1);
+        final LoadingView loadingView2 = (LoadingView) view.findViewById(R.id.progress2);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (pr < 100) pr += 5;
-                loadingView.setProgress(pr);
+                loadingView1.setProgress(pr);
+                loadingView2.setProgress(pr);
                 handler.postDelayed(this, 200);
             }
         }, 3000);

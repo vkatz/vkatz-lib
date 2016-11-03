@@ -6,8 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.SweepGradient;
 import android.util.AttributeSet;
 import android.view.View;
+
 import by.vkatz.R;
 
 /**
@@ -31,10 +33,14 @@ public class LoadingView extends View {
     private float pass = 0;
     private float lw;
     private int color;
+    private int colorStart;
+    private int colorCenter;
+    private int colorEnd;
     private float thickness;
     private int progress;
     private boolean flip;
     private int rotate;
+    private int customColors[] = null;
 
     public LoadingView(Context context) {
         this(context, null);
@@ -44,8 +50,11 @@ public class LoadingView extends View {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingView, 0, 0);
         color = a.getColor(R.styleable.LoadingView_spinner_color, Color.WHITE);
+        colorStart = a.getColor(R.styleable.LoadingView_spinner_colorStart, color);
+        colorCenter = a.getColor(R.styleable.LoadingView_spinner_colorCenter, color);
+        colorEnd = a.getColor(R.styleable.LoadingView_spinner_colorEnd, color);
         thickness = a.getDimension(R.styleable.LoadingView_spinner_thickness, 5);
-        progress = a.getInt(R.styleable.LoadingView_progress, 0);
+        progress = a.getInt(R.styleable.LoadingView_progress, -1);
         rotate = a.getInt(R.styleable.LoadingView_rotate, 0);
         flip = a.getBoolean(R.styleable.LoadingView_flip, false);
         a.recycle();
@@ -74,7 +83,13 @@ public class LoadingView extends View {
         int w = getMeasuredWidth() - pl - pr;
         int h = getMeasuredHeight() - pt - pb;
         int s = Math.min(w, h);
+        paint.setShader(new SweepGradient(w / 2 + pl, h / 2 + pt, customColors != null ? customColors : new int[]{colorStart, colorCenter, colorEnd}, null));
         drawRect.set(pl + (w - s) / 2 + thickness / 2 + 1, pt + (h - s) / 2 + thickness / 2 + 1, pl + (w + s) / 2 - thickness / 2 - 1, pt + (h + s) / 2 - thickness / 2 - 1);
+    }
+
+    public void setColor(int[] colors) {
+        customColors = colors;
+        updateDrawingRect();
     }
 
     private int resolveSize(int spec) {
@@ -147,18 +162,19 @@ public class LoadingView extends View {
         if (isInEditMode()) canvas.drawOval(drawRect, paint); //preview whole circle in editor
         canvas.rotate(rotate, drawRect.centerX(), drawRect.centerY());
         float w;
-        if (progress == 0) {
+        if (progress < 0) {
             pass = (pass += 0.015) > 1 ? 0 : pass;
             w = (float) (240 * Math.pow(Math.sin(Math.PI * pass), 4) + 30);
             offset = (offset + Math.abs(lw - w) / 2 + (lw - w) / 2 + 1.5f) % 360;
         } else {
             w = lw + (3.6f * progress - lw) / 16;
             if (Math.abs(3.6f * progress - w) < 1) w = 3.6f * progress;
-            offset = offset + (360 - offset) / 16;
+            if (Math.abs(offset) < 0.01) offset = 0;
+            else offset = offset + (360 - offset) / 16;
             if (360 - offset < 0.05) offset = 360;
         }
+        if (progress < 0 || Math.abs(lw - w) > 0.0001) postInvalidate();
         lw = w;
         canvas.drawArc(drawRect, flip ? -offset : offset, flip ? -w : w, false, paint);
-        invalidate();
     }
 }
