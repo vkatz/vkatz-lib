@@ -3,26 +3,70 @@
     <attr name="font" format="string|reference"/>
     <attr name="compoundDrawableWidth" format="dimension|reference"/>
     <attr name="compoundDrawableHeight" format="dimension|reference"/>
+    <attr name="extendBackground1" format="reference|color"/>
+    <attr name="extendBackground2" format="reference|color"/>
+    <attr name="extendEnabled" format="boolean"/>
+    <attr name="extendActivated" format="boolean"/>
 
     <declare-styleable name="ExtendCheckBox">
         <attr name="font"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
     </declare-styleable>
     <declare-styleable name="ExtendEditText">
         <attr name="font"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
     </declare-styleable>
     <declare-styleable name="ExtendRadioButton">
         <attr name="font"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
     </declare-styleable>
     <declare-styleable name="ExtendTextView">
         <attr name="font"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExtendFrameLayout">
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExtendLinearLayout">
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExtendImageView">
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
+        <attr name="touchZoom" format="boolean"/>
+        <attr name="maxZoom" format="float"/>
+        <attr name="minZoom" format="float"/>
     </declare-styleable>
 
     <declare-styleable name="FlowLayout">
@@ -36,26 +80,11 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="LoadingView">
-        <attr name="spinner_color" format="color|reference"/>
-        <attr name="spinner_colorStart" format="color|reference"/>
-        <attr name="spinner_colorCenter" format="color|reference"/>
-        <attr name="spinner_colorEnd" format="color|reference"/>
-        <attr name="spinner_thickness" format="dimension|reference"/>
-        <attr name="progress" format="integer"/>
-        <attr name="flip" format="boolean|reference"/>
-        <attr name="rotate" format="integer|reference"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendRelativeLayout_Layout">
-        <attr name="percentWidth" format="string|reference"/>
-        <attr name="percentHeight" format="string|reference"/>
-        <attr name="percentLeft" format="string|reference"/>
-        <attr name="percentRight" format="string|reference"/>
-        <attr name="percentTop" format="string|reference"/>
-        <attr name="percentBottom" format="string|reference"/>
-        <attr name="extendDx" format="dimension|reference"/>
-        <attr name="extendDy" format="dimension|reference"/>
+    <declare-styleable name="ExtendRelativeLayout">
+        <attr name="extendBackground1"/>
+        <attr name="extendBackground2"/>
+        <attr name="extendEnabled"/>
+        <attr name="extendActivated"/>
     </declare-styleable>
 
     <declare-styleable name="SlideMenuLayout">
@@ -72,11 +101,10 @@
         </attr>
         <attr name="menuHidingSize" format="dimension|reference"/>
         <attr name="menuVisibleSize" format="dimension|reference"/>
-        <attr name="menuPercentHidingSize" format="string|reference"/>
-        <attr name="menuPercentVisibleSize" format="string|reference"/>
         <attr name="menuExpanded" format="boolean|reference"/>
         <attr name="menuEnabled" format="boolean|reference"/>
         <attr name="startScrollDistance" format="dimension|reference"/>
+        <attr name="scrollerDuration" format="integer|reference"/>
     </declare-styleable>
     <declare-styleable name="SlideMenuLayout_Layout">
         <attr name="applyScroll" format="boolean|reference"/>

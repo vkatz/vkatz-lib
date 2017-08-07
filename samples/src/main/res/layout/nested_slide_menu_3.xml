@@ -6,15 +6,18 @@
     android:layout_height="match_parent"
     app:menuExpanded="false"
     app:menuHidingSize="200dp"
-    android:background="#00f"
     app:nestedScrollBehavior="collapseLast|expandFirst"
     app:slideFrom="bottom">
 
+    <View android:id="@+id/nested_offset"
+          android:layout_width="match_parent"
+          android:layout_height="100dp"
+          app:applyScroll="false"/>
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
+        android:layout_below="@id/nested_offset"
         android:background="#555"
         app:interceptTouches="false">
         <TextView android:layout_width="match_parent"
@@ -32,7 +35,7 @@
               android:text="HEADER"
               android:textColor="#000"
               android:textSize="80dp"
-              app:applyScroll="false"
+              app:applyScroll="true"
               app:interceptTouches="false"/>
 
 </by.vkatz.support.widgets.NestedSlideMenuLayout>
