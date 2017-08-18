@@ -4,31 +4,29 @@ import java.io.*
 
 object SerializableUtils {
     fun commit(file: File, data: Any): Boolean {
-        try {
+        return try {
             val out = ObjectOutputStream(FileOutputStream(file))
             out.writeObject(data)
             out.flush()
             out.close()
-            return true
+            true
         } catch (e: Exception) {
             LogUtils.e("SerializableUtils", "Commit error:", e)
-            return false
+            false
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> restore(file: File, creator: () -> T): T {
-        try {
-            return ObjectInputStream(FileInputStream(file)).readObject() as T
+        return try {
+            ObjectInputStream(FileInputStream(file)).readObject() as T
         } catch (e: Exception) {
             LogUtils.e("SerializableUtils", "Restore error:", e)
-            return creator()
+            creator()
         }
     }
 
     @Throws(Exception::class)
     @Suppress("UNCHECKED_CAST")
-    fun <T> restoreOrThrow(file: File): T {
-        return ObjectInputStream(FileInputStream(file)).readObject() as T
-    }
+    fun <T> restoreOrThrow(file: File): T = ObjectInputStream(FileInputStream(file)).readObject() as T
 }

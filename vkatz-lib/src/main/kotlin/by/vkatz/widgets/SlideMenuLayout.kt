@@ -10,11 +10,13 @@ import android.widget.RelativeLayout
 import android.widget.Scroller
 import by.vkatz.R
 
+@Suppress("MemberVisibilityCanPrivate")
 open class SlideMenuLayout : ExtendRelativeLayout {
     val slideFrom: Int
     var isExpanded: Boolean = false
         private set
     var isMenuEnabled: Boolean = false
+    var scrollerDuration: Int = 0
     private var scroll: Boolean = false
     private var autoScroll: Boolean = false
     private var pos: Float = 0.toFloat()
@@ -25,7 +27,6 @@ open class SlideMenuLayout : ExtendRelativeLayout {
     private var slideVisibleSize: Int = 0
     private val startScrollDistance: Float
     private val scroller: Scroller
-    var scrollerDuration: Int = 0
     private var onExpandStateChangeListener: OnExpandStateChangeListener? = null
     private var onSlideChangeListener: OnSlideChangeListener? = null
     private var customScrollBehavior: ScrollBehavior? = null
@@ -49,7 +50,6 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         scrollerDuration = a.getInt(R.styleable.SlideMenuLayout_scrollerDuration, 250)
         flags = a.getInt(R.styleable.SlideMenuLayout_scrollBehavior, FLAG_ALWAYS_FINISH)
         a.recycle()
-        //setWillNotDraw(false)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -57,15 +57,13 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         var dy = 0f
         if (isHorizontal()) dx = clamp(scroller.currX.toFloat(), 0f, slideSize.toFloat())
         else dy = clamp(scroller.currY.toFloat(), 0f, slideSize.toFloat())
-        for (i in 0..childCount - 1) {
+        for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility == View.GONE) continue
             val lp = child.layoutParams as LayoutParams
             if (lp.isMovable) {
                 child.translationX = dx
                 child.translationY = dy
-//                lp.dx = dx
-//                lp.dy = dy
             }
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -73,26 +71,11 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         slideSize = 0
         val w = measuredWidth
         val h = measuredHeight
-        if (slideFrom == BOTTOM) {
-            if (slideHidingSize != 0)
-                slideSize = slideHidingSize
-            else
-                slideSize = h - slideVisibleSize
-        } else if (slideFrom == TOP) {
-            if (slideHidingSize != 0)
-                slideSize = -slideHidingSize
-            else
-                slideSize = slideVisibleSize - h
-        } else if (slideFrom == RIGHT) {
-            if (slideHidingSize != 0)
-                slideSize = slideHidingSize
-            else
-                slideSize = w - slideVisibleSize
-        } else if (slideFrom == LEFT) {
-            if (slideHidingSize != 0)
-                slideSize = -slideHidingSize
-            else
-                slideSize = slideVisibleSize - w
+        when (slideFrom) {
+            BOTTOM -> slideSize = if (slideHidingSize != 0) slideHidingSize else h - slideVisibleSize
+            TOP -> slideSize = if (slideHidingSize != 0) -slideHidingSize else slideVisibleSize - h
+            RIGHT -> slideSize = if (slideHidingSize != 0) slideHidingSize else w - slideVisibleSize
+            LEFT -> slideSize = if (slideHidingSize != 0) -slideHidingSize else slideVisibleSize - w
         }
         if (oldSlideSize != slideSize) {
             if (isExpanded) expand(false)
@@ -109,14 +92,9 @@ open class SlideMenuLayout : ExtendRelativeLayout {
             val value = 1 - Math.abs(1f * updatedScroll / (getMaxSlide() - getMinSlide()))
             onSlideChangeListener!!.onScrollSizeChangeListener(this@SlideMenuLayout, value)
         }
-        if (anim)
-            postInvalidate()
+        if (anim) postInvalidate()
         else {
-            val isExpanded: Boolean
-            if (isHorizontal())
-                isExpanded = scroller.currX == 0
-            else
-                isExpanded = scroller.currY == 0
+            val isExpanded: Boolean = if (isHorizontal()) scroller.currX == 0 else scroller.currY == 0
             if (isExpanded != this@SlideMenuLayout.isExpanded && onExpandStateChangeListener != null) onExpandStateChangeListener!!.onExpandStateChanged(this@SlideMenuLayout, isExpanded)
             this@SlideMenuLayout.isExpanded = isExpanded
             autoScroll = false
@@ -129,7 +107,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
     fun isVertical() = !isHorizontal()
 
     private fun isEventInsideChild(x: Float, y: Float): Boolean {
-        for (i in 0..childCount - 1) {
+        for (i in 0 until childCount) {
             val child = getChildAt(i)
             val lp = child.layoutParams as LayoutParams
             if (!lp.isTouchable || child.visibility == View.GONE) continue
@@ -149,17 +127,17 @@ open class SlideMenuLayout : ExtendRelativeLayout {
             pos = curPos
             return !isIntercept
         } else if (ev.action == MotionEvent.ACTION_MOVE) {
-            if (scroll) {
+            return if (scroll) {
                 dPos = (curPos - pos).toInt()
                 scrollMenuBy(dPos)
                 pos = curPos
-                return true
+                true
             } else {
                 if (Math.abs(pos - curPos) > startScrollDistance) {
                     pos = curPos
                     scroll = true
-                    return true
-                } else return false
+                    true
+                } else false
             }
         } else if (ev.action == MotionEvent.ACTION_CANCEL || ev.action == MotionEvent.ACTION_UP)
             if (scroll) finishMenuScroll()
@@ -219,9 +197,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         }
     }
 
-    fun hasFlag(what: Int, flag: Int): Boolean {
-        return what and flag == flag
-    }
+    fun hasFlag(what: Int, flag: Int): Boolean = what and flag == flag
 
     fun expand(anim: Boolean = true) {
         scroller.startScroll(scroller.currX, scroller.currY, -scroller.currX, -scroller.currY, if (anim) scrollerDuration else 0)
@@ -243,9 +219,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         else expand(anim)
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return isMenuEnabled && dispatchTouch(ev, true)
-    }
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean = isMenuEnabled && dispatchTouch(ev, true)
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         if (isMenuEnabled) dispatchTouch(ev, false)
@@ -283,17 +257,11 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         return value
     }
 
-    override fun generateLayoutParams(attrs: AttributeSet): LayoutParams {
-        return LayoutParams(context, attrs)
-    }
+    override fun generateLayoutParams(attrs: AttributeSet): LayoutParams = LayoutParams(context, attrs)
 
-    override fun generateDefaultLayoutParams(): LayoutParams {
-        return LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true, false)
-    }
+    override fun generateDefaultLayoutParams(): LayoutParams = LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true, false)
 
-    override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean {
-        return p is LayoutParams
-    }
+    override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 
     fun setOnExpandStateChangeListener(onExpandStateChangeListener: OnExpandStateChangeListener) {
         this.onExpandStateChangeListener = onExpandStateChangeListener

@@ -32,9 +32,7 @@ class MainScreen : AppScreen() {
     @SuppressLint("ValidFragment")
     private fun createViewScreen(viewId: Int): FragmentScreen {
         return object : AppScreen() {
-            override fun createView(): View {
-                return inflate(viewId)
-            }
+            override fun createView(): View = inflate(viewId)
         }
     }
 
@@ -86,7 +84,7 @@ class MainScreen : AppScreen() {
                     }
 
                     menu.setOnSlideChangeListener(
-                            object : SlideMenuLayout . OnSlideChangeListener {
+                            object : SlideMenuLayout.OnSlideChangeListener {
                                 override fun onScrollSizeChangeListener(view: SlideMenuLayout, value: Float) {
                                     btn.alpha = 1 - value;
                                     header.setTextSize(TypedValue.COMPLEX_UNIT_PX, headerTextSize * Math.max(1 - value, 0.3f));

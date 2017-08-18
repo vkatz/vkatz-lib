@@ -11,18 +11,17 @@ import java.io.Serializable
  * Created by Katz on 17.06.2016.
  */
 
+@Suppress("MemberVisibilityCanPrivate")
 class ActivityNavigator private constructor(private val activity: Activity) {
     companion object {
 
-        fun forActivity(activity: Activity): ActivityNavigator {
-            return ActivityNavigator(activity)
-        }
+        fun forActivity(activity: Activity): ActivityNavigator = ActivityNavigator(activity)
 
         fun getData(activity: Activity): Bundle? {
-            try {
-                return activity.intent.extras
+            return try {
+                activity.intent.extras
             } catch (e: Exception) {
-                return null
+                null
             }
         }
     }

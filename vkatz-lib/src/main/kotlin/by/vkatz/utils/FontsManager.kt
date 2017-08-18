@@ -18,18 +18,16 @@ class FontsManager private constructor() {
 
     fun getFont(context: Context, fontName: String?): Typeface? {
         if (fontName == null || fontName == "") return null
-        try {
-            if (fonts.containsKey(fontName))
-                return fonts[fontName]
+        return try {
+            if (fonts.containsKey(fontName)) fonts[fontName]
             else {
                 val font = Typeface.createFromAsset(context.assets, fontName)
                 fonts.put(fontName, font)
-                return font
+                font
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return null
+            null
         }
-
     }
 }

@@ -23,8 +23,8 @@ class FlowLayout : ExtendRelativeLayout {
         init(context, attrs, defStyle)
     }
 
-    fun init(context: Context, attrs: AttributeSet?, defStyle: Int) {
-        lineSizes = ArrayList<Int>()
+    private fun init(context: Context, attrs: AttributeSet?, defStyle: Int) {
+        lineSizes = ArrayList()
         val a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout, defStyle, 0)
         offsetHorizontal = a.getDimensionPixelSize(R.styleable.FlowLayout_offsetHorizontal, 0)
         offsetVertical = a.getDimensionPixelSize(R.styleable.FlowLayout_offsetVertical, 0)
@@ -39,7 +39,7 @@ class FlowLayout : ExtendRelativeLayout {
         var lineHeight = if (fixedLineHeight > 0) fixedLineHeight else 0
         val myWidth = r - l
         var line = 0
-        for (i in 0..childCount - 1) {
+        for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility == View.GONE) continue
             val childWidth = child.measuredWidth
@@ -53,11 +53,11 @@ class FlowLayout : ExtendRelativeLayout {
             }
             val lineSize = lineSizes[line]
             var offset = 0
-            if (lineGravity == GRAVITY_TOP)
-                offset = 0
-            else if (lineGravity == GRAVITY_CENTER)
-                offset = (lineSize - childHeight) / 2
-            else if (lineGravity == GRAVITY_BOT) offset = lineSize - childHeight
+            when (lineGravity) {
+                GRAVITY_TOP -> offset = 0
+                GRAVITY_CENTER -> offset = (lineSize - childHeight) / 2
+                GRAVITY_BOT -> offset = lineSize - childHeight
+            }
             child.layout(childLeft, offset + childTop, childLeft + childWidth, offset + childTop + childHeight)
             childLeft += childWidth + offsetHorizontal
         }
@@ -71,7 +71,7 @@ class FlowLayout : ExtendRelativeLayout {
         val myWidth = View.resolveSize(100, widthMeasureSpec)
         var wantedHeight = 0
         lineSizes.clear()
-        for (i in 0..childCount - 1) {
+        for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility == View.GONE) continue
             child.measure(

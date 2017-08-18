@@ -2,6 +2,7 @@ package by.vkatz.screen
 
 import java.util.*
 
+@Suppress("MemberVisibilityCanPrivate")
 abstract class BackStack<ScreenType : Screen<ScreenType>> {
     val backStack: ArrayList<ScreenType> = ArrayList()
     var current: ScreenType? = null
@@ -12,22 +13,13 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
     protected abstract fun closeScreen(screen: ScreenType, navigation: Screen.Navigation)
 
     val lastScreen: ScreenType?
-        get() {
-            if (canBack()) return backStack[backStack.size - 1]
-            else return null
-        }
+        get() = if (canBack()) backStack[backStack.size - 1] else null
 
-    fun getLastScreen(name: String): ScreenType? {
-        return backStack.firstOrNull { strEquals(name, it.name) }
-    }
+    fun getLastScreen(name: String): ScreenType? = backStack.firstOrNull { strEquals(name, it.name) }
 
-    fun canBack(): Boolean {
-        return backStack.size > 0
-    }
+    fun canBack(): Boolean = backStack.size > 0
 
-    fun canBackTo(name: String): Boolean {
-        return getLastScreen(name) != null
-    }
+    fun canBackTo(name: String): Boolean = getLastScreen(name) != null
 
     fun go(screen: ScreenType) {
         if (current != null) {
@@ -104,7 +96,5 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
         while (backStack.size > index) backStack.removeAt(index)
     }
 
-    private fun strEquals(a: String?, b: String?): Boolean {
-        return (a == null && b == null) || (a != null && b != null && a == b)
-    }
+    private fun strEquals(a: String?, b: String?): Boolean = (a == null && b == null) || (a != null && b != null && a == b)
 }

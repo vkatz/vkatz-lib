@@ -68,12 +68,8 @@ object LibExtension {
             setBounds(0, 0, intrinsicWidth, intrinsicHeight)
         }
 
-        override fun getIntrinsicWidth(): Int {
-            return intrinsicWidth
-        }
+        override fun getIntrinsicWidth(): Int = intrinsicWidth
 
-        override fun getIntrinsicHeight(): Int {
-            return intrinsicHeight
-        }
+        override fun getIntrinsicHeight(): Int = intrinsicHeight
     }
 }

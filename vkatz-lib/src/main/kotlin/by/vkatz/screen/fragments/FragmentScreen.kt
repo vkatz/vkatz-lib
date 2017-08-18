@@ -1,5 +1,7 @@
 package by.vkatz.screen.fragments
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.app.Fragment
 import android.app.FragmentTransaction
 import android.os.Bundle
@@ -10,6 +12,8 @@ import by.vkatz.screen.BackStack
 import by.vkatz.screen.Screen
 
 abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
+    private var forward = true
+    private var animators: List<Int>? = null
 
     override var parent: BackStack<FragmentScreen>? = null
     override var name: String? = null
@@ -22,10 +26,12 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
     var transactionConfig: ((FragmentTransaction) -> Unit)? = null
 
     override fun onOpen(navigation: Screen.Navigation) {
+        forward = navigation == Screen.Navigation.forward
         active = true
     }
 
     override fun onClose(navigation: Screen.Navigation) {
+        forward = navigation == Screen.Navigation.forward
         active = false
     }
 
@@ -33,17 +39,15 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
         active = false
     }
 
-    fun inflate(resId: Int): View {
-        return LayoutInflater.from(activity).inflate(resId, null, false)
-    }
+    fun inflate(resId: Int): View = LayoutInflater.from(activity).inflate(resId, null, false)
 
     abstract fun createView(): View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (holdView) {
+        return if (holdView) {
             if (root == null) root = createView()
-            return root
-        } else return createView()
+            root
+        } else createView()
     }
 
     override fun onDestroyView() {
@@ -51,7 +55,12 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
         if (root != null && root!!.parent != null) (root!!.parent as ViewGroup).removeView(root)
     }
 
-    fun onBackPressed(): Boolean {
-        return false
+    open fun onBackPressed(): Boolean = false
+
+    open fun getTransactionAnimator(isForward: Boolean, isEntering: Boolean): Int? = null
+
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
+        val animator = getTransactionAnimator(forward, enter)
+        return if (animator != null) AnimatorInflater.loadAnimator(activity, animator) else super.onCreateAnimator(transit, enter, nextAnim)
     }
 }

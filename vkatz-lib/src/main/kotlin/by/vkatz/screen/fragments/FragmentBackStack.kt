@@ -15,7 +15,5 @@ class FragmentBackStack(private val activity: Activity, private val containerId:
 
     override fun closeScreen(screen: FragmentScreen, navigation: Screen.Navigation) {}
 
-    override fun back(): Boolean {
-        return current != null && current!!.onBackPressed() || super.back()
-    }
+    override fun back(): Boolean = current != null && current!!.onBackPressed() || super.back()
 }

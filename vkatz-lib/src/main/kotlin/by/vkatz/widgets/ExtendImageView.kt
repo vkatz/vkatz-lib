@@ -12,6 +12,7 @@ import android.widget.ImageView
 import by.vkatz.R
 import by.vkatz.utils.LibExtension
 
+@Suppress("MemberVisibilityCanPrivate")
 open class ExtendImageView : ImageView, LibExtension.ImageInterface {
     private var touchZoom = false
     private var minZoom = 1f
@@ -76,27 +77,21 @@ open class ExtendImageView : ImageView, LibExtension.ImageInterface {
         update()
     }
 
-    fun getMinZoom(): Float {
-        return minZoom
-    }
+    fun getMinZoom(): Float = minZoom
 
     fun setMinZoom(minZoom: Float) {
         this.minZoom = minZoom
         update()
     }
 
-    fun getMaxZoom(): Float {
-        return maxZoom
-    }
+    fun getMaxZoom(): Float = maxZoom
 
     fun setMaxZoom(maxZoom: Float) {
         this.maxZoom = maxZoom
         update()
     }
 
-    fun getZoom(): Float {
-        return zoom
-    }
+    fun getZoom(): Float = zoom
 
     fun setZoom(zoom: Float) {
         this.zoom = zoom
@@ -139,14 +134,8 @@ open class ExtendImageView : ImageView, LibExtension.ImageInterface {
         val z = clamp(zoom, minZoom, maxZoom) * Math.min(1f * measuredWidth / drawable.intrinsicWidth, 1f * measuredHeight / drawable.intrinsicHeight)
         maxX = drawable.intrinsicWidth * z - measuredWidth
         maxY = drawable.intrinsicHeight * z - measuredHeight
-        if (maxX > 0)
-            scrollDx = clamp(scrollDx, 0f, maxX)
-        else
-            scrollDx = maxX / 2
-        if (maxY > 0)
-            scrollDy = clamp(scrollDy, 0f, maxY)
-        else
-            scrollDy = maxY / 2
+        scrollDx = if (maxX > 0) clamp(scrollDx, 0f, maxX) else maxX / 2
+        scrollDy = if (maxY > 0) clamp(scrollDy, 0f, maxY) else maxY / 2
         val matrix = imageMatrix
         matrix.setScale(z, z)
         matrix.postTranslate(-scrollDx, -scrollDy)
