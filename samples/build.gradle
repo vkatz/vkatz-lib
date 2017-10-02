@@ -6,13 +6,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "by.vkatz"
         minSdkVersion 18
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -32,7 +32,7 @@ dependencies {
     compile project(':vkatz-lib')
     compile project(':vkatz-support-lib')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'com.android.support:support-compat:24.2.0'
-    compile 'com.android.support:support-core-ui:24.2.0'
-    compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile 'com.android.support:support-compat:25.3.1'
+    compile 'com.android.support:support-core-ui:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
 }

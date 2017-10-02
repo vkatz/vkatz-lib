@@ -5,16 +5,16 @@ repositories {
     jcenter()
 }
 
-def libVersion = 4;
+def libVersion = 4
 def libVersionName = "4.3"
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode libVersion
         versionName libVersionName
     }
@@ -29,6 +29,14 @@ android {
     }
 }
 
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18'
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.18"
 }

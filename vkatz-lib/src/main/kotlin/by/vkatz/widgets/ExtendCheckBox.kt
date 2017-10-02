@@ -23,7 +23,7 @@ open class ExtendCheckBox : CheckBox, LibExtension.TextInterface, LibExtension.I
 
     private fun init(context: Context, attrs: AttributeSet, defStyle: Int) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ExtendCheckBox, defStyle, 0)
-        setFont(a.getString(R.styleable.ExtendCheckBox_font))
+        setFont(a.getString(R.styleable.ExtendCheckBox_extendFont))
         setCompoundDrawableSize(
                 a.getDimensionPixelSize(R.styleable.ExtendCheckBox_compoundDrawableWidth, 0),
                 a.getDimensionPixelSize(R.styleable.ExtendCheckBox_compoundDrawableHeight, 0))

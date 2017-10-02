@@ -26,7 +26,7 @@ class ActivityA : Activity() {
         val data = ActivityNavigator.getData(this)
         Toast.makeText(this, "" + data!!.getString("a")!!, Toast.LENGTH_SHORT).show()
         //animate
-        findViewById(R.id.root).addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+        findViewById<View>(R.id.root).addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 v.removeOnAttachStateChangeListener(this)
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -49,7 +49,7 @@ class ActivityA : Activity() {
         })
 
         //end of animate
-        findViewById(R.id.item).setOnClickListener {
+        findViewById<View>(R.id.item).setOnClickListener {
             ActivityNavigator.forActivity(this@ActivityA).withFillData { bundle ->
                 val o = floatArrayOf(0f, 1f, 2f)
                 Log.i("AAA", o.toString())

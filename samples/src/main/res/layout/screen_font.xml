@@ -15,7 +15,7 @@
             android:textColor="#000"
             android:textSize="30dp"
             android:layout_marginTop="30dp"
-            app:font="@string/font"
+            app:extendFont="@string/font"
             android:text="this is edit text with custom font from xml"/>
     <by.vkatz.widgets.ExtendTextView
             android:layout_width="fill_parent"
@@ -23,7 +23,7 @@
             android:textColor="#000"
             android:textSize="30dp"
             android:layout_marginTop="30dp"
-            app:font="@string/font"
+            app:extendFont="@string/font"
             android:background="@drawable/some_bg"
             android:clickable="true"
             android:text="this is some text with custom font from xml with background"/>

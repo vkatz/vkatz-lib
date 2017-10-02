@@ -7,15 +7,15 @@ repositories {
 }
 
 def libVersion = 4;
-def libVersionName = "4.3"
+def libVersionName = "4.4"
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode libVersion
         versionName libVersionName
     }
@@ -32,5 +32,5 @@ android {
 
 dependencies {
     compile project(path: ':vkatz-lib')
-    compile 'com.android.support:support-compat:24.2.0'
+    compile 'com.android.support:support-compat:25.3.1'
 }

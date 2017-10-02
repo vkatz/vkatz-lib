@@ -3,9 +3,6 @@ package by.vkatz.utils
 import java.util.*
 import java.util.concurrent.Executor
 
-/**
- * Created by vKatz on 27.02.2015.
- */
 class SelfKillerExecutor : Executor {
     private val sync = Any()
     private var thread: Thread? = null

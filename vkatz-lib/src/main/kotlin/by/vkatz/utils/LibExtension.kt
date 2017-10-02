@@ -2,6 +2,7 @@ package by.vkatz.utils
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
+import android.os.Build
 import android.view.View
 import android.widget.TextView
 
@@ -31,7 +32,18 @@ object LibExtension {
         else if (layer1 != null)
             bg = layer1
         else if (layer2 != null) bg = layer2
-        if (bg != null) view.background = bg
+        if (bg != null) {
+            if (Build.VERSION.SDK_INT <= 21) {
+                //android 4.* has bug, on setBg it reset padding's, here is fix
+                val pl = view.paddingLeft
+                val pt = view.paddingTop
+                val pr = view.paddingRight
+                val pb = view.paddingBottom
+                view.background = bg
+                view.setPadding(pl, pt, pr, pb)
+            } else view.background = bg
+        }
+        view.postInvalidate()
     }
 
     interface TextInterface {

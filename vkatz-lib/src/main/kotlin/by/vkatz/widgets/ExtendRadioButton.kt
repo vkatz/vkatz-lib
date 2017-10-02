@@ -23,7 +23,7 @@ open class ExtendRadioButton : RadioButton, LibExtension.TextInterface, LibExten
 
     private fun init(context: Context, attrs: AttributeSet, defStyle: Int) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ExtendRadioButton, defStyle, 0)
-        setFont(a.getString(R.styleable.ExtendRadioButton_font))
+        setFont(a.getString(R.styleable.ExtendRadioButton_extendFont))
         setCompoundDrawableSize(
                 a.getDimensionPixelSize(R.styleable.ExtendRadioButton_compoundDrawableWidth, 0),
                 a.getDimensionPixelSize(R.styleable.ExtendRadioButton_compoundDrawableHeight, 0))

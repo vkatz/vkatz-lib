@@ -23,7 +23,7 @@ open class ExtendTextView : TextView, LibExtension.TextInterface, LibExtension.I
 
     private fun init(context: Context, attrs: AttributeSet, defStyle: Int) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ExtendTextView, defStyle, 0)
-        setFont(a.getString(R.styleable.ExtendTextView_font))
+        setFont(a.getString(R.styleable.ExtendTextView_extendFont))
         setCompoundDrawableSize(
                 a.getDimensionPixelSize(R.styleable.ExtendTextView_compoundDrawableWidth, 0),
                 a.getDimensionPixelSize(R.styleable.ExtendTextView_compoundDrawableHeight, 0))

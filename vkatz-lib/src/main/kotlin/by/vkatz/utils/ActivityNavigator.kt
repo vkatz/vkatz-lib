@@ -7,10 +7,6 @@ import android.os.Parcelable
 
 import java.io.Serializable
 
-/**
- * Created by Katz on 17.06.2016.
- */
-
 @Suppress("MemberVisibilityCanPrivate")
 class ActivityNavigator private constructor(private val activity: Activity) {
     companion object {

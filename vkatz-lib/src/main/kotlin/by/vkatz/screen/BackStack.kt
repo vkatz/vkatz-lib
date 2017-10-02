@@ -8,6 +8,11 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
     var current: ScreenType? = null
         private set
 
+    private fun ScreenType.release() {
+        onRelease()
+        parent = null
+    }
+
     protected abstract fun openScreen(screen: ScreenType, navigation: Screen.Navigation)
 
     protected abstract fun closeScreen(screen: ScreenType, navigation: Screen.Navigation)
@@ -15,23 +20,19 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
     val lastScreen: ScreenType?
         get() = if (canBack()) backStack[backStack.size - 1] else null
 
-    fun getLastScreen(name: String): ScreenType? = backStack.firstOrNull { strEquals(name, it.name) }
+    fun getLastScreen(name: String): ScreenType? = backStack.firstOrNull { name == it.name }
 
     fun canBack(): Boolean = backStack.size > 0
 
     fun canBackTo(name: String): Boolean = getLastScreen(name) != null
 
-    fun go(screen: ScreenType) {
+    open fun go(screen: ScreenType) {
         if (current != null) {
             if (!current!!.onLeave(screen)) return
             current!!.onClose(Screen.Navigation.forward)
             closeScreen(current!!, Screen.Navigation.forward)
-            if (current!!.storeInBackStack)
-                backStack.add(current!!)
-            else {
-                current!!.onRelease()
-                current!!.parent = null
-            }
+            if (current!!.storeInBackStack) backStack.add(current!!)
+            else current!!.release()
         }
         current = screen
         current!!.parent = this
@@ -44,8 +45,7 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
         if (current != null) {
             current!!.onClose(Screen.Navigation.backward)
             closeScreen(current!!, Screen.Navigation.backward)
-            current!!.onRelease()
-            current!!.parent = null
+            current!!.release()
         }
         current = lastScreen
         current!!.parent = this
@@ -60,41 +60,34 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
         if (current != null) {
             current!!.onClose(Screen.Navigation.backward)
             closeScreen(current!!, Screen.Navigation.backward)
-            current!!.onRelease()
-            current!!.parent = null
+            current!!.release()
         }
         while (backStack.size > 0) {
             current = lastScreen
             backStack.remove(current)
-            if (strEquals(name, current!!.name)) {
+            if (name == current!!.name) {
                 current!!.parent = this
                 openScreen(current!!, Screen.Navigation.backward)
                 current!!.onOpen(Screen.Navigation.backward)
                 return true
-            } else {
-                current!!.onRelease()
-                current!!.parent = null
-            }
+            } else current!!.release()
         }
         return false
     }
 
     fun clearBackStack() {
-        for (screen in backStack) {
-            screen.onRelease()
-            screen.parent = null
-        }
+        for (screen in backStack) screen.release()
         backStack.clear()
     }
 
     fun clearBackStackUntil(name: String) {
-        var index = 0
-        for (i in backStack.indices.reversed()) {
-            if (strEquals(name, backStack[i].name)) return
-            index = i
-        }
-        while (backStack.size > index) backStack.removeAt(index)
+        backStack.takeLastWhile { it.name != name }.forEach { remove(it) }
     }
 
-    private fun strEquals(a: String?, b: String?): Boolean = (a == null && b == null) || (a != null && b != null && a == b)
+    fun remove(screen: ScreenType) {
+        if (backStack.contains(screen)) {
+            screen.release()
+            backStack.remove(screen)
+        }
+    }
 }

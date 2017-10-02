@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="font" format="string|reference"/>
+    <attr name="extendFont" format="string|reference"/>
     <attr name="compoundDrawableWidth" format="dimension|reference"/>
     <attr name="compoundDrawableHeight" format="dimension|reference"/>
     <attr name="extendBackground1" format="reference|color"/>
@@ -9,7 +9,7 @@
     <attr name="extendActivated" format="boolean"/>
 
     <declare-styleable name="ExtendCheckBox">
-        <attr name="font"/>
+        <attr name="extendFont"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
         <attr name="extendBackground1"/>
@@ -18,7 +18,7 @@
         <attr name="extendActivated"/>
     </declare-styleable>
     <declare-styleable name="ExtendEditText">
-        <attr name="font"/>
+        <attr name="extendFont"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
         <attr name="extendBackground1"/>
@@ -27,7 +27,7 @@
         <attr name="extendActivated"/>
     </declare-styleable>
     <declare-styleable name="ExtendRadioButton">
-        <attr name="font"/>
+        <attr name="extendFont"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
         <attr name="extendBackground1"/>
@@ -36,7 +36,7 @@
         <attr name="extendActivated"/>
     </declare-styleable>
     <declare-styleable name="ExtendTextView">
-        <attr name="font"/>
+        <attr name="extendFont"/>
         <attr name="compoundDrawableWidth"/>
         <attr name="compoundDrawableHeight"/>
         <attr name="extendBackground1"/>

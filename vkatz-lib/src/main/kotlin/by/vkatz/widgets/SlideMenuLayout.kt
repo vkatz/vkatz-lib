@@ -1,10 +1,9 @@
 package by.vkatz.widgets
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Scroller
@@ -46,7 +45,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         isMenuEnabled = a.getBoolean(R.styleable.SlideMenuLayout_menuEnabled, true)
         slideHidingSize = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_menuHidingSize, 0)
         slideVisibleSize = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_menuVisibleSize, 0)
-        startScrollDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_startScrollDistance, 25).toFloat()
+        startScrollDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_startScrollDistance, ViewConfiguration.get(context).scaledTouchSlop).toFloat()
         scrollerDuration = a.getInt(R.styleable.SlideMenuLayout_scrollerDuration, 250)
         flags = a.getInt(R.styleable.SlideMenuLayout_scrollBehavior, FLAG_ALWAYS_FINISH)
         a.recycle()
@@ -119,6 +118,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
     }
 
     private fun dispatchTouch(ev: MotionEvent, isIntercept: Boolean): Boolean {
+        invalidate()
         if (autoScroll) return false
         val curPos = if (isHorizontal()) ev.x else ev.y
         if (!scroll && !isEventInsideChild(ev.x, ev.y)) return false
@@ -134,6 +134,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
                 true
             } else {
                 if (Math.abs(pos - curPos) > startScrollDistance) {
+                    parent?.requestDisallowInterceptTouchEvent(true)
                     pos = curPos
                     scroll = true
                     true
@@ -249,6 +250,13 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         requestLayout()
     }
 
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (i in 0 until childCount) getChildAt(i).dispatchApplyWindowInsets(WindowInsets(insets))
+            insets
+        } else super.onApplyWindowInsets(insets)
+    }
+
     private fun clamp(value: Float, a: Float, b: Float): Float {
         val max = Math.max(a, b)
         val min = Math.min(a, b)
@@ -263,15 +271,15 @@ open class SlideMenuLayout : ExtendRelativeLayout {
 
     override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 
-    fun setOnExpandStateChangeListener(onExpandStateChangeListener: OnExpandStateChangeListener) {
+    fun setOnExpandStateChangeListener(onExpandStateChangeListener: OnExpandStateChangeListener?) {
         this.onExpandStateChangeListener = onExpandStateChangeListener
     }
 
-    fun setOnSlideChangeListener(onSlideChangeListener: OnSlideChangeListener) {
+    fun setOnSlideChangeListener(onSlideChangeListener: OnSlideChangeListener?) {
         this.onSlideChangeListener = onSlideChangeListener
     }
 
-    fun setScrollBehavior(scrollBehavior: ScrollBehavior) {
+    fun setScrollBehavior(scrollBehavior: ScrollBehavior?) {
         this.customScrollBehavior = scrollBehavior
     }
 

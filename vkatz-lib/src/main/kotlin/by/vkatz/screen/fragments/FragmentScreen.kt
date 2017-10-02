@@ -1,7 +1,6 @@
 package by.vkatz.screen.fragments
 
 import android.animation.Animator
-import android.animation.AnimatorInflater
 import android.app.Fragment
 import android.app.FragmentTransaction
 import android.os.Bundle
@@ -14,30 +13,37 @@ import by.vkatz.screen.Screen
 abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
     private var forward = true
     private var animators: List<Int>? = null
+    private var active = false
 
     override var parent: BackStack<FragmentScreen>? = null
     override var name: String? = null
     override var storeInBackStack = true
-    override var active = false
 
-    var holdView = true
+    open var holdView = true
 
     private var root: View? = null
-    var transactionConfig: ((FragmentTransaction) -> Unit)? = null
 
     override fun onOpen(navigation: Screen.Navigation) {
         forward = navigation == Screen.Navigation.forward
         active = true
+        onOpen(navigation, root)
     }
 
     override fun onClose(navigation: Screen.Navigation) {
         forward = navigation == Screen.Navigation.forward
         active = false
+        onClose(navigation, root)
     }
 
     override fun onRelease() {
         active = false
     }
+
+    open fun onOpen(navigation: Screen.Navigation, view: View?) {}
+
+    open fun onClose(navigation: Screen.Navigation, view: View?) {}
+
+    fun isScreenVisible() = active
 
     fun inflate(resId: Int): View = LayoutInflater.from(activity).inflate(resId, null, false)
 
@@ -57,10 +63,11 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
 
     open fun onBackPressed(): Boolean = false
 
-    open fun getTransactionAnimator(isForward: Boolean, isEntering: Boolean): Int? = null
-
-    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
-        val animator = getTransactionAnimator(forward, enter)
-        return if (animator != null) AnimatorInflater.loadAnimator(activity, animator) else super.onCreateAnimator(transit, enter, nextAnim)
+    open fun onTransaction(transaction: FragmentTransaction, navigation: Screen.Navigation) {
     }
+
+    open fun getTransactionAnimator(isForward: Boolean, isEntering: Boolean): Animator? = null
+
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? =
+            getTransactionAnimator(forward, enter) ?: super.onCreateAnimator(transit, enter, nextAnim)
 }

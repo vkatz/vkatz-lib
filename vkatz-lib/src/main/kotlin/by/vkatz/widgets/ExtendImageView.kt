@@ -120,11 +120,11 @@ open class ExtendImageView : ImageView, LibExtension.ImageInterface {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (touchZoom) {
+        return if (touchZoom) {
             scrollDetector.onTouchEvent(event)
             scaleDetector.onTouchEvent(event)
-        }
-        return true
+            true
+        } else super.onTouchEvent(event)
     }
 
     private fun update() {
