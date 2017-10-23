@@ -42,6 +42,7 @@ class MainScreen : AppScreen() {
 
         setupButton(R.id.asset_font, R.layout.screen_font)
         setupButton(R.id.compound_images, R.layout.screen_compound_images)
+        setupButton(R.id.flow_layout, R.layout.flow_layout)
         setupButton(R.id.slide_menu_1, R.layout.slide_menu_1)
         setupButton(R.id.slide_menu_2, R.layout.slide_menu_2)
         setupButton(R.id.slide_menu_3, R.layout.slide_menu_3)

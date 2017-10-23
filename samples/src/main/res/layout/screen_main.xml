@@ -33,6 +33,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Slide Menu 4"/>
+        <Button android:id="@+id/flow_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Flow layout"/>
         <Button android:id="@+id/nested_slide_menu_1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
