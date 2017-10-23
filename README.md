@@ -38,7 +38,7 @@ I am use this method by many diffrent reasons, main is - backstack and navigatio
 
 ---
 
-##Widgets
+## Widgets
 
 **Extend** elements have a bunch of buffs
 
@@ -82,7 +82,7 @@ New widgets:
    
 ---
    
-#New widgets
+# New widgets
 #### FlowLayout
 
 Allow to place items one by one, in case there is no space in line - item placed at next line. Allow to set horizontal gaps and vertical per line align
