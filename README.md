@@ -34,9 +34,8 @@ I am use this method by many diffrent reasons, main is - backstack and navigatio
     }
  
 `Delegates` - `SharedPreferences` and `Bundle` delegates
-`ExtUtils` - various useful functions
 
----
+`ExtUtils` - various useful functions
 
 ## Widgets
 
@@ -56,19 +55,17 @@ New widgets:
 * FlowLayout
 * SlideMenuLayout
 
----
-
 # Core buffs:
 1. `app:compoundDrawableWidth` and `app:compoundDrawableHeight` -> specify compound drawable size(one or both)
 
 ![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/compound_drawable.png)
+
 2. `app:extendBackground1` and `app:extendBackground2` -> combine 2 bg into one as layers (useful when u have color + selector)     
 3. `app:extendEnabled` and `app:extendActivated` -> set relative view state from xml
 4. "text" widgets get `app:extendFont` param to support ttf fonts from asset
 
 ![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/asset_font.png)
 
----
 # Special buffs
 #### ExtendEditText
 
@@ -79,9 +76,7 @@ New widgets:
 #### ExtendImageView
 
 `app:touchZoom` allow to enable pinchZoom(default false), `app:maxZoom` and `app:minZoom` to config it
-   
----
-   
+      
 # New widgets
 #### FlowLayout
 
