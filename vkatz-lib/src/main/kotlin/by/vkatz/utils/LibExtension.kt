@@ -22,7 +22,7 @@ object LibExtension {
     }
 
     fun setFont(textView: TextView, assetFontFile: String?) {
-        textView.typeface = FontsManager.instance.getFont(textView.context, assetFontFile)
+        textView.typeface = FontsManager.instance.getFont(textView.context, assetFontFile) ?: textView.typeface
     }
 
     fun setComplexBackground(view: View, layer1: Drawable?, layer2: Drawable?) {

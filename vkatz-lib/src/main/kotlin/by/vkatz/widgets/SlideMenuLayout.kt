@@ -11,6 +11,17 @@ import by.vkatz.R
 
 @Suppress("MemberVisibilityCanPrivate")
 open class SlideMenuLayout : ExtendRelativeLayout {
+    companion object {
+        val LEFT = 1
+        val RIGHT = 2
+        val TOP = 3
+        val BOTTOM = 4
+
+        val FLAG_NEVER_FINISH = 0
+        val FLAG_ALWAYS_FINISH = 1
+        val FLAG_CUSTOM = 2
+    }
+
     val slideFrom: Int
     var isExpanded: Boolean = false
         private set
@@ -40,7 +51,7 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         autoScroll = false
         //init params
         val a = context.obtainStyledAttributes(attrs, R.styleable.SlideMenuLayout, 0, 0)
-        slideFrom = a.getInt(R.styleable.SlideMenuLayout_slideFrom, 2)
+        slideFrom = a.getInt(R.styleable.SlideMenuLayout_slideFrom, LEFT)
         isExpanded = a.getBoolean(R.styleable.SlideMenuLayout_menuExpanded, false)
         isMenuEnabled = a.getBoolean(R.styleable.SlideMenuLayout_menuEnabled, true)
         slideHidingSize = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_menuHidingSize, 0)
@@ -310,16 +321,5 @@ open class SlideMenuLayout : ExtendRelativeLayout {
             this.isMovable = isMovable
             this.isTouchable = isTouchable
         }
-    }
-
-    companion object {
-        val LEFT = 1
-        val RIGHT = 2
-        val TOP = 3
-        val BOTTOM = 4
-
-        val FLAG_NEVER_FINISH = 0
-        val FLAG_ALWAYS_FINISH = 1
-        val FLAG_CUSTOM = 2
     }
 }

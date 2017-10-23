@@ -44,6 +44,7 @@ fun Activity.showKeyboard(focus: View) {
 }
 
 operator fun View.get(id: Int): View = findViewById<View>(id)
+fun View.postRequestLayout() = post { requestLayout() }
 
 fun View.asViewGroup() = this as ViewGroup
 fun View.asLinearLayout() = this as LinearLayout

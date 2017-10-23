@@ -25,6 +25,7 @@
         <attr name="extendBackground2"/>
         <attr name="extendEnabled"/>
         <attr name="extendActivated"/>
+        <attr name="extendInputMask" format="string|reference"/>
     </declare-styleable>
     <declare-styleable name="ExtendRadioButton">
         <attr name="extendFont"/>
