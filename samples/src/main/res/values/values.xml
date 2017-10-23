@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="font">Roboto-Bold.ttf</string>
+    <string name="font">FiraCode-Medium.ttf</string>
     <dimen name="screen_animation_dx_r">200px</dimen>
     <dimen name="screen_animation_dx_l">-200px</dimen>
 </resources>

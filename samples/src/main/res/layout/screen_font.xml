@@ -8,7 +8,7 @@
               android:layout_height="wrap_content"
               android:textColor="#000"
               android:textSize="30dp"
-              android:text="this is some text with default font"/>
+              android:text="this is some text with default font =>"/>
     <by.vkatz.widgets.ExtendEditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
             android:textSize="30dp"
             android:layout_marginTop="30dp"
             app:extendFont="@string/font"
-            android:text="this is edit text with custom font from xml"/>
+            android:text="this is edit text with custom font from xml =>"/>
     <by.vkatz.widgets.ExtendTextView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -26,5 +26,5 @@
             app:extendFont="@string/font"
             android:background="@drawable/some_bg"
             android:clickable="true"
-            android:text="this is some text with custom font from xml with background"/>
+            android:text="this is some text with custom font from xml with background =>"/>
 </LinearLayout>

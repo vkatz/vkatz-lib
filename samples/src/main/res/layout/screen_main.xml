@@ -36,15 +36,15 @@
         <Button android:id="@+id/nested_slide_menu_1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Nested Slide Menu 1"/>
+                android:text="Nested Slide Menu 1 (experemental)"/>
         <Button android:id="@+id/nested_slide_menu_2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Nested Slide Menu 2"/>
+                android:text="Nested Slide Menu 2 (experemental)"/>
         <Button android:id="@+id/nested_slide_menu_3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Nested Slide Menu 3"/>
+                android:text="Nested Slide Menu 3 (experemental)"/>
 
     </LinearLayout>
 </ScrollView>
