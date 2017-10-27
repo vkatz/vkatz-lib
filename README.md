@@ -76,7 +76,14 @@ New widgets:
 #### ExtendImageView
 
 `app:touchZoom` allow to enable pinchZoom(default false), `app:maxZoom` and `app:minZoom` to config it
-      
+
+#### ExtendSpinner
+
+Completely new spinner that allow to handle - "no selection" and "custom selected" items
+ps: in case u are using TextView+[height=wrap-content] as list istem - add also line count !! (otherwise u will face ListView measure bug, someday i will fix it)
+
+![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/ext_spinner.png)
+
 # New widgets
 #### FlowLayout
 

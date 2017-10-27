@@ -97,7 +97,6 @@ open class ExtendSpinner : ExtendRelativeLayout {
             window.elevation = popupElevation.toFloat()
         popupShownListener?.invoke(window)
         window.showAsDropDown(this, popupHorizontalOffset, popupVerticalOffset)
-
     }
 
     fun setOnSelectionChangedListener(listener: OnItemSelectedListener?) {
@@ -111,14 +110,12 @@ open class ExtendSpinner : ExtendRelativeLayout {
     abstract class ExtendSpinnerAdapter<T>(var data: List<T>, private val idProvider: (T.() -> Long)?) : BaseAdapter() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: getDropDownView(parent)
-            view.layoutParams = AbsListView.LayoutParams(parent.width, -2)
+            view.layoutParams = AbsListView.LayoutParams(parent.width, view.layoutParams?.height ?: -2)
             bindDropDownView(position, getItem(position), view)
             return view
         }
 
-        override fun hasStableIds(): Boolean {
-            return idProvider != null
-        }
+        override fun hasStableIds(): Boolean = idProvider != null
 
         override fun getItem(position: Int) = data[position]
 

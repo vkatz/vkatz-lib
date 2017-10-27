@@ -13,10 +13,7 @@ import by.vkatz.samples.activity.ActivityA
 import by.vkatz.samples.activity.AppScreen
 import by.vkatz.samples.activity.AppViewScreen
 import by.vkatz.screen.fragments.FragmentScreen
-import by.vkatz.utils.ActivityNavigator
-import by.vkatz.utils.asSlideMenu
-import by.vkatz.utils.asTextView
-import by.vkatz.utils.get
+import by.vkatz.utils.*
 import by.vkatz.widgets.SlideMenuLayout
 
 /**
@@ -29,7 +26,7 @@ class MainScreen : AppScreen() {
     }
 
     override fun createView(): View {
-        val view = inflate(R.layout.screen_main)
+        val view = activity.inflate(R.layout.screen_main)
 
         view[R.id.activities].setOnClickListener {
             val bundle = ActivityOptions.makeCustomAnimation(activity, R.anim.idle, R.anim.idle).toBundle()
@@ -43,6 +40,7 @@ class MainScreen : AppScreen() {
         setupButton(R.id.asset_font, R.layout.screen_font)
         setupButton(R.id.compound_images, R.layout.screen_compound_images)
         setupButton(R.id.flow_layout, R.layout.flow_layout)
+        view[R.id.ext_spinner].setOnClickListener { parent?.go(ExtSpinnerScreen()) }
         setupButton(R.id.slide_menu_1, R.layout.slide_menu_1)
         setupButton(R.id.slide_menu_2, R.layout.slide_menu_2)
         setupButton(R.id.slide_menu_3, R.layout.slide_menu_3)

@@ -37,6 +37,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Flow layout"/>
+        <Button android:id="@+id/ext_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Extend Spinner"/>
         <Button android:id="@+id/nested_slide_menu_1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
