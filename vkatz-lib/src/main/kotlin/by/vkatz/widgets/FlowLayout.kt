@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import by.vkatz.R
 import java.util.*
 
-class FlowLayout : ExtendRelativeLayout {
+open class FlowLayout : ExtendRelativeLayout {
 
     private var offsetVertical: Int = 0
     private var offsetHorizontal: Int = 0

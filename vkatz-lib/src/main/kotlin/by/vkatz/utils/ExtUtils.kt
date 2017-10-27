@@ -3,6 +3,7 @@ package by.vkatz.utils
 import android.app.Activity
 import android.content.Context
 import android.os.Handler
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -29,6 +30,10 @@ fun Context?.toast(text: String, duration: Int = Toast.LENGTH_SHORT) {
 }
 
 fun Context.dp(amount: Float) = amount * resources.displayMetrics.density
+
+fun Context.inflate(rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false): View = LayoutInflater.from(this).inflate(rId, parent, attachToParent)
+
+fun View.inflate(rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = context.inflate(rId, parent, attachToParent)
 
 fun Activity.hideKeyboard(focus: View? = null) {
     val view = focus ?: this.currentFocus

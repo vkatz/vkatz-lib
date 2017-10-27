@@ -6,12 +6,12 @@ repositories {
     jcenter()
 }
 
-def libVersion = 4;
-def libVersionName = "4.4"
+def libVersion = 4
+def libVersionName = "4.5"
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.0'
 
     defaultConfig {
         minSdkVersion 18

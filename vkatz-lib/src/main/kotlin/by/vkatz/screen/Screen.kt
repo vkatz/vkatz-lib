@@ -13,5 +13,5 @@ interface Screen<SELF : Screen<SELF>> {
 
     fun onLeave(screen: SELF): Boolean = true
 
-    enum class Navigation {forward, backward }
+    enum class Navigation { forward, backward }
 }

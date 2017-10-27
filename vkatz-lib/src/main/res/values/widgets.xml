@@ -70,6 +70,16 @@
         <attr name="minZoom" format="float"/>
     </declare-styleable>
 
+    <declare-styleable name="ExtendSpinner">
+        <attr name="extendPopupBackground" format="reference|color"/>
+        <attr name="extendPopupElevation" format="reference|dimension"/>
+        <attr name="extendPopupMinHeight" format="reference|dimension"/>
+        <attr name="extendPopupAdditionWidth" format="reference|dimension"/>
+        <attr name="extendPopupVerticalOffset" format="reference|dimension"/>
+        <attr name="extendPopupHorizontalOffset" format="reference|dimension"/>
+        <attr name="toolsItem" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="FlowLayout">
         <attr name="offsetHorizontal" format="dimension|reference"/>
         <attr name="offsetVertical" format="dimension|reference"/>

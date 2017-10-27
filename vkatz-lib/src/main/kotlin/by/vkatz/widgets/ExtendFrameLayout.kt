@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import by.vkatz.R
 import by.vkatz.utils.LibExtension
 
-class ExtendFrameLayout : FrameLayout, LibExtension.ImageInterface {
+open class ExtendFrameLayout : FrameLayout, LibExtension.ImageInterface {
 
     constructor(context: Context) : this(context, null)
 

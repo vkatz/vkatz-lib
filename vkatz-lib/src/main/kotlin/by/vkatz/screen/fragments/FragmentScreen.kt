@@ -45,8 +45,6 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
 
     fun isScreenVisible() = active
 
-    fun inflate(resId: Int): View = LayoutInflater.from(activity).inflate(resId, null, false)
-
     abstract fun createView(): View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
