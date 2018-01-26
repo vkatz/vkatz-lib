@@ -14,7 +14,6 @@ import by.vkatz.samples.activity.AppScreen
 import by.vkatz.samples.activity.AppViewScreen
 import by.vkatz.screen.fragments.FragmentScreen
 import by.vkatz.utils.*
-import by.vkatz.widgets.SlideMenuLayout
 
 /**
  * Created by vKatz on 08.03.2015.
@@ -48,7 +47,7 @@ class MainScreen : AppScreen() {
         view[R.id.nested_slide_menu_1].setOnClickListener {
             parent?.go(
                     @SuppressLint("ValidFragment")
-                    object : FragmentScreen() {
+                    object : AppScreen() {
                         override fun createView(): View {
                             val innerView = View.inflate(activity, R.layout.nested_slide_menu_1, null)
                             val btn = innerView[R.id.btn]
@@ -73,15 +72,11 @@ class MainScreen : AppScreen() {
                                 override fun getItemCount(): Int = 100
                             }
 
-                            menu.setOnSlideChangeListener(
-                                    object : SlideMenuLayout.OnSlideChangeListener {
-                                        override fun onScrollSizeChangeListener(view: SlideMenuLayout, value: Float) {
-                                            btn.alpha = 1 - value
-                                            header.setTextSize(TypedValue.COMPLEX_UNIT_PX, headerTextSize * Math.max(1 - value, 0.3f))
-                                            header.translationX = -100 * value
-                                        }
-                                    })
-
+                            menu.setOnSlideChangeListener { _, value ->
+                                btn.alpha = 1 - value
+                                header.setTextSize(TypedValue.COMPLEX_UNIT_PX, headerTextSize * Math.max(1 - value, 0.3f))
+                                header.translationX = -100 * value
+                            }
                             return innerView
                         }
                     })

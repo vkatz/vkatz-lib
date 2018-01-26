@@ -26,6 +26,7 @@
         <attr name="extendEnabled"/>
         <attr name="extendActivated"/>
         <attr name="extendInputMask" format="string|reference"/>
+        <attr name="extendMaskChar" format="string|reference"/>
     </declare-styleable>
     <declare-styleable name="ExtendRadioButton">
         <attr name="extendFont"/>
@@ -120,5 +121,14 @@
     <declare-styleable name="SlideMenuLayout_Layout">
         <attr name="applyScroll" format="boolean|reference"/>
         <attr name="interceptTouches" format="boolean|reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="NestedSlideMenuLayout">
+        <attr name="nestedScrollBehavior">
+            <flag name="expandFirst" value="1"/>
+            <flag name="expandLast" value="2"/>
+            <flag name="collapseFirst" value="4"/>
+            <flag name="collapseLast" value="8"/>
+        </attr>
     </declare-styleable>
 </resources>

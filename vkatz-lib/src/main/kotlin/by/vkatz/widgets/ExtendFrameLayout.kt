@@ -21,7 +21,7 @@ open class ExtendFrameLayout : FrameLayout, LibExtension.ImageInterface {
         a.recycle()
     }
 
-    override fun setComplexBackground(layer1: Drawable?, layer2: Drawable?) {
+    override final fun setComplexBackground(layer1: Drawable?, layer2: Drawable?) {
         LibExtension.setComplexBackground(this, layer1, layer2)
     }
 }

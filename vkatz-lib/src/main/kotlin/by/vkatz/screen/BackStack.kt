@@ -29,37 +29,37 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
     open fun go(screen: ScreenType) {
         if (current != null) {
             if (!current!!.onLeave(screen)) return
-            current!!.onClose(Screen.Navigation.forward)
-            closeScreen(current!!, Screen.Navigation.forward)
+            current!!.onClose(Screen.Navigation.FORWARD)
+            closeScreen(current!!, Screen.Navigation.FORWARD)
             if (current!!.storeInBackStack) backStack.add(current!!)
             else current!!.release()
         }
         current = screen
         current!!.parent = this
-        openScreen(current!!, Screen.Navigation.forward)
-        screen.onOpen(Screen.Navigation.forward)
+        openScreen(current!!, Screen.Navigation.FORWARD)
+        screen.onOpen(Screen.Navigation.FORWARD)
     }
 
     open fun back(): Boolean {
         if (!canBack()) return false
         if (current != null) {
-            current!!.onClose(Screen.Navigation.backward)
-            closeScreen(current!!, Screen.Navigation.backward)
+            current!!.onClose(Screen.Navigation.BACKWARD)
+            closeScreen(current!!, Screen.Navigation.BACKWARD)
             current!!.release()
         }
         current = lastScreen
         current!!.parent = this
         backStack.remove(current!!)
-        openScreen(current!!, Screen.Navigation.backward)
-        current!!.onOpen(Screen.Navigation.backward)
+        openScreen(current!!, Screen.Navigation.BACKWARD)
+        current!!.onOpen(Screen.Navigation.BACKWARD)
         return true
     }
 
     fun backTo(name: String): Boolean {
         if (!canBackTo(name)) return false
         if (current != null) {
-            current!!.onClose(Screen.Navigation.backward)
-            closeScreen(current!!, Screen.Navigation.backward)
+            current!!.onClose(Screen.Navigation.BACKWARD)
+            closeScreen(current!!, Screen.Navigation.BACKWARD)
             current!!.release()
         }
         while (backStack.size > 0) {
@@ -67,8 +67,8 @@ abstract class BackStack<ScreenType : Screen<ScreenType>> {
             backStack.remove(current)
             if (name == current!!.name) {
                 current!!.parent = this
-                openScreen(current!!, Screen.Navigation.backward)
-                current!!.onOpen(Screen.Navigation.backward)
+                openScreen(current!!, Screen.Navigation.BACKWARD)
+                current!!.onOpen(Screen.Navigation.BACKWARD)
                 return true
             } else current!!.release()
         }

@@ -2,10 +2,10 @@ package by.vkatz.widgets
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.support.v7.widget.AppCompatEditText
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.widget.EditText
 import by.vkatz.R
 import by.vkatz.utils.LibExtension
 
@@ -15,7 +15,7 @@ typealias AfterTextChangedListener = (sender: ExtendEditText, text: Editable) ->
 /**
  * Mask format - "000 000-0000" - 0 will be replaced to input char, other chars will appear automatically
  */
-open class ExtendEditText : EditText, LibExtension.TextInterface, LibExtension.ImageInterface {
+open class ExtendEditText : AppCompatEditText, LibExtension.TextInterface, LibExtension.ImageInterface {
     private var cpdw: Int = 0
     private var cpdh: Int = 0
 
@@ -40,36 +40,46 @@ open class ExtendEditText : EditText, LibExtension.TextInterface, LibExtension.I
                 a.getDimensionPixelSize(R.styleable.ExtendEditText_compoundDrawableWidth, 0),
                 a.getDimensionPixelSize(R.styleable.ExtendEditText_compoundDrawableHeight, 0))
         setComplexBackground(a.getDrawable(R.styleable.ExtendEditText_extendBackground1), a.getDrawable(R.styleable.ExtendEditText_extendBackground2))
-        setMask(a.getString(R.styleable.ExtendEditText_extendInputMask))
+        setMask(a.getString(R.styleable.ExtendEditText_extendInputMask), a.getString(R.styleable.ExtendEditText_extendMaskChar))
         isEnabled = a.getBoolean(R.styleable.ExtendEditText_extendEnabled, isEnabled)
         isActivated = a.getBoolean(R.styleable.ExtendEditText_extendActivated, isActivated)
         a.recycle()
     }
 
-    fun setMask(mask: String?) {
+    fun setMask(mask: String?, maskChar: String?) {
         if (maskTextWatcher != null) {
             removeTextChangedListener(maskTextWatcher)
             maskTextWatcher = null
         }
-        if (mask == null) return
-        val maskDigitsSize = mask.count { it == '0' }
+        if (mask == null || mask.isNullOrEmpty()) return
+        val mc = maskChar!![0]
+        val pureMask = mask.replace(Regex("[^$mc|\\d]"), "")
         var inEdit = false
+
         maskTextWatcher = addAfterTextChangedListener { _, text ->
             if (!inEdit) {
                 inEdit = true
-                val cutEnd = text.length - mask.length > 1
+                //clear text
+                var tPos = 0
+                var mPos = 0
+                while (tPos != text.length) {
+                    if (mPos < pureMask.length) {
+                        if (!text[tPos].isDigit()) text.delete(tPos, tPos + 1)
+                        else if (text[tPos] == pureMask[mPos]) {
+                            text.delete(tPos, tPos + 1)
+                            mPos++
+                        } else if (pureMask[mPos].isDigit()) {
+                            mPos++
+                        } else {
+                            tPos++
+                            mPos++
+                        }
+                    } else text.delete(tPos, tPos + 1)
+                }
+                //fill mask
                 var pos = 0
-                while (pos != text.length) {
-                    if (!text[pos].isDigit()) text.delete(pos, pos + 1)
-                    else pos++
-                }
-                if (text.length > maskDigitsSize) {
-                    if (cutEnd) text.delete(0, text.length - maskDigitsSize)
-                    else text.delete(maskDigitsSize, text.length)
-                }
-                pos = 0
                 while (pos < mask.length && pos < text.length)
-                    if (mask[pos] != '0') text.insert(pos, "${mask[pos++]}") else pos++
+                    if (mask[pos] != mc) text.insert(pos, "${mask[pos++]}") else pos++
                 inEdit = false
             }
         }

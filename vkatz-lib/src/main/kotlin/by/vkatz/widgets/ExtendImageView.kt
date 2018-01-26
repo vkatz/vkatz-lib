@@ -3,6 +3,7 @@ package by.vkatz.widgets
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -13,7 +14,7 @@ import by.vkatz.R
 import by.vkatz.utils.LibExtension
 
 @Suppress("MemberVisibilityCanPrivate")
-open class ExtendImageView : ImageView, LibExtension.ImageInterface {
+open class ExtendImageView : AppCompatImageView, LibExtension.ImageInterface {
     private var touchZoom = false
     private var minZoom = 1f
     private var maxZoom = 1f

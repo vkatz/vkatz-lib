@@ -9,7 +9,7 @@ open class SimpleExtendSpinnerAdapter<T>(data: List<T>,
                                          idProvider: (T.() -> Long)?,
                                          private val viewCreator: (parent: ViewGroup) -> View,
                                          private val viewBinder: (view: View, item: T) -> Unit
-) : ExtendSpinner.ExtendSpinnerAdapter<T>(data, idProvider) {
+                                        ) : ExtendSpinner.ExtendSpinnerAdapter<T>(data, idProvider) {
 
     override fun getSpinnerNoSelectionView(parent: ViewGroup): View? {
         val view = viewCreator(parent)

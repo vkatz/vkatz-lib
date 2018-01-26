@@ -49,7 +49,28 @@ fun Activity.showKeyboard(focus: View) {
 }
 
 operator fun View.get(id: Int): View = findViewById<View>(id)
+fun View.setAsyncOnClickListener(listener: suspend (view: View) -> Unit) = setOnClickListener { view -> asyncUI { listener(view) } }
 fun View.postRequestLayout() = post { requestLayout() }
+
+fun View.makeVisible() {
+    visibility = View.VISIBLE
+}
+
+fun View.makeInvisible() {
+    visibility = View.INVISIBLE
+}
+
+fun View.makeGone() {
+    visibility = View.GONE
+}
+
+fun ViewGroup.forEachChildren(action: (view: View) -> Unit) {
+    for (i in 0 until childCount) action(getChildAt(i))
+}
+
+fun ViewGroup.forEachChildrenIndexed(action: (view: View, pos: Int) -> Unit) {
+    for (i in 0 until childCount) action(getChildAt(i), i)
+}
 
 fun View.asViewGroup() = this as ViewGroup
 fun View.asLinearLayout() = this as LinearLayout

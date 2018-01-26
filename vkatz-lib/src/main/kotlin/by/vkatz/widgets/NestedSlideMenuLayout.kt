@@ -5,7 +5,7 @@ import android.support.v4.view.NestedScrollingParent
 import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.view.View
-import by.vkatz.support.R
+import by.vkatz.R
 import by.vkatz.widgets.SlideMenuLayout
 
 /**
@@ -63,22 +63,17 @@ class NestedSlideMenuLayout : SlideMenuLayout, NestedScrollingParent {
         //todo horizontal
     }
 
-    override fun onNestedFling(target: View, velocityX: Float, velocityY: Float, consumed: Boolean): Boolean {
-        return false
-    }
+    override fun onNestedFling(target: View, velocityX: Float, velocityY: Float, consumed: Boolean): Boolean =
+            false
 
-    override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
-        return false
-    }
+    override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean = false
 
-    override fun getNestedScrollAxes(): Int {
-        return nestedScrollAxes
-    }
+    override fun getNestedScrollAxes(): Int = nestedScrollAxes
 
     companion object {
-        val FLAG_EXPAND_FIRST = 1
-        val FLAG_EXPAND_LAST = 2
-        val FLAG_COLLAPSE_FIRST = 4
-        val FLAG_COLLAPSE_LAST = 8
+        const val FLAG_EXPAND_FIRST = 1
+        const val FLAG_EXPAND_LAST = 2
+        const val FLAG_COLLAPSE_FIRST = 4
+        const val FLAG_COLLAPSE_LAST = 8
     }
 }

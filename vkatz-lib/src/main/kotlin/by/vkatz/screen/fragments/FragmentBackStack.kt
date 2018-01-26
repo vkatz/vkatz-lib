@@ -6,8 +6,10 @@ import by.vkatz.screen.Screen
 
 /**
  * In case u want to avoid transactions error (due to activity stopped) - please attach instance of this class to lifecycle (onPause and onResume functions)
+ *
+ * Handle permissions - add onRequestPermissionsResult call to appropriate activity method
  */
-class FragmentBackStack(private val activity: Activity, private val containerId: Int) : BackStack<FragmentScreen>() {
+open class FragmentBackStack(private val activity: Activity, private val containerId: Int) : BackStack<FragmentScreen>() {
 
     private var transactionAllowed = true
     private var pendingTransaction = ArrayList<FragmentScreen>()
@@ -27,11 +29,11 @@ class FragmentBackStack(private val activity: Activity, private val containerId:
         else pendingTransaction.add(screen)
     }
 
-    fun onPause() {
+    open fun onPause() {
         transactionAllowed = false
     }
 
-    fun onResume() {
+    open fun onResume() {
         transactionAllowed = true
         pendingTransaction.forEach { go(it) }
         pendingTransaction.clear()

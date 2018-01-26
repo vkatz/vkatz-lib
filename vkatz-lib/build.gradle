@@ -5,16 +5,16 @@ repositories {
     jcenter()
 }
 
-def libVersion = 4
-def libVersionName = "4.3"
+def libVersion = 5
+def libVersionName = "5.2"
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '27.0.0'
+    compileSdkVersion appCompileSdkVersion
+    buildToolsVersion  appBuildToolsVersion
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode libVersion
         versionName libVersionName
     }
@@ -36,7 +36,8 @@ kotlin {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_corutines"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_corutines"
+    implementation "com.android.support:appcompat-v7:$appSupportVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$appKotlinVersion"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"
 }

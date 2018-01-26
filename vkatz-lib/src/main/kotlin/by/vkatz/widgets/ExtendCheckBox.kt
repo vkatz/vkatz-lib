@@ -2,12 +2,12 @@ package by.vkatz.widgets
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.support.v7.widget.AppCompatCheckBox
 import android.util.AttributeSet
-import android.widget.CheckBox
 import by.vkatz.R
 import by.vkatz.utils.LibExtension
 
-open class ExtendCheckBox : CheckBox, LibExtension.TextInterface, LibExtension.ImageInterface {
+open class ExtendCheckBox : AppCompatCheckBox, LibExtension.TextInterface, LibExtension.ImageInterface {
     private var cpdw: Int = 0
     private var cpdh: Int = 0
 

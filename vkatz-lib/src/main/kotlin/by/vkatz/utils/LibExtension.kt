@@ -13,10 +13,20 @@ object LibExtension {
         val drawables = textView.compoundDrawables
         val processed = arrayOfNulls<Drawable>(4)
         (0..3).filter { drawables[it] != null }.forEach {
-            if (drawables[it] is FixedSizeDrawable) {
-                (drawables[it] as FixedSizeDrawable).setSize(width, height)
-                processed[it] = drawables[it]
-            } else processed[it] = FixedSizeDrawable(drawables[it], width, height)
+            processed[it] = drawables[it]
+            val intrinsicWidth: Int
+            val intrinsicHeight: Int
+            if (width > 0 && height > 0) {
+                intrinsicWidth = width
+                intrinsicHeight = height
+            } else if (width > 0) {
+                intrinsicWidth = width
+                intrinsicHeight = (drawables[it].intrinsicHeight * (1f * width / drawables[it].intrinsicWidth)).toInt()
+            } else {
+                intrinsicWidth = (drawables[it].intrinsicWidth * (1f * height / drawables[it].intrinsicHeight)).toInt()
+                intrinsicHeight = height
+            }
+            processed[it]!!.setBounds(0, 0, intrinsicWidth, intrinsicHeight)
         }
         textView.setCompoundDrawables(processed[0], processed[1], processed[2], processed[3])
     }
@@ -54,34 +64,5 @@ object LibExtension {
 
     interface ImageInterface {
         fun setComplexBackground(layer1: Drawable?, layer2: Drawable?)
-    }
-
-    class FixedSizeDrawable(private val child: Drawable, width: Int, height: Int) : LayerDrawable(arrayOf(child)) {
-        private var intrinsicWidth: Int = 0
-        private var intrinsicHeight: Int = 0
-
-        init {
-            setSize(width, height)
-        }
-
-        fun setSize(width: Int, height: Int) {
-            if (width > 0 && height > 0) {
-                intrinsicWidth = width
-                intrinsicHeight = height
-            } else if (width > 0) {
-                intrinsicWidth = width
-                intrinsicHeight = (child.intrinsicHeight * (1f * width / child.intrinsicWidth)).toInt()
-            } else {
-                intrinsicWidth = (child.intrinsicWidth * (1f * height / child.intrinsicHeight)).toInt()
-                intrinsicHeight = height
-            }
-            isFilterBitmap = true
-            child.isFilterBitmap = true
-            setBounds(0, 0, intrinsicWidth, intrinsicHeight)
-        }
-
-        override fun getIntrinsicWidth(): Int = intrinsicWidth
-
-        override fun getIntrinsicHeight(): Int = intrinsicHeight
     }
 }

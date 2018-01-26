@@ -24,13 +24,13 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
     private var root: View? = null
 
     override fun onOpen(navigation: Screen.Navigation) {
-        forward = navigation == Screen.Navigation.forward
+        forward = navigation == Screen.Navigation.FORWARD
         active = true
         onOpen(navigation, root)
     }
 
     override fun onClose(navigation: Screen.Navigation) {
-        forward = navigation == Screen.Navigation.forward
+        forward = navigation == Screen.Navigation.FORWARD
         active = false
         onClose(navigation, root)
     }
@@ -68,4 +68,13 @@ abstract class FragmentScreen : Fragment(), Screen<FragmentScreen> {
 
     override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? =
             getTransactionAnimator(forward, enter) ?: super.onCreateAnimator(transit, enter, nextAnim)
+
+    open fun requestPermission(permissions: ArrayList<Int>, code: Int, handler: (state: Int) -> Unit) {
+
+    }
+
+    @Suppress("RedundantOverride") //needed to params type
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }

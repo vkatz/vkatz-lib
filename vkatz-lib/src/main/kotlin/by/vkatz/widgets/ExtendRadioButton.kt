@@ -2,12 +2,12 @@ package by.vkatz.widgets
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.support.v7.widget.AppCompatRadioButton
 import android.util.AttributeSet
-import android.widget.RadioButton
 import by.vkatz.R
 import by.vkatz.utils.LibExtension
 
-open class ExtendRadioButton : RadioButton, LibExtension.TextInterface, LibExtension.ImageInterface {
+open class ExtendRadioButton : AppCompatRadioButton, LibExtension.TextInterface, LibExtension.ImageInterface {
     private var cpdw: Int = 0
     private var cpdh: Int = 0
 
