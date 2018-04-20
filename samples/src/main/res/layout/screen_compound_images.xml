@@ -5,7 +5,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <by.vkatz.widgets.ExtendTextView
+    <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -15,7 +15,7 @@
         android:textColor="#000"
         android:textSize="20dp"/>
 
-    <by.vkatz.widgets.ExtendTextView
+    <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -27,7 +27,7 @@
         android:textColor="#000"
         android:textSize="20dp"/>
 
-    <by.vkatz.widgets.ExtendTextView
+    <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -40,7 +40,7 @@
         android:textSize="20dp"
         app:compoundDrawableWidth="20dp"/>
 
-    <by.vkatz.widgets.ExtendTextView
+    <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -53,7 +53,7 @@
         android:textSize="20dp"
         app:compoundDrawableHeight="30dp"/>
 
-    <by.vkatz.widgets.ExtendTextView
+    <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"

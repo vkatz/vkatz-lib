@@ -13,7 +13,7 @@ import android.view.ViewAnimationUtils
 import android.widget.Toast
 
 import by.vkatz.samples.R
-import by.vkatz.utils.ActivityNavigator
+import by.vkatz.katzext.utils.ActivityNavigator
 
 /**
  * Created by Katz on 17.06.2016.

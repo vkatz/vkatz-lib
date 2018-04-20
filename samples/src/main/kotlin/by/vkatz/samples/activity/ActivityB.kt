@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import by.vkatz.samples.R
-import by.vkatz.utils.ActivityNavigator
+import by.vkatz.katzext.utils.ActivityNavigator
 import java.util.*
 
 /**

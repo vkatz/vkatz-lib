@@ -2,7 +2,7 @@ package by.vkatz.samples
 
 import android.app.Activity
 import android.os.Bundle
-import by.vkatz.screen.fragments.FragmentBackStack
+import by.vkatz.katzilla.screen.fragments.FragmentBackStack
 
 class MainUI : Activity() {
 

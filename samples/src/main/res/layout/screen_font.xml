@@ -9,7 +9,7 @@
               android:textColor="#000"
               android:textSize="30dp"
               android:text="this is some text with default font =>"/>
-    <by.vkatz.widgets.ExtendEditText
+    <by.vkatz.katzext.widgets.ExtendEditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="#000"
@@ -17,7 +17,7 @@
             android:layout_marginTop="30dp"
             app:extendFont="@string/font"
             android:text="this is edit text with custom font from xml =>"/>
-    <by.vkatz.widgets.ExtendTextView
+    <by.vkatz.katzext.widgets.ExtendTextView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textColor="#000"

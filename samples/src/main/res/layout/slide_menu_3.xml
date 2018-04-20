@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
-    <by.vkatz.widgets.SlideMenuLayout
+    <by.vkatz.katzext.widgets.SlideMenuLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -41,8 +41,8 @@
         </LinearLayout>
 
 
-    </by.vkatz.widgets.SlideMenuLayout>
-    <by.vkatz.widgets.SlideMenuLayout
+    </by.vkatz.katzext.widgets.SlideMenuLayout>
+    <by.vkatz.katzext.widgets.SlideMenuLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -79,8 +79,8 @@
         </LinearLayout>
 
 
-    </by.vkatz.widgets.SlideMenuLayout>
-    <by.vkatz.widgets.SlideMenuLayout
+    </by.vkatz.katzext.widgets.SlideMenuLayout>
+    <by.vkatz.katzext.widgets.SlideMenuLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -117,5 +117,5 @@
         </LinearLayout>
 
 
-    </by.vkatz.widgets.SlideMenuLayout>
+    </by.vkatz.katzext.widgets.SlideMenuLayout>
 </LinearLayout>

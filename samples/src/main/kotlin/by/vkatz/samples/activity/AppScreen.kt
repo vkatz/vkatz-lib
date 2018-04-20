@@ -9,9 +9,8 @@ import android.support.v4.app.ActivityCompat
 import android.transition.Slide
 import android.view.Gravity
 import android.view.View
-import by.vkatz.samples.R
-import by.vkatz.screen.Screen
-import by.vkatz.screen.fragments.FragmentScreen
+import by.vkatz.katzilla.screen.Screen
+import by.vkatz.katzilla.screen.fragments.FragmentScreen
 
 /**
  * Created by Katz on 07.08.2017.
@@ -22,13 +21,13 @@ abstract class AppScreen : FragmentScreen(), ActivityCompat.OnRequestPermissions
     override fun onOpen(navigation: Screen.Navigation) {
         super.onOpen(navigation)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            enterTransition = Slide(if (navigation == Screen.Navigation.forward) Gravity.RIGHT else Gravity.LEFT)
+            enterTransition = Slide(if (navigation == Screen.Navigation.FORWARD) Gravity.RIGHT else Gravity.LEFT)
     }
 
     override fun onClose(navigation: Screen.Navigation) {
         super.onClose(navigation)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            exitTransition = Slide(if (navigation == Screen.Navigation.forward) Gravity.LEFT else Gravity.RIGHT)
+            exitTransition = Slide(if (navigation == Screen.Navigation.FORWARD) Gravity.LEFT else Gravity.RIGHT)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

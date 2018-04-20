@@ -10,7 +10,7 @@
               android:text="static view"
               android:textColor="#000"
               android:textSize="30dp"/>
-    <by.vkatz.widgets.SlideMenuLayout
+    <by.vkatz.katzext.widgets.SlideMenuLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:menuExpanded="true"
@@ -43,5 +43,5 @@
                   android:textColor="#000"
                   android:textSize="20dp"
                   app:applyScroll="false"/>
-    </by.vkatz.widgets.SlideMenuLayout>
+    </by.vkatz.katzext.widgets.SlideMenuLayout>
 </RelativeLayout>

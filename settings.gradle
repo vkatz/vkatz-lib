@@ -1,1 +1,1 @@
-include ':samples',':vkatz-lib',':vkatz-support-lib'
+include ':samples',':katzext',':katzilla'

@@ -1,19 +1,31 @@
 buildscript {
+    ext.appKotlinVersion = '1.2.21'
+    ext.appKotlinCorutines = '0.21.2'
 
-    ext.kotlin_version = '1.1.51'
-    ext.kotlin_corutines = '0.19.2'
+    ext.appSupportVersion = '28.0.0-alpha1'
+
+    ext.appTargetVersion = 27
+    ext.appCompileSdkVersion = 27
+    ext.appBuildToolsVersion = '27.0.3'
 
     repositories {
+        google()
         jcenter()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha07'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$appKotlinVersion"
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
