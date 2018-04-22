@@ -35,7 +35,6 @@ kotlin {
 dependencies {
     api "com.android.support:appcompat-v7:$appSupportVersion"
     api "com.android.support:recyclerview-v7:$appSupportVersion"
-    api "com.android.support:viewpager:$appSupportVersion"
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"

@@ -1,13 +1,10 @@
 package by.vkatz.samples
 
-import android.app.ActivityOptions
 import android.view.LayoutInflater
 import android.view.View
-import by.vkatz.samples.activity.ActivityA
+import by.vkatz.katzext.utils.get
 import by.vkatz.samples.activity.AppScreen
 import by.vkatz.samples.activity.AppViewScreen
-import by.vkatz.katzext.utils.ActivityNavigator
-import by.vkatz.katzext.utils.get
 
 /**
  * Created by vKatz on 08.03.2015.
@@ -21,10 +18,6 @@ class MainScreen : AppScreen() {
     override fun createView(): View {
         val view = LayoutInflater.from(activity).inflate(R.layout.screen_main, null, false)
 
-        view[R.id.activities].setOnClickListener {
-            val bundle = ActivityOptions.makeCustomAnimation(activity, R.anim.idle, R.anim.idle).toBundle()
-            ActivityNavigator.forActivity(activity).withData("a", "String from MainUI").go(ActivityA::class.java, bundle)
-        }
 
         fun setupButton(button: Int, screen: Int) {
             view[button].setOnClickListener { parent?.go(AppViewScreen.create(screen)) }

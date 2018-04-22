@@ -35,12 +35,12 @@ abstract class CompatFragmentScreen : FragmentScreen(), LifecycleOwner {
                 ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
             else false
 
-    suspend fun requestPermission(permission: String, code: Int) = suspendCoroutine<Boolean> { result ->
+  /*  suspend fun requestPermission(permission: String, code: Int) = suspendCoroutine<Boolean> { result ->
         if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
             permissionRequestHandlers.put(code, result)
             ActivityCompat.requestPermissions(activity, arrayOf(permission), code)
         } else result.resume(true)
-    }
+    }*/
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
