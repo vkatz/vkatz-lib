@@ -1,95 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<by.vkatz.katzext.widgets.FlowLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<by.vkatz.katzext.widgets.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
     app:lineGravity="center"
     app:offsetHorizontal="3dp">
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 1"
-              android:textColor="#000"
-              android:textSize="16dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 2"
-              android:textColor="#000"
-              android:textSize="18dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 3"
-              android:textColor="#000"
-              android:textSize="14dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 4"
-              android:textColor="#000"
-              android:textSize="20dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 5"
-              android:textColor="#000"
-              android:textSize="16dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 6"
-              android:textColor="#000"
-              android:textSize="14dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 7"
-              android:textColor="#000"
-              android:textSize="12dp"/>
 
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 8"
-              android:textColor="#000"
-              android:textSize="26dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 9"
-              android:textColor="#000"
-              android:textSize="32dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 10"
-              android:textColor="#000"
-              android:textSize="14dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 11"
-              android:textColor="#000"
-              android:textSize="48dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 12"
-              android:textColor="#000"
-              android:textSize="54dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 13"
-              android:textColor="#000"
-              android:textSize="36dp"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="#ccc"
-              android:text="some item 14"
-              android:textColor="#000"
-              android:textSize="28dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 1"
+        android:textColor="#000"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 2"
+        android:textColor="#000"
+        android:textSize="18dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 3"
+        android:textColor="#000"
+        android:textSize="14dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 4"
+        android:textColor="#000"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 5"
+        android:textColor="#000"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 6"
+        android:textColor="#000"
+        android:textSize="14dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 7"
+        android:textColor="#000"
+        android:textSize="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 8"
+        android:textColor="#000"
+        android:textSize="26dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 9"
+        android:textColor="#000"
+        android:textSize="32dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 10"
+        android:textColor="#000"
+        android:textSize="14dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 11"
+        android:textColor="#000"
+        android:textSize="48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 12"
+        android:textColor="#000"
+        android:textSize="54dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 13"
+        android:textColor="#000"
+        android:textSize="36dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:text="some item 14"
+        android:textColor="#000"
+        android:textSize="28dp" />
 
 </by.vkatz.katzext.widgets.FlowLayout>

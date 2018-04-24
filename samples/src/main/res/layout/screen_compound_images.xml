@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
 
     <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
@@ -13,7 +14,7 @@
         android:padding="10dp"
         android:text="some text"
         android:textColor="#000"
-        android:textSize="20dp"/>
+        android:textSize="20dp" />
 
     <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
@@ -25,7 +26,7 @@
         android:padding="10dp"
         android:text="default compund drawable"
         android:textColor="#000"
-        android:textSize="20dp"/>
+        android:textSize="20dp" />
 
     <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
@@ -38,7 +39,7 @@
         android:text="fixed width compund drawable"
         android:textColor="#000"
         android:textSize="20dp"
-        app:compoundDrawableWidth="20dp"/>
+        app:compoundDrawableWidth="20dp" />
 
     <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
@@ -51,7 +52,7 @@
         android:text="fixed height compund drawable"
         android:textColor="#000"
         android:textSize="20dp"
-        app:compoundDrawableHeight="30dp"/>
+        app:compoundDrawableHeight="30dp" />
 
     <by.vkatz.katzext.widgets.ExtendTextView
         android:layout_width="wrap_content"
@@ -65,5 +66,5 @@
         android:textColor="#000"
         android:textSize="20dp"
         app:compoundDrawableHeight="20dp"
-        app:compoundDrawableWidth="30dp"/>
+        app:compoundDrawableWidth="30dp" />
 </LinearLayout>

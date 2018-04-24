@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<by.vkatz.katzext.widgets.SlideMenuLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<by.vkatz.katzext.widgets.SlideMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
     app:menuExpanded="true"
     app:slideFrom="left">
-    <TextView android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:gravity="center"
-              android:text="static view"
-              android:textColor="#000"
-              android:textSize="30dp"
-              app:applyScroll="false"
-              app:interceptTouches="false"/>
-    <TextView android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#f00"
-              android:gravity="center"
-              android:text="i am menu"
-              android:textColor="#000"
-              android:textSize="30dp"/>
-    <TextView android:layout_width="100dp"
-              android:layout_height="100dp"
-              android:background="#0f0"
-              android:gravity="center"
-              android:text="i am unmovable slide zone"
-              android:textColor="#000"
-              android:textSize="20dp"
-              app:applyScroll="false"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="static view"
+        android:textColor="#000"
+        android:textSize="30dp"
+        app:applyScroll="false"
+        app:interceptTouches="false" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f00"
+        android:gravity="center"
+        android:text="i am menu"
+        android:textColor="#000"
+        android:textSize="30dp" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="#0f0"
+        android:gravity="center"
+        android:text="i am unmovable slide zone"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:applyScroll="false" />
 </by.vkatz.katzext.widgets.SlideMenuLayout>

@@ -37,6 +37,8 @@ fun Context.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToPare
 
 fun Fragment.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = activity!!.inflate(rId, parent, attachToParent)
 
+fun LayoutInflater.inflate(@LayoutRes rId: Int) = inflate(rId, null)
+
 fun View.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = context.inflate(rId, parent, attachToParent)
 
 fun Activity.hideKeyboard(focus: View? = null) {

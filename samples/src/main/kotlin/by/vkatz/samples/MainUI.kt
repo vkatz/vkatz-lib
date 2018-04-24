@@ -1,21 +1,12 @@
 package by.vkatz.samples
 
-import android.app.Activity
-import android.os.Bundle
-import by.vkatz.katzilla.screen.fragments.FragmentBackStack
+import by.vkatz.katzilla.FragmentBackStack
+import by.vkatz.katzilla.helpers.KotzillaActivity
 
-class MainUI : Activity() {
+class MainUI : KotzillaActivity() {
 
-    private var backStack: FragmentBackStack? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun initContent(backStack: FragmentBackStack) {
         setContentView(R.layout.main)
-        backStack = FragmentBackStack(this, R.id.screen_layout)
-        backStack!!.go(MainScreen())
-    }
-
-    override fun onBackPressed() {
-        if (!backStack!!.back()) super.onBackPressed()
+        backStack.bind(supportFragmentManager, R.id.screen_layout, MainScreen::class)
     }
 }

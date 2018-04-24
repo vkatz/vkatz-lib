@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="by.vkatz.samples">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="by.vkatz.samples">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="Samples">
+        android:label="Samples"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".MainUI"
-            android:configChanges="screenSize|orientation|keyboard|keyboardHidden"
             android:label="Samples"
-            android:theme="@android:style/Theme.Light">
+            android:theme="@style/Base.Theme.AppCompat.Light">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ActivityA"/>
-        <activity android:name=".activity.ActivityB"/>
     </application>
 
 </manifest>
