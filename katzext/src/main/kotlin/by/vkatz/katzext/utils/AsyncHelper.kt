@@ -63,18 +63,14 @@ open class AsyncHelper<T>(private val lifecycle: Lifecycle? = null, protected va
     }
 }
 
-fun <T> safeAsyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncHelper<T> {
-    return AsyncHelper(lifecycleOwner?.lifecycle, UI, action)
-}
+fun <T> safeAsyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T) =
+        AsyncHelper(lifecycleOwner?.lifecycle, UI, action)
 
-fun <T> safeAsync(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncHelper<T> {
-    return AsyncHelper(lifecycleOwner?.lifecycle, CommonPool, action)
-}
+fun <T> safeAsync(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncHelper<T> =
+        AsyncHelper(lifecycleOwner?.lifecycle, CommonPool, action)
 
-fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> {
-    return safeAsyncUI<T?>(lifecycleOwner, action).onError { e -> AsyncHelper.DEFAULT_ERROR_HANDLER(e) so null }.run()
-}
+fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> =
+        safeAsyncUI<T?>(lifecycleOwner, action).onError { e -> AsyncHelper.DEFAULT_ERROR_HANDLER(e) so null }.run()
 
-fun <T> async(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> {
-    return safeAsync<T?>(lifecycleOwner, action).onError { e -> AsyncHelper.DEFAULT_ERROR_HANDLER(e) so null }.run()
-}
+fun <T> async(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> =
+        safeAsync<T?>(lifecycleOwner, action).onError { e -> AsyncHelper.DEFAULT_ERROR_HANDLER(e) so null }.run()
