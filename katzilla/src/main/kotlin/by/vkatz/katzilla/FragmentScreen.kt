@@ -1,6 +1,5 @@
 package by.vkatz.katzilla
 
-import android.arch.lifecycle.ViewModel
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -47,6 +46,7 @@ open class FragmentScreen<Model : FragmentScreen.ScreenModel> : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    abstract class ScreenModel : ViewModel()
+    abstract class ScreenModel
+    class SimpleModel : ScreenModel()
     data class ScreenOptions(var storeInBackStack: Boolean = true)
 }

@@ -55,6 +55,12 @@
             android:text="Compound drawable" />
 
         <Button
+            android:id="@+id/spinners"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Ext Spinners" />
+
+        <Button
             android:id="@+id/slideMenu1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

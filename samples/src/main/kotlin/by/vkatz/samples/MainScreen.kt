@@ -36,6 +36,9 @@ class MainScreen : KotzillaFragment<MainScreen.Model>() {
         dataPass.setOnClickListener {
             parent?.go(DataPassScreen::class, DataPassScreen.Model(model.counter.value, { model.counter.value = it }))
         }
+        spinners.setOnClickListener {
+            parent?.go(SpinnerScreen::class)
+        }
         compoundImages.setOnClickListener {
             parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.screen_compound_images))
         }
