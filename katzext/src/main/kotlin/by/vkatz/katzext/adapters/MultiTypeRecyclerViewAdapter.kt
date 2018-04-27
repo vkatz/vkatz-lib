@@ -30,12 +30,12 @@ open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
             idProvider?.invoke(data[position]) ?: super.getItemId(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, type: Int): SimpleViewHolder<*> =
-            typeHandlers[type].viewHolderProvider(parent)
+            typeHandlers[type].viewHolderProvider(parent.context)
 
     override fun getItemCount(): Int = data.size
 
     @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: SimpleViewHolder<*>, position: Int) {
-        (holder as SimpleViewHolder<T>).binder?.invoke(holder.itemView, position, data[position])
+        (holder as SimpleViewHolder<T>).binder?.invoke(holder, data[position])
     }
 }

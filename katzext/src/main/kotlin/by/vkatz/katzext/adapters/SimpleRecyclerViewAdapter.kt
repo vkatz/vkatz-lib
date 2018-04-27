@@ -22,11 +22,11 @@ open class SimpleRecyclerViewAdapter<T>(var data: List<T>,
 
     override fun getItemId(position: Int): Long = idProvider?.invoke(data[position]) ?: super.getItemId(position)
 
-    override fun onCreateViewHolder(parent: ViewGroup, type: Int): SimpleViewHolder<T> = viewHolderProvider(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, type: Int): SimpleViewHolder<T> = viewHolderProvider(parent.context)
 
     override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: SimpleViewHolder<T>, position: Int) {
-        holder.binder?.invoke(holder.itemView, position, data[position])
+        holder.binder?.invoke(holder, data[position])
     }
 }

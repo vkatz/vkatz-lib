@@ -1,5 +1,6 @@
 package by.vkatz.katzext.adapters
 
+import android.content.Context
 import android.support.annotation.LayoutRes
 import android.view.ViewGroup
 
@@ -28,8 +29,8 @@ open class HeaderFooterRecyclerViewAdapter<T>(data: List<T>,
                 footerBinder: ViewBinder<Unit>?,
                 vararg typeHandlers: ViewTypeHandler<T>
                ) : this(data, idProvider,
-                        headerBinder?.let { binder -> { parent: ViewGroup -> SimpleViewHolder<Unit>(headerRId, parent, binder) } },
-                        footerBinder?.let { binder -> { parent: ViewGroup -> SimpleViewHolder<Unit>(footerRId, parent, binder) } },
+                        headerBinder?.let { binder -> { context: Context -> SimpleViewHolder<Unit>(headerRId, context, binder) } },
+                        footerBinder?.let { binder -> { context: Context -> SimpleViewHolder<Unit>(footerRId, context, binder) } },
                         *typeHandlers
                        )
 
@@ -57,8 +58,8 @@ open class HeaderFooterRecyclerViewAdapter<T>(data: List<T>,
 
     override fun onCreateViewHolder(parent: ViewGroup, type: Int): SimpleViewHolder<*> {
         return when (type) {
-            TYPE_HEADER -> headerProvider!!(parent)
-            TYPE_FOOTER -> footerProvider!!(parent)
+            TYPE_HEADER -> headerProvider!!(parent.context)
+            TYPE_FOOTER -> footerProvider!!(parent.context)
             else -> super.onCreateViewHolder(parent, type)
         }
     }
@@ -66,7 +67,7 @@ open class HeaderFooterRecyclerViewAdapter<T>(data: List<T>,
     @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: SimpleViewHolder<*>, position: Int) {
         when {
-            isHeaderIndex(position) || isFooterIndex(position) -> (holder as SimpleViewHolder<Unit>).binder?.invoke(holder.itemView, position, Unit)
+            isHeaderIndex(position) || isFooterIndex(position) -> (holder as SimpleViewHolder<Unit>).binder?.invoke(holder, Unit)
             else -> super.onBindViewHolder(holder, position - isHeaderVisible().toInt())
         }
     }

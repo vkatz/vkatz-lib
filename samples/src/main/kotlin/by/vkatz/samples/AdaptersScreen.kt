@@ -1,5 +1,6 @@
 package by.vkatz.samples
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -35,66 +36,73 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
     }
 
     private fun setAdapter(index: Int) {
-
-        //  PagedList<Int>()
-
-
         val adapter = when (index) {
             0 -> SimpleRecyclerViewAdapter(listOf(1, 2, 3),
                                            { this.toLong() },
                                            R.layout.spinner_item,
-                                           { adapter, itemView, pos, data -> itemView.asTextView().text = data.toString() })
+                                           { itemView.asTextView().text = it.toString() })
 
             1 -> SimpleRecyclerViewAdapter(listOf(3, 4, 5),
                                            { this.toLong() },
-                                           { parent: ViewGroup ->
-                                               SimpleViewHolder(R.layout.spinner_item, parent,
-                                                                { adapter, itemView, pos, data -> itemView.asTextView().text = data.toString() })
+                                           { context: Context ->
+                                               SimpleViewHolder(R.layout.spinner_item, context, { itemView.asTextView().text = it.toString() })
                                            })
 
             2 -> MultiTypeRecyclerViewAdapter(listOf("a", 1, "c", 2), { hashCode().toLong() },
                                               ViewTypeHandler(
                                                       { it is String },
                                                       R.layout.spinner_item,
-                                                      { adapter, itemView, pos, data ->
-                                                          itemView.asTextView().text = data as String
+                                                      {
+                                                          itemView.asTextView().text = it as String
                                                           itemView.setBackgroundColor(Color.RED)
                                                       }),
                                               ViewTypeHandler(
                                                       { it is Int },
-                                                      { parent: ViewGroup ->
-                                                          SimpleViewHolder(R.layout.spinner_item, parent,
-                                                                           { adapter, itemView, pos, data: Any ->
-                                                                               itemView.asTextView().text = data.toString()
-                                                                               itemView.setBackgroundColor(Color.BLUE)
-                                                                           })
+                                                      {
+                                                          SimpleViewHolder<Any>(R.layout.spinner_item, it,
+                                                                                {
+                                                                                    itemView.asTextView().text = it.toString()
+                                                                                    itemView.setBackgroundColor(Color.BLUE)
+                                                                                })
                                                       })
                                              )
 
             3 -> HeaderFooterRecyclerViewAdapter(Array(50, { i -> i }).toList(), null,
                                                  R.layout.spinner_item,
-                                                 { _, itemView, _, _ -> itemView.asTextView().text = "Header" },
+                                                 { itemView.asTextView().text = "Header" },
                                                  R.layout.spinner_item,
-                                                 { _, itemView, _, _ -> itemView.asTextView().text = "Footer" },
+                                                 { itemView.asTextView().text = "Footer" },
                                                  ViewTypeHandler({ true },
                                                                  R.layout.spinner_item,
-                                                                 { _, itemView, _, data -> itemView.asTextView().text = data.toString() })
+                                                                 { itemView.asTextView().text = it.toString() })
                                                 ).apply { headerVisible = true; footerVisible = true }
 
 
             4 -> {
-                val list = PaginationList<String>(20, { from, count, callback ->
+                val list = PaginationList<String>(5, { from, count, callback ->
                     asyncUI {
                         delay(1000)
-                        callback(Array(count, { i -> "Item #${i + from}" }).toList())
+                        val cnt = minOf(count, 100 - from)
+                        callback(Array(cnt, { i -> "Item #${i + from}" }).toList())
                     }
                 })
-                HeaderFooterRecyclerViewAdapter(list, null, null,
-                                                { parent -> SimpleViewHolder(ProgressBar(parent.context), { adapter, _, _, _ -> list.loadPage { adapter.notifyDataSetChanged() } }) },
-                                                ViewTypeHandler({ true },
-                                                                R.layout.spinner_item,
-                                                                { _, itemView, _, data -> itemView.asTextView().text = data })
-                                               ).apply { footerVisible = true }
+                val adapter = HeaderFooterRecyclerViewAdapter(list, null, null,
+                                                              { SimpleViewHolder(ProgressBar(it), { list.loadPage() }) },
+                                                              ViewTypeHandler({ true },
+                                                                              R.layout.spinner_item,
+                                                                              { itemView.asTextView().text = it })
+                                                             )
+                list.setOnPageLoadedListener {
+                    if (adapter.data == list) {
+                        if (!list.hasMorePages) {
+                            adapter.footerVisible = false
+                        }
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        list.setOnPageLoadedListener(null)
+                    }
+                }
+                adapter
             }
             else -> null
         }
