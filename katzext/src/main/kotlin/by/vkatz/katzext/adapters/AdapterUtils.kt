@@ -1,9 +1,9 @@
 package by.vkatz.katzext.adapters
 
-import android.content.Context
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.view.ViewGroup
 import by.vkatz.katzext.utils.Callback
 import by.vkatz.katzext.utils.ValueCallback
 import by.vkatz.katzext.utils.inflate
@@ -13,17 +13,21 @@ import by.vkatz.katzext.utils.inflate
  */
 typealias ViewBinder<T> = SimpleViewHolder<T>.(data: T) -> Unit
 
-typealias SimpleViewHolderProvider<T> = (context: Context) -> SimpleViewHolder<T>
+typealias SimpleViewHolderProvider<T> = (parent: ViewGroup) -> SimpleViewHolder<T>
 
-open class SimpleViewHolder<T>(itemView: View?, val binder: ViewBinder<T>? = null) : RecyclerView.ViewHolder(itemView) {
-    constructor(@LayoutRes layoutRid: Int, context: Context, binder: ViewBinder<T>? = null) : this(context.inflate(layoutRid, null, false), binder)
+open class SimpleViewHolder<T>(itemView: View?, private val binder: ViewBinder<T>? = null) : RecyclerView.ViewHolder(itemView) {
+    constructor(@LayoutRes layoutRid: Int, parent: ViewGroup, binder: ViewBinder<T>? = null) : this(parent.inflate(layoutRid, parent, false), binder)
+
+    open fun bind(data: T) {
+        binder?.invoke(this, data)
+    }
 }
 
 open class ViewTypeHandler<T>(val typeValidator: (item: T) -> Boolean,
-                              val viewHolderProvider: SimpleViewHolderProvider<T>) {
+                              val viewHolderProvider: SimpleViewHolderProvider<out T>) {
 
     constructor(typeValidator: (item: T) -> Boolean, @LayoutRes layoutRid: Int, binder: ViewBinder<T>)
-            : this(typeValidator, { context -> SimpleViewHolder(layoutRid, context, binder) })
+            : this(typeValidator, { parent -> SimpleViewHolder(layoutRid, parent, binder) })
 }
 
 open class PaginationList<T>(private val pageSize: Int, private val loader: (from: Int, count: Int, callback: ValueCallback<List<T>>) -> Unit) : ArrayList<T>() {

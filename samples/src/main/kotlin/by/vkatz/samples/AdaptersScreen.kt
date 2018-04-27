@@ -1,6 +1,5 @@
 package by.vkatz.samples
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -8,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import by.vkatz.katzext.adapters.*
 import by.vkatz.katzext.utils.asTextView
 import by.vkatz.katzext.utils.asyncUI
@@ -44,18 +44,12 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
 
             1 -> SimpleRecyclerViewAdapter(listOf(3, 4, 5),
                                            { this.toLong() },
-                                           { context: Context ->
-                                               SimpleViewHolder(R.layout.spinner_item, context, { itemView.asTextView().text = it.toString() })
+                                           { parent ->
+                                               SimpleViewHolder(R.layout.spinner_item, parent, { itemView.asTextView().text = it.toString() })
                                            })
 
             2 -> MultiTypeRecyclerViewAdapter(listOf("a", 1, "c", 2), { hashCode().toLong() },
-                                              ViewTypeHandler(
-                                                      { it is String },
-                                                      R.layout.spinner_item,
-                                                      {
-                                                          itemView.asTextView().text = it as String
-                                                          itemView.setBackgroundColor(Color.RED)
-                                                      }),
+                                              ViewTypeHandler<Any>({ it is String }, ::SpinnerItemViewHolder),
                                               ViewTypeHandler(
                                                       { it is Int },
                                                       {
@@ -80,14 +74,14 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
 
             4 -> {
                 val list = PaginationList<String>(5, { from, count, callback ->
-                    asyncUI {
-                        delay(1000)
+                    asyncUI(this) {
+                        delay(5000)
                         val cnt = minOf(count, 100 - from)
                         callback(Array(cnt, { i -> "Item #${i + from}" }).toList())
                     }
                 })
                 val adapter = HeaderFooterRecyclerViewAdapter(list, null, null,
-                                                              { SimpleViewHolder(ProgressBar(it), { list.loadPage() }) },
+                                                              { SimpleViewHolder(ProgressBar(it.context), { list.loadPage() }) },
                                                               ViewTypeHandler({ true },
                                                                               R.layout.spinner_item,
                                                                               { itemView.asTextView().text = it })
@@ -107,5 +101,15 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
             else -> null
         }
         recycler.adapter = adapter
+    }
+
+    class SpinnerItemViewHolder(parent: ViewGroup) : SimpleViewHolder<String>(R.layout.spinner_item, parent, null) {
+
+        private val textView: TextView = itemView.asTextView()
+
+        override fun bind(data: String) {
+            textView.text = data
+            textView.setBackgroundColor(Color.RED)
+        }
     }
 }
