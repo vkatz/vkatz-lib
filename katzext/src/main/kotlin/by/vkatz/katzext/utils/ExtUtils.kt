@@ -15,6 +15,9 @@ import by.vkatz.katzext.widgets.ExtendImageView
 import by.vkatz.katzext.widgets.ExtendTextView
 import by.vkatz.katzext.widgets.SlideMenuLayout
 
+typealias Callback = () -> Unit
+
+typealias ValueCallback<T> = (t:T) -> Unit
 
 @Suppress("unused")
 infix fun <T> Any?.so(t: T) = t

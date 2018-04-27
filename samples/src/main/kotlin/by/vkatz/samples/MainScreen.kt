@@ -39,6 +39,9 @@ class MainScreen : KotzillaFragment<MainScreen.Model>() {
         spinners.setOnClickListener {
             parent?.go(SpinnerScreen::class)
         }
+        adapters.setOnClickListener {
+            parent?.go(AdaptersScreen::class)
+        }
         compoundImages.setOnClickListener {
             parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.screen_compound_images))
         }

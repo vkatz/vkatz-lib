@@ -8,7 +8,8 @@ import kotlin.reflect.KProperty
 open class SharedPrefDelegate<T>(private val sharedPrefs: () -> SharedPreferences,
                                  private val default: T,
                                  private val reader: SharedPreferences.(field: String, default: T) -> T,
-                                 private val writer: SharedPreferences.Editor.(field: String, value: T) -> SharedPreferences.Editor) : ReadWriteProperty<Any, T> {
+                                 private val writer: SharedPreferences.Editor.(field: String, value: T) -> SharedPreferences.Editor
+                                ) : ReadWriteProperty<Any, T> {
 
     override fun getValue(thisRef: Any, property: KProperty<*>): T = sharedPrefs().reader(property.name, default)
 
@@ -43,7 +44,8 @@ open class BundleDelegate<T>(private val bundle: () -> Bundle,
 open class BundleWithDefaultDelegate<T>(private val bundle: () -> Bundle,
                                         private val default: T,
                                         private val reader: Bundle.(field: String, default: T) -> T,
-                                        private val writer: Bundle.(field: String, value: T) -> Unit) : ReadWriteProperty<Any, T> {
+                                        private val writer: Bundle.(field: String, value: T) -> Unit
+                                       ) : ReadWriteProperty<Any, T> {
     override fun getValue(thisRef: Any, property: KProperty<*>): T = bundle().reader(property.name, default)
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) = bundle().writer(property.name, value)
 }
