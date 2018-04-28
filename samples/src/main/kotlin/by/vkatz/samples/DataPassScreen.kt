@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KotzillaFragment
+import by.vkatz.katzilla.helpers.KatzillaFragment
 import kotlinx.android.synthetic.main.data_pass.*
 
 /**
  * Created by V on 24.04.2018.
  */
 
-class DataPassScreen : KotzillaFragment<DataPassScreen.Model>() {
+class DataPassScreen : KatzillaFragment<DataPassScreen.Model>() {
 
     class Model(var counter: Int, val passCallback: (value: Int) -> Unit) : FragmentScreen.ScreenModel()
 

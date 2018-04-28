@@ -12,12 +12,12 @@ import by.vkatz.katzext.utils.get
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzext.widgets.ExtendSpinner
 import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KotzillaFragment
+import by.vkatz.katzilla.helpers.KatzillaFragment
 
 /**
  * Created by vKatz on 28.10.2017.
  */
-class SpinnerScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
+class SpinnerScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: SimpleModel, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.spinners)
         (view[R.id.spinner1] as ExtendSpinner).apply {

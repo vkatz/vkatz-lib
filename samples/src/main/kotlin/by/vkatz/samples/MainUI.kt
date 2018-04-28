@@ -1,9 +1,9 @@
 package by.vkatz.samples
 
 import by.vkatz.katzilla.FragmentBackStack
-import by.vkatz.katzilla.helpers.KotzillaActivity
+import by.vkatz.katzilla.helpers.KatzillaActivity
 
-class MainUI : KotzillaActivity() {
+class MainUI : KatzillaActivity() {
 
     override fun initContent(backStack: FragmentBackStack) {
         setContentView(R.layout.main)

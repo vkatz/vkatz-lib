@@ -8,7 +8,7 @@ import by.vkatz.katzilla.FragmentBackStack
 /**
  * Created by V on 24.04.2018.
  */
-abstract class KotzillaActivity : AppCompatActivity() {
+abstract class KatzillaActivity : AppCompatActivity() {
     companion object {
         private val backStackMap = HashMap<String, FragmentBackStack>()
 
@@ -41,7 +41,7 @@ abstract class KotzillaActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         when {
-            (backStack.currentScreen as? KotzillaFragment<*>)?.onBackPressed() == true -> {
+            (backStack.currentScreen as? KatzillaFragment<*>)?.onBackPressed() == true -> {
                 /*screen handle back action, do nothing*/
             }
             backStack.isBackPossible() -> backStack.back()

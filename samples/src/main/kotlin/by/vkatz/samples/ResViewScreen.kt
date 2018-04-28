@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KotzillaFragment
+import by.vkatz.katzilla.helpers.KatzillaFragment
 
 /**
  * Created by V on 24.04.2018.
  */
 
-class ResViewScreen : KotzillaFragment<ResViewScreen.Model>() {
+class ResViewScreen : KatzillaFragment<ResViewScreen.Model>() {
 
     class Model(@LayoutRes val layoutId: Int) : FragmentScreen.ScreenModel()
 

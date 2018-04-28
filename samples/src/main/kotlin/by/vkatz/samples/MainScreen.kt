@@ -9,14 +9,14 @@ import by.vkatz.katzext.utils.asyncUI
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzext.utils.toast
 import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KotzillaFragment
+import by.vkatz.katzilla.helpers.KatzillaFragment
 import kotlinx.android.synthetic.main.screen_main.*
 import kotlinx.coroutines.experimental.delay
 
 /**
  * Created by vKatz on 08.03.2015.
  */
-class MainScreen : KotzillaFragment<MainScreen.Model>() {
+class MainScreen : KatzillaFragment<MainScreen.Model>() {
     private var backTimeouted = false
 
     class Model : FragmentScreen.ScreenModel() {

@@ -13,14 +13,14 @@ import by.vkatz.katzext.utils.asTextView
 import by.vkatz.katzext.utils.asyncUI
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KotzillaFragment
+import by.vkatz.katzilla.helpers.KatzillaFragment
 import kotlinx.android.synthetic.main.adapters.*
 import kotlinx.coroutines.experimental.delay
 
 /**
  * Created by V on 26.04.2018.
  */
-class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
+class AdaptersScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: SimpleModel, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.adapters)
@@ -37,17 +37,18 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
 
     private fun setAdapter(index: Int) {
         val adapter = when (index) {
+            // usual recycler without direct creation of VH
             0 -> SimpleRecyclerViewAdapter(listOf(1, 2, 3),
                                            { this.toLong() },
                                            R.layout.spinner_item,
                                            { itemView.asTextView().text = it.toString() })
-
+            // usual recycler with VH
             1 -> SimpleRecyclerViewAdapter(listOf(3, 4, 5),
                                            { this.toLong() },
                                            { parent ->
                                                SimpleViewHolder(R.layout.spinner_item, parent, { itemView.asTextView().text = it.toString() })
                                            })
-
+            // adapter for multiple types - just register handlers and it's done
             2 -> MultiTypeRecyclerViewAdapter(listOf("a", 1, "c", 2), { hashCode().toLong() },
                                               ViewTypeHandler<Any>({ it is String }, ::SpinnerItemViewHolder),
                                               ViewTypeHandler(
@@ -60,7 +61,7 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
                                                                                 })
                                                       })
                                              )
-
+            // multi type adapter where u can add 1 header and 1 footer (u can hide it via visibility properties) (if u need more - use default MultiTypeRecyclerViewAdapter)
             3 -> HeaderFooterRecyclerViewAdapter(Array(50, { i -> i }).toList(), null,
                                                  R.layout.spinner_item,
                                                  { itemView.asTextView().text = "Header" },
@@ -71,11 +72,11 @@ class AdaptersScreen : KotzillaFragment<FragmentScreen.SimpleModel>() {
                                                                  { itemView.asTextView().text = it.toString() })
                                                 ).apply { headerVisible = true; footerVisible = true }
 
-
+            // pagination - just use PaginationList as data source and call list.loadPAge on footer show (or impl your own logic)
             4 -> {
                 val list = PaginationList<String>(5, { from, count, callback ->
                     asyncUI(this) {
-                        delay(5000)
+                        delay(1000)
                         val cnt = minOf(count, 100 - from)
                         callback(Array(cnt, { i -> "Item #${i + from}" }).toList())
                     }

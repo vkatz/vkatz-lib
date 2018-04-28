@@ -15,7 +15,7 @@ import by.vkatz.katzilla.FragmentScreen
 /**
  * Created by V on 24.04.2018.
  */
-open class KotzillaFragment<Model : FragmentScreen.ScreenModel> : FragmentScreen<Model>() {
+open class KatzillaFragment<Model : FragmentScreen.ScreenModel> : FragmentScreen<Model>() {
     private var isForwardNavigationState = true
 
     fun isPermissionNeedExplanation(permission: String): Boolean =
@@ -52,7 +52,7 @@ open class KotzillaFragment<Model : FragmentScreen.ScreenModel> : FragmentScreen
                 FragmentBackStack.NAVIGATION_BACK_EXIT -> setExitTransition(Slide(Gravity.RIGHT))
                 else -> {
                     enterTransition = null
-                    setExitTransition(null)
+                    exitTransition = null
                 }
             }
         } else {
