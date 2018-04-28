@@ -1,19 +1,20 @@
 buildscript {
+    ext.appKotlinVersion = '1.2.40'
+    ext.appKotlinCorutines = '0.22.5'
 
-    ext.appKotlinVersion = '1.2.20'
-    ext.appKotlinCorutines = '0.21.2'
-    ext.appGsmVersion = "11.8.0"
-    ext.appSupportVersion = "27.0.2"
+    ext.appSupportVersion = '27.1.1'
 
+    ext.appTargetVersion = 27
     ext.appCompileSdkVersion = 27
-    ext.appBuildToolsVersion = '27.0.1'
+    ext.appBuildToolsVersion = '27.0.3'
 
     repositories {
         google()
         jcenter()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0-alpha09'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha12'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$appKotlinVersion"
     }
 }
@@ -23,4 +24,8 @@ allprojects {
         google()
         jcenter()
     }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

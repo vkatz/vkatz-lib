@@ -1,89 +1,78 @@
 package by.vkatz.samples
 
-import android.annotation.SuppressLint
-import android.app.ActivityOptions
-import android.graphics.Color
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import by.vkatz.samples.activity.ActivityA
-import by.vkatz.samples.activity.AppScreen
-import by.vkatz.samples.activity.AppViewScreen
-import by.vkatz.screen.fragments.FragmentScreen
-import by.vkatz.utils.*
+import by.vkatz.katzext.utils.AppLiveData
+import by.vkatz.katzext.utils.asyncUI
+import by.vkatz.katzext.utils.inflate
+import by.vkatz.katzext.utils.toast
+import by.vkatz.katzilla.FragmentScreen
+import by.vkatz.katzilla.helpers.KatzillaFragment
+import kotlinx.android.synthetic.main.screen_main.*
+import kotlinx.coroutines.experimental.delay
 
 /**
  * Created by vKatz on 08.03.2015.
  */
-class MainScreen : AppScreen() {
+class MainScreen : KatzillaFragment<MainScreen.Model>() {
+    private var backTimeouted = false
 
-    init {
-        holdView = true
+    class Model : FragmentScreen.ScreenModel() {
+        var counter = AppLiveData(0)
     }
 
-    override fun createView(): View {
-        val view = activity.inflate(R.layout.screen_main)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: Model, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.screen_main)
 
-        view[R.id.activities].setOnClickListener {
-            val bundle = ActivityOptions.makeCustomAnimation(activity, R.anim.idle, R.anim.idle).toBundle()
-            ActivityNavigator.forActivity(activity).withData("a", "String from MainUI").go(ActivityA::class.java, bundle)
+    override fun onViewCreated(view: View, model: Model, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, model, savedInstanceState)
+
+        model.counter.observe(this) { t -> counter.text = "$t" }
+        counterPlus.setOnClickListener { model.counter.value += 1 }
+        counterMinus.setOnClickListener { model.counter.value -= 1 }
+
+        dataPass.setOnClickListener {
+            parent?.go(DataPassScreen::class, DataPassScreen.Model(model.counter.value, { model.counter.value = it }))
         }
-
-        fun setupButton(button: Int, screen: Int) {
-            view[button].setOnClickListener { parent?.go(AppViewScreen.create(screen)) }
+        spinners.setOnClickListener {
+            parent?.go(SpinnerScreen::class)
         }
-
-        setupButton(R.id.asset_font, R.layout.screen_font)
-        setupButton(R.id.compound_images, R.layout.screen_compound_images)
-        setupButton(R.id.flow_layout, R.layout.flow_layout)
-        view[R.id.ext_spinner].setOnClickListener { parent?.go(ExtSpinnerScreen()) }
-        setupButton(R.id.slide_menu_1, R.layout.slide_menu_1)
-        setupButton(R.id.slide_menu_2, R.layout.slide_menu_2)
-        setupButton(R.id.slide_menu_3, R.layout.slide_menu_3)
-        setupButton(R.id.slide_menu_4, R.layout.slide_menu_4)
-        view[R.id.nested_slide_menu_1].setOnClickListener {
-            parent?.go(
-                    @SuppressLint("ValidFragment")
-                    object : AppScreen() {
-                        override fun createView(): View {
-                            val innerView = View.inflate(activity, R.layout.nested_slide_menu_1, null)
-                            val btn = innerView[R.id.btn]
-                            val header = innerView[R.id.header].asTextView()
-                            val headerTextSize = header.textSize
-                            val list = innerView[R.id.recycler] as RecyclerView
-                            val menu = innerView[R.id.menu].asSlideMenu()
-
-                            list.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-                            list.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-                                override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-                                    val tw = TextView(parent!!.context)
-                                    tw.setTextColor(Color.WHITE)
-                                    tw.textSize = 50f
-                                    return object : RecyclerView.ViewHolder(tw) {}
-                                }
-
-                                override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-                                    holder!!.itemView.asTextView().text = "Position $position"
-                                }
-
-                                override fun getItemCount(): Int = 100
-                            }
-
-                            menu.setOnSlideChangeListener { _, value ->
-                                btn.alpha = 1 - value
-                                header.setTextSize(TypedValue.COMPLEX_UNIT_PX, headerTextSize * Math.max(1 - value, 0.3f))
-                                header.translationX = -100 * value
-                            }
-                            return innerView
-                        }
-                    })
+        adapters.setOnClickListener {
+            parent?.go(AdaptersScreen::class)
         }
-        setupButton(R.id.nested_slide_menu_2, R.layout.nested_slide_menu_2)
-        setupButton(R.id.nested_slide_menu_3, R.layout.nested_slide_menu_3)
+        compoundImages.setOnClickListener {
+            parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.screen_compound_images))
+        }
+        slideMenu1.setOnClickListener {
+            parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.slide_menu_1))
+        }
+        slideMenu2.setOnClickListener {
+            parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.slide_menu_2))
+        }
+        slideMenu3.setOnClickListener {
+            parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.slide_menu_3))
+        }
+        slideMenu4.setOnClickListener {
+            parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.slide_menu_4))
+        }
+        flowLayout.setOnClickListener {
+            parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.flow_layout))
+        }
+    }
 
-        return view
+    override fun onBackPressed(): Boolean {
+        return if (!backTimeouted) {
+            backTimeouted = true
+            context?.toast("Press back again to exit")
+            asyncUI {
+                delay(3000)
+                backTimeouted = false
+            }
+            true
+        } else {
+            super.onBackPressed()
+        }
     }
 }

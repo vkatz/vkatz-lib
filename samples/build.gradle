@@ -1,18 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 repositories {
     jcenter()
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    compileSdkVersion appCompileSdkVersion
+    buildToolsVersion appBuildToolsVersion
 
     defaultConfig {
         applicationId "by.vkatz"
         minSdkVersion 18
-        targetSdkVersion 27
+        targetSdkVersion appTargetVersion
         versionCode 1
         versionName "1.0"
     }
@@ -27,10 +28,20 @@ android {
     }
 }
 
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
-    api project(':vkatz-lib')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$appKotlinVersion"
+    implementation project(':katzext')
+    implementation project(':katzilla')
     implementation "com.android.support:support-compat:$appSupportVersion"
     implementation "com.android.support:support-core-ui:$appSupportVersion"
-    implementation "com.android.support:recyclerview-v7:$appSupportVersion"
+    implementation "android.arch.paging:runtime:1.0.0-rc1"
 }

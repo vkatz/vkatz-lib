@@ -1,59 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#fff">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/counterPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+
+            <Button
+                android:id="@+id/counterMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:gravity="center"
+                android:text="Counter: " />
+
+            <TextView
+                android:id="@+id/counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/dataPass"
             android:layout_width="fill_parent"
-    android:background="#fff"
-            android:layout_height="fill_parent">
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical">
-        <Button android:id="@+id/activities"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Activities navigation"/>
-        <Button android:id="@+id/asset_font"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Asset font example"/>
-        <Button android:id="@+id/compound_images"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Compound drawable"/>
-        <Button android:id="@+id/slide_menu_1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Slide Menu 1"/>
-        <Button android:id="@+id/slide_menu_2"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Slide Menu 2"/>
-        <Button android:id="@+id/slide_menu_3"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Slide Menu 3"/>
-        <Button android:id="@+id/slide_menu_4"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Slide Menu 4"/>
-        <Button android:id="@+id/flow_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Flow layout"/>
-        <Button android:id="@+id/ext_spinner"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Extend Spinner"/>
-        <Button android:id="@+id/nested_slide_menu_1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Nested Slide Menu 1 (experemental)"/>
-        <Button android:id="@+id/nested_slide_menu_2"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Nested Slide Menu 2 (experemental)"/>
-        <Button android:id="@+id/nested_slide_menu_3"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Nested Slide Menu 3 (experemental)"/>
+            android:layout_height="wrap_content"
+            android:text="Pass counter for other screen" />
+
+        <Button
+            android:id="@+id/compoundImages"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Compound drawable" />
+
+        <Button
+            android:id="@+id/spinners"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Ext Spinners" />
+
+       <Button
+            android:id="@+id/adapters"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Adapters" />
+
+        <Button
+            android:id="@+id/slideMenu1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Slide Menu 1" />
+
+        <Button
+            android:id="@+id/slideMenu2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Slide Menu 2" />
+
+        <Button
+            android:id="@+id/slideMenu3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Slide Menu 3" />
+
+        <Button
+            android:id="@+id/slideMenu4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Slide Menu 4" />
+
+        <Button
+            android:id="@+id/flowLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Flow layout" />
 
     </LinearLayout>
 </ScrollView>

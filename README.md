@@ -1,26 +1,29 @@
 # General
+
 **My eng aint perfect, sorry for that**
 
-## Navigation
+This lib contain 2 general modules:
 
-`BackStack` and `Screen` provide a custom backstack with full control over it as abstract clases
+`katzilla` - navigation helper to make activity/framgent navigation, compatible with mvp/mvvm and almost any pattern<br>
+`katzext`  - extentionsand and usable widgets
 
-`FragmentBackStack` and `FragmentScreen` implementations using fragments
+# KATZILLA
 
-How to use:
+`FragmentBackStack` & `FragmentScreen` - provide basi impl of navigation<br>
+`KatzillaActivity` & `KatzillaFragment` - useful implementation with predefined anmations and all necessary callbacks
 
-U may put a backstack into activity or app class depend on your intentions and use it as simple mvp patter with 1 class. Allow to control history, navigation, holding view in memory, history state, animations etc... For more details take a look at sample code
+There is only 2 rules to use:<br>
+1) In case u.r using FragmentBackStack - forward activity `onDestroy`
+2) ScreenModel should not contains any context references (or at least clear this refs for the time fragment aint on screen)
 
-I am use this method by many diffrent reasons, main is - backstack and navigation control, i can simple call `parent.go(SomeScreen.with(some params))` to launch screen, `parent.back()` to back, and `parent.backTo(screen name)` to back for specific screen, this is much more simplier that default actitvity navigation + allow me to make kid of mvp with data anc callbacks between screen + let me use all power of fragments.
+I am use this method by many diffrent reasons, main is - backstack and navigation control,
+i can simple call `parent.go(SomeScreen::class)` to launch screen, `parent.back()` to back, i
+can control backstack as i want, this is much more simplier than
+default actitvity navigation + allow me to make any pattern i want (clean/mvp/mvvm).
+
+# KATZEXT
 
 ## Utils
-
-`ActivityNavigator` - simple activity navigation
-
-    ActivityNavigator.forActivity(activity).withData("field", "String from MainUI").go(ActivityA::class.java)
-    ---
-    ActivityNavigator.getData(this).getString("field")
-    ActivityNavigator.forActivity(this@ActivityB).withData("extra", "String from activity B").backWithResult(1)
 
 `AsyncHelper` - helper for asyn operations using corutines
     
@@ -43,17 +46,19 @@ I am use this method by many diffrent reasons, main is - backstack and navigatio
 
 List of items:
 * ExtendCheckBox
-* ExtendEditText
-* ExtendRadioButton
-* ExtendTextView
-* ExtendImageView
+* ExtendEditText.kt
 * ExtendFrameLayout
+* ExtendImageView
 * ExtendLinearLayout
+* ExtendRadioButton
 * ExtendRelativeLayout
+* ExtendSpinner.kt
+* ExtendTextView
 
 New widgets:
 * FlowLayout
 * SlideMenuLayout
+* ViewPagerIndicator
 
 # Core buffs:
 1. `app:compoundDrawableWidth` and `app:compoundDrawableHeight` -> specify compound drawable size(one or both)
@@ -62,9 +67,6 @@ New widgets:
 
 2. `app:extendBackground1` and `app:extendBackground2` -> combine 2 bg into one as layers (useful when u have color + selector)     
 3. `app:extendEnabled` and `app:extendActivated` -> set relative view state from xml
-4. "text" widgets get `app:extendFont` param to support ttf fonts from asset
-
-![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/asset_font.png)
 
 # Special buffs
 #### ExtendEditText
@@ -120,9 +122,92 @@ Examples:
 
 ![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/slide_menu_4.gif)
 
+#### ViewPagerIndicator
+
+Simple inicators for ViewPager - just setup adapter and bind to ViewPager
+
+#### Adapters
+
+* HeaderFooterRecyclerViewAdapter
+* MultiTypeRecyclerViewAdapter
+* SimpleExtendSpinnerAdapter
+* SimpleExtendSpinnerArrayAdapter
+* SimpleRecyclerViewAdapter
+* SimpleViewPagerAdapter
+
+Pack of useful adapters:
+
+```
+    private fun setAdapter(index: Int) {
+         val adapter = when (index) {
+             // usual recycler without direct creation of VH
+             0 -> SimpleRecyclerViewAdapter(listOf(1, 2, 3),
+                                            { this.toLong() },
+                                            R.layout.spinner_item,
+                                            { itemView.asTextView().text = it.toString() })
+             // usual recycler with VH
+             1 -> SimpleRecyclerViewAdapter(listOf(3, 4, 5),
+                                            { this.toLong() },
+                                            { parent ->
+                                                SimpleViewHolder(R.layout.spinner_item, parent, { itemView.asTextView().text = it.toString() })
+                                            })
+             // adapter for multiple types - just register handlers and it's done
+             2 -> MultiTypeRecyclerViewAdapter(listOf("a", 1, "c", 2), { hashCode().toLong() },
+                                               ViewTypeHandler<Any>({ it is String }, ::SpinnerItemViewHolder),
+                                               ViewTypeHandler(
+                                                       { it is Int },
+                                                       {
+                                                           SimpleViewHolder<Any>(R.layout.spinner_item, it,
+                                                                                 {
+                                                                                     itemView.asTextView().text = it.toString()
+                                                                                     itemView.setBackgroundColor(Color.BLUE)
+                                                                                 })
+                                                       })
+                                              )
+             // multi type adapter where u can add 1 header and 1 footer (u can hide it via visibility properties) (if u need more - use default MultiTypeRecyclerViewAdapter)
+             3 -> HeaderFooterRecyclerViewAdapter(Array(50, { i -> i }).toList(), null,
+                                                  R.layout.spinner_item,
+                                                  { itemView.asTextView().text = "Header" },
+                                                  R.layout.spinner_item,
+                                                  { itemView.asTextView().text = "Footer" },
+                                                  ViewTypeHandler({ true },
+                                                                  R.layout.spinner_item,
+                                                                  { itemView.asTextView().text = it.toString() })
+                                                 ).apply { headerVisible = true; footerVisible = true }
+             // pagination - just use PaginationList as data source and call list.loadPAge on footer show (or impl your own logic)
+             4 -> {
+                 val list = PaginationList<String>(5, { from, count, callback ->
+                     asyncUI(this) {
+                         delay(5000)
+                         val cnt = minOf(count, 100 - from)
+                         callback(Array(cnt, { i -> "Item #${i + from}" }).toList())
+                     }
+                 })
+                 val adapter = HeaderFooterRecyclerViewAdapter(list, null, null,
+                                                               { SimpleViewHolder(ProgressBar(it.context), { list.loadPage() }) },
+                                                               ViewTypeHandler({ true },
+                                                                               R.layout.spinner_item,
+                                                                               { itemView.asTextView().text = it })
+                                                              )
+                 list.setOnPageLoadedListener {
+                     if (adapter.data == list) {
+                         if (!list.hasMorePages) {
+                             adapter.footerVisible = false
+                         }
+                         adapter.notifyDataSetChanged()
+                     } else {
+                         list.setOnPageLoadedListener(null)
+                     }
+                 }
+                 adapter
+             }
+             else -> null
+         }
+         recycler.adapter = adapter
+     }
+```
+
 ## How to thanks
 
 wmz - Z424415381288 <br/>
 wmr - R109844875467
-
-[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-vkatz--lib-green.svg?style=flat )]( https://android-arsenal.com/details/1/6368 )

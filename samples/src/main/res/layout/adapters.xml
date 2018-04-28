@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#fff"
+              android:orientation="vertical">
+    <by.vkatz.katzext.widgets.FlowLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button android:id="@+id/simple1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Simple 1"/>
+        <Button android:id="@+id/simple2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Simple 2"/>
+        <Button android:id="@+id/mulType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MultiType"/>
+        <Button android:id="@+id/headerFooter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HeaderFooter"/>
+        <Button android:id="@+id/pagination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pagination"/>
+    </by.vkatz.katzext.widgets.FlowLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>
