@@ -17,7 +17,7 @@ import by.vkatz.katzext.widgets.SlideMenuLayout
 
 typealias Callback = () -> Unit
 
-typealias ValueCallback<T> = (t:T) -> Unit
+typealias ValueCallback<T> = (t: T) -> Unit
 
 @Suppress("unused")
 infix fun <T> Any?.so(t: T) = t

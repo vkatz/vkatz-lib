@@ -25,7 +25,7 @@ class SpinnerScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
             selection = 0
         }
         (view[R.id.spinner2] as ExtendSpinner).apply {
-            adapter = SimpleExtendSpinnerAdapter(resources.getStringArray(R.array.spinner_items).toList(), null,"Nothing selected",
+            adapter = SimpleExtendSpinnerAdapter(resources.getStringArray(R.array.spinner_items).toList(), null, "Nothing selected",
                                                  { it.inflate(R.layout.spinner_item) },
                                                  { view, item -> view.asTextView().text = item })
             selection = -1

@@ -78,6 +78,13 @@ New widgets:
 #### ExtendImageView
 
 `app:touchZoom` allow to enable pinchZoom(default false), `app:maxZoom` and `app:minZoom` to config it
+      
+# New widgets
+#### FlowLayout
+
+Allow to place items one by one, in case there is no space in line - item placed at next line. Allow to set horizontal gaps and vertical per line align
+
+![](https://github.com/vkatz/vkatz-lib/blob/master/.doc/flow_layout.png?raw=true)
 
 #### ExtendSpinner
 
@@ -85,13 +92,6 @@ Completely new spinner that allow to handle - "no selection" and "custom selecte
 ps: in case u are using TextView+[height=wrap-content] as list istem - add also line count !! (otherwise u will face ListView measure bug, someday i will fix it)
 
 ![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/ext_spinner.png)
-
-# New widgets
-#### FlowLayout
-
-Allow to place items one by one, in case there is no space in line - item placed at next line. Allow to set horizontal gaps and vertical per line align
-
-![](https://github.com/vkatz/vkatz-lib/blob/master/.doc/flow_layout.png?raw=true)
 
 #### SlideMenuLayout  
 
