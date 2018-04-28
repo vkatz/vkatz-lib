@@ -1,0 +1,9 @@
+<templateSet group="KatzLib">
+  <template name="kzf" value="class $NAME$ : KatzillaFragment&lt;$NAME$.$Model_name$&gt;() {&#10;    class $Model_name$ : FragmentScreen.ScreenModel() {&#10;       &#10;    }&#10;}" description="Create KatzilllFramgent" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="FramgmentName" alwaysStopAt="true" />
+    <variable name="Model_name" expression="" defaultValue="ModelName" alwaysStopAt="true" />
+    <context>
+      <option name="KOTLIN_TOPLEVEL" value="true" />
+    </context>
+  </template>
+</templateSet>
