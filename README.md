@@ -27,14 +27,11 @@ default actitvity navigation + allow me to make any pattern i want (clean/mvp/mv
 
 `AsyncHelper` - helper for asyn operations using corutines
     
-    asyncUI {
-          val t1 = async { 1 }.await()                                //Int?
-          val t2 = async { 1 }.await()!!                              //Int
-          val t3 = safeAsync { 1 }.onError { 2 }.await()              //Int
-          val t4 = safeAsync<Int?> { 1 }.onError { null }.await()     //Int?
-          val t5 = AsyncHelper(newSingleThreadContext("WorkThread")) { 1 }.onError { 2 }.await()
-          val t6 = AsyncHelper<Int?>(newFixedThreadPoolContext(5, "WorkThread")) { 1 }.onError { 2 }.await()
-    }
+     asyncUI {
+           val t1 = async { 1 }.await()   //Int? - ? due to task might be canceled
+           val t2 = async { 1 }.await()!! //Int
+           val t3 = AsyncHelper(null, newSingleThreadContext("WorkThread"), { 1 }).start().await()
+     }
  
 `Delegates` - `SharedPreferences` and `Bundle` delegates
 

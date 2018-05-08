@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import by.vkatz.katzext.adapters.*
 import by.vkatz.katzext.utils.asTextView
+import by.vkatz.katzext.utils.async
 import by.vkatz.katzext.utils.asyncUI
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzilla.FragmentScreen
@@ -33,6 +34,19 @@ class AdaptersScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
         headerFooter.setOnClickListener { setAdapter(3) }
         pagination.setOnClickListener { setAdapter(4) }
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+
+
+        async {   // todo test cancelation
+            async {
+                async(this) {
+                    delay(1000)
+                }
+            }
+        }
+
+
+
+
     }
 
     private fun setAdapter(index: Int) {
@@ -74,7 +88,7 @@ class AdaptersScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
 
         // pagination - just use PaginationList as data source and call list.loadPAge on footer show (or impl your own logic)
             4 -> {
-                val list = PaginationList<String>(5, { from, count, callback ->
+                val list = PaginationList<String>(7, { from, count, callback ->
                     asyncUI(this) {
                         delay(1000)
                         val cnt = minOf(count, 100 - from)
