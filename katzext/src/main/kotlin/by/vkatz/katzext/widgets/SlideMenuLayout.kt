@@ -12,14 +12,14 @@ import by.vkatz.katzext.R
 @Suppress("MemberVisibilityCanPrivate")
 open class SlideMenuLayout : ExtendRelativeLayout {
     companion object {
-        val LEFT = 1
-        val RIGHT = 2
-        val TOP = 3
-        val BOTTOM = 4
+        const val LEFT = 1
+        const val RIGHT = 2
+        const val TOP = 3
+        const val BOTTOM = 4
 
-        val FLAG_NEVER_FINISH = 0
-        val FLAG_ALWAYS_FINISH = 1
-        val FLAG_CUSTOM = 2
+        const val FLAG_NEVER_FINISH = 0
+        const val FLAG_ALWAYS_FINISH = 1
+        const val FLAG_CUSTOM = 2
     }
 
     val slideFrom: Int

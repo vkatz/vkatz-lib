@@ -1,6 +1,5 @@
 package by.vkatz.katzext.utils
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
@@ -8,8 +7,11 @@ import android.arch.lifecycle.OnLifecycleEvent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotlin.coroutines.experimental.CoroutineContext
 
 
