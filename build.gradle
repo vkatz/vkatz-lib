@@ -1,5 +1,5 @@
 buildscript {
-    ext.appKotlinVersion = '1.2.40'
+    ext.appKotlinVersion = '1.2.41'
     ext.appKotlinCorutines = '0.22.5'
 
     ext.appSupportVersion = '27.1.1'
@@ -14,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha13'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha14'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$appKotlinVersion"
     }
 }

@@ -10,7 +10,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import by.vkatz.katzext.adapters.*
 import by.vkatz.katzext.utils.asTextView
-import by.vkatz.katzext.utils.async
 import by.vkatz.katzext.utils.asyncUI
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzilla.FragmentScreen
@@ -34,19 +33,6 @@ class AdaptersScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
         headerFooter.setOnClickListener { setAdapter(3) }
         pagination.setOnClickListener { setAdapter(4) }
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-
-
-        async {   // todo test cancelation
-            async {
-                async(this) {
-                    delay(1000)
-                }
-            }
-        }
-
-
-
-
     }
 
     private fun setAdapter(index: Int) {

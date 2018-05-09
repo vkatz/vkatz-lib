@@ -26,7 +26,7 @@ typealias AsyncResult<T> = Deferred<T>
 
 open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private val context: CoroutineContext, private val action: suspend () -> T) : LifecycleObserver {
     companion object {
-        var DEFAULT_ERROR_HANDLER: suspend (Throwable) -> Unit? = { if (it !is JobCancellationException||1==1) Log.e("AsyncHelper", "async::", it) }
+        var DEFAULT_ERROR_HANDLER: suspend (Throwable) -> Unit? = { if (it !is JobCancellationException) Log.e("AsyncHelper", "async::", it) }
         var DETACH_HANDLER = Handler(Looper.getMainLooper())
     }
 
