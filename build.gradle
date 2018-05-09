@@ -4,7 +4,8 @@ buildscript {
 
     ext.appSupportVersion = '27.1.1'
 
-    ext.appTargetVersion = 27
+    ext.appMinSdkVersion = 18
+    ext.appTargetSdkVersion = 27
     ext.appCompileSdkVersion = 27
     ext.appBuildToolsVersion = '27.0.3'
 

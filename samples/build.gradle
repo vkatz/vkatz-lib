@@ -12,8 +12,8 @@ android {
 
     defaultConfig {
         applicationId "by.vkatz"
-        minSdkVersion 18
-        targetSdkVersion appTargetVersion
+        minSdkVersion appMinSdkVersion
+        targetSdkVersion appTargetSdkVersion
         versionCode 1
         versionName "1.0"
     }
