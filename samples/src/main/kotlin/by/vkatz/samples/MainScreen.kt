@@ -16,17 +16,18 @@ import kotlinx.coroutines.experimental.delay
 /**
  * Created by vKatz on 08.03.2015.
  */
-class MainScreen : KatzillaFragment<MainScreen.Model>() {
+
+class MainScreenModel : FragmentScreen.ScreenModel() {
+    var counter = AppLiveData(0)
+}
+
+class MainScreen : KatzillaFragment<MainScreenModel>() {
     private var backTimeouted = false
 
-    class Model : FragmentScreen.ScreenModel() {
-        var counter = AppLiveData(0)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: Model, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: MainScreenModel, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.screen_main)
 
-    override fun onViewCreated(view: View, model: Model, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, model: MainScreenModel, savedInstanceState: Bundle?) {
         super.onViewCreated(view, model, savedInstanceState)
 
         model.counter.observe(this) { t -> counter.text = "$t" }
