@@ -8,14 +8,23 @@ import android.arch.lifecycle.Observer
  * Created by V on 24.04.2018.
  */
 
+@Suppress("UNCHECKED_CAST")
 open class AppLiveData<T>(initialValue: T) : MutableLiveData<T>() {
     init {
         value = initialValue
     }
 
-    override fun getValue(): T = super.getValue()!!
-
+    @Suppress("UNCHECKED_CAST")
     fun observe(owner: LifecycleOwner, observer: (T) -> Unit) {
-        super.observe(owner, Observer { observer(it!!) })
+        super.observe(owner, Observer { observer(it as T) })
+    }
+
+    override fun getValue(): T {
+        return super.getValue() as T
+    }
+
+    @Suppress("RedundantOverride")
+    override fun postValue(value: T) {
+        super.postValue(value)
     }
 }

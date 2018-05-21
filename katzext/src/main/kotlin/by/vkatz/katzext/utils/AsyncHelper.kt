@@ -67,8 +67,11 @@ open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private 
     }
 }
 
-fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> =
-        AsyncHelper<T?>(lifecycleOwner?.lifecycle, UI, action).start()
+fun <T> async(lifecycleOwner: LifecycleOwner? = null, coroutineContext: CoroutineContext = CommonPool, action: suspend () -> T): AsyncResult<T?> =
+        AsyncHelper<T?>(lifecycleOwner?.lifecycle, coroutineContext, action).start()
 
-fun <T> async(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> =
-        AsyncHelper<T?>(lifecycleOwner?.lifecycle, CommonPool, action).start()
+fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> = async(lifecycleOwner, UI, action)
+
+fun <T> asyncResult(data: T) = async { data }
+
+fun <T> asyncUIResult(data: T) = asyncUI { data }

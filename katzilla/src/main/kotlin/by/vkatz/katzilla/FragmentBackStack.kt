@@ -138,7 +138,25 @@ open class FragmentBackStack {
         screenChanged(pendingScreen)
     }
 
+    fun hasScreen(screen: KClass<out FragmentScreen<*>>): Boolean {
+        return backStackEntries.any { it.screen == screen }
+    }
+
+    fun backTo(screen: KClass<out FragmentScreen<*>>, transactionConfig: (FragmentTransaction.() -> Unit)? = null) {
+        val index = backStackEntries.indexOfLast { it.screen == screen }
+        if (index >= 0) {
+            while (backStackEntries.size != index + 1) {
+                backStackEntries.removeAt(index + 1)
+            }
+            back(transactionConfig)
+        }
+    }
+
+    fun clearBackStack() {
+        backStackEntries.clear()
+    }
+
     fun isBackPossible() = backStackEntries.size > 0
 
-    data class BackStackEntry(var screen: KClass<out FragmentScreen<*>>, var data: FragmentScreen.ScreenModel?, var state: Fragment.SavedState)
+    data class BackStackEntry(var screen: KClass<out FragmentScreen<*>>, var data: FragmentScreen.ScreenModel?, var state: Fragment.SavedState?)
 }

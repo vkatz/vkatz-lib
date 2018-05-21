@@ -2,6 +2,9 @@ package by.vkatz.katzext.utils
 
 import android.app.Activity
 import android.app.Fragment
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Handler
 import android.support.annotation.LayoutRes
@@ -23,6 +26,46 @@ typealias ValueCallback<T> = (t: T) -> Unit
 infix fun <T> Any?.so(t: T) = t
 
 fun <T> List<T>.toArrayList() = ArrayList(this)
+
+fun <T> LiveData<T>.observe(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {
+    observe(lifecycle, Observer { observer(it) })
+}
+
+fun <T> LiveData<T>.observeOnce(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {
+    observe(lifecycle, object : Observer<T> {
+        override fun onChanged(t: T?) {
+            observer(t)
+            removeObserver(this)
+        }
+    })
+}
+
+fun <T> LiveData<T>.observeLater(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {
+    observe(lifecycle, object : Observer<T> {
+        var skipped = false
+
+        override fun onChanged(t: T?) {
+            if (!skipped) {
+                skipped = true
+            } else {
+                observer(t)
+            }
+        }
+    })
+}
+
+fun <T> LiveData<T>.observeNotNull(lifecycle: LifecycleOwner, observer: (T) -> Unit) {
+    observe(lifecycle, Observer { observer(it!!) })
+}
+
+fun <T> LiveData<T>.observeNotNullOnce(lifecycle: LifecycleOwner, observer: (T) -> Unit) {
+    observe(lifecycle, object : Observer<T> {
+        override fun onChanged(t: T?) {
+            observer(t!!)
+            removeObserver(this)
+        }
+    })
+}
 
 fun Handler.postDelayed(delay: Long, action: () -> Unit) = postDelayed(action, delay)
 
@@ -63,16 +106,29 @@ fun View.setAsyncOnClickListener(listener: suspend (view: View) -> Unit) = setOn
 
 fun View.postRequestLayout() = post { requestLayout() }
 
-fun View.makeVisible() {
+fun <T : View> T.makeVisible(): T {
     visibility = View.VISIBLE
+    return this
 }
 
-fun View.makeInvisible() {
+fun <T : View> T.makeInvisible(): T {
     visibility = View.INVISIBLE
+    return this
 }
 
-fun View.makeGone() {
+fun <T : View> T.makeGone(): T {
     visibility = View.GONE
+    return this
+}
+
+fun <T : View> T.makeVisibleOrGone(visible: Boolean): T {
+    visibility = if (visible) View.VISIBLE else View.GONE
+    return this
+}
+
+fun <T : View> T.makeVisibleOrInvisible(visible: Boolean): T {
+    visibility = if (visible) View.VISIBLE else View.INVISIBLE
+    return this
 }
 
 fun ViewGroup.forEachChildren(action: (view: View) -> Unit) {
