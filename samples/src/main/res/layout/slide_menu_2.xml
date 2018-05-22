@@ -19,6 +19,17 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/menu1"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:background="#0f0"
+            android:gravity="center"
+            android:text="i am slide zone"
+            android:textColor="#000"
+            android:textSize="20dp"
+            app:slideZoneForId="@+id/menu"/>/>
+
+        <TextView
             android:id="@+id/menu"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
@@ -30,18 +41,6 @@
             app:slideDirection="fromTop"
             app:slideEnabled="true"
             app:slided="true"/>
-
-        <TextView
-            android:id="@+id/menu1"
-            android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:background="#0f0"
-            android:gravity="center"
-            android:text="i am movable slide zone"
-            android:textColor="#000"
-            android:textSize="20dp"
-            app:layout_constraintTop_toBottomOf="@id/menu"
-            app:slideZoneForId="@id/menu"/>/>
     </by.vkatz.katzext.widgets.SlideMenuLayout>
 
 </RelativeLayout>

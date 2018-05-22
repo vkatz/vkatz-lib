@@ -3,19 +3,19 @@ package by.vkatz.katzext.widgets
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import by.vkatz.katzext.R
 import by.vkatz.katzext.utils.clamp
 import by.vkatz.katzext.utils.closeTo
 import by.vkatz.katzext.utils.forEachChildren
 
 @Suppress("MemberVisibilityCanPrivate")
-open class SlideMenuLayout : ConstraintLayout {
+open class SlideMenuLayout : RelativeLayout {
     companion object {
         const val SLIDE_FROM_LEFT = 1
         const val SLIDE_FROM_RIGHT = 2
@@ -71,18 +71,6 @@ open class SlideMenuLayout : ConstraintLayout {
     }
 
     private fun getActiveChild() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.isInScroll }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-       /* forEachChildren {
-            if (it.lp.slideEnabled) {
-                var viewWidget = getViewWidget(it)
-                viewWidget.drawX += 100
-                viewWidget.drawY += 100
-            }
-        }*/
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
-    }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
@@ -278,7 +266,7 @@ open class SlideMenuLayout : ConstraintLayout {
     override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 
     @Suppress("MemberVisibilityCanBePrivate")
-    class LayoutParams : ConstraintLayout.LayoutParams {
+    class LayoutParams : RelativeLayout.LayoutParams {
 
         internal var isInScroll = false
         internal var slideLastPoint: Float = 0f

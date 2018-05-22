@@ -1,60 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <by.vkatz.katzext.widgets.SlideMenuLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff">
 
-    <!--
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff"
-        android:gravity="center"
-        android:text="background"
-        android:textColor="#000"
-        android:textSize="40dp"
-        app:applyScroll="false"
-        app:interceptTouches="false" />
+    <TextView android:layout_width="100dp"
+              android:layout_height="100dp"
+              android:layout_centerVertical="true"
+              android:background="#0f0"
+              android:gravity="center"
+              android:text="Left Slide Zone"
+              android:textColor="#000"
+              app:slideZoneForId="@+id/left"/>
 
-    <View
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:background="#80f0"
-        app:applyScroll="false" />
+    <TextView android:layout_width="100dp"
+              android:layout_height="100dp"
+              android:layout_alignParentRight="true"
+              android:layout_centerVertical="true"
+              android:background="#0f0"
+              android:gravity="center"
+              android:text="Right Slide Zone"
+              android:textColor="#000"
+              app:slideZoneForId="@+id/right"/>
 
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:background="#f00"
-        android:gravity="center"
-        android:text="Left menu"
-        android:textColor="#000"
-        android:textSize="30dp" />
+    <TextView android:layout_width="100dp"
+              android:layout_height="100dp"
+              android:layout_centerHorizontal="true"
+              android:background="#0f0"
+              android:gravity="center"
+              android:text="Top Slide Zone"
+              android:textColor="#000"
+              app:slideZoneForId="@+id/top"/>
 
-    <by.vkatz.katzext.widgets.SlideMenuLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:applyScroll="false"
-        app:interceptTouches="false"
-        app:slideFrom="right">
+    <TextView android:layout_width="100dp"
+              android:layout_height="100dp"
+              android:layout_alignParentBottom="true"
+              android:layout_centerHorizontal="true"
+              android:background="#0f0"
+              android:gravity="center"
+              android:text="Bot Slide Zone"
+              android:textColor="#000"
+              app:slideZoneForId="@+id/bot"/>
 
-        <View
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:background="#80f0"
-            app:applyScroll="false" />
+    <TextView android:id="@+id/left"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#f88"
+              android:gravity="center"
+              android:text="Left Slide"
+              android:textColor="#000"
+              android:textSize="20sp"
+              app:slideDirection="fromLeft"
+              app:slideEnabled="true"
+              app:slided="false"/>
 
-        <TextView
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:background="#f00"
-            android:gravity="center"
-            android:text="Right menu"
-            android:textColor="#000"
-            android:textSize="30dp" />
-    </by.vkatz.katzext.widgets.SlideMenuLayout>
-    -->
+    <TextView android:id="@+id/right"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#f88"
+              android:gravity="center"
+              android:text="Right Slide"
+              android:textColor="#000"
+              android:textSize="20sp"
+              app:slideDirection="fromRight"
+              app:slideEnabled="true"
+              app:slided="false"/>
+
+    <TextView android:id="@+id/top"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#f88"
+              android:gravity="center"
+              android:text="Top Slide"
+              android:textColor="#000"
+              android:textSize="20sp"
+              app:slideDirection="fromTop"
+              app:slideEnabled="true"
+              app:slided="false"/>
+
+    <TextView android:id="@+id/bot"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#f88"
+              android:gravity="center"
+              android:text="Bot Slide"
+              android:textColor="#000"
+              android:textSize="20sp"
+              app:slideDirection="fromBottom"
+              app:slideEnabled="true"
+              app:slided="false"/>
+
+
 </by.vkatz.katzext.widgets.SlideMenuLayout>
