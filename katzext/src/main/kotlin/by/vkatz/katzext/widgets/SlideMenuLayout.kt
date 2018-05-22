@@ -1,265 +1,267 @@
 package by.vkatz.katzext.widgets
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.*
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.Interpolator
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.Scroller
 import by.vkatz.katzext.R
+import by.vkatz.katzext.utils.clamp
+import by.vkatz.katzext.utils.closeTo
+import by.vkatz.katzext.utils.forEachChildren
 
 @Suppress("MemberVisibilityCanPrivate")
-open class SlideMenuLayout : ExtendRelativeLayout {
+open class SlideMenuLayout : ConstraintLayout {
     companion object {
-        const val LEFT = 1
-        const val RIGHT = 2
-        const val TOP = 3
-        const val BOTTOM = 4
+        const val SLIDE_FROM_LEFT = 1
+        const val SLIDE_FROM_RIGHT = 2
+        const val SLIDE_FROM_TOP = 3
+        const val SLIDE_FROM_BOTTOM = 4
 
-        const val FLAG_NEVER_FINISH = 0
-        const val FLAG_ALWAYS_FINISH = 1
-        const val FLAG_CUSTOM = 2
+        const val BEHAVIOUR_NONE = 0
+        const val BEHAVIOUR_AUTO = 1
+
+        const val OPEN_BEFORE_NESTED_SCROLL = 1
+        const val OPEN_AFTER_NESTED_SCROLL = 2
+        const val CLOSE_BEFORE_NESTEDSCROLL = 4
+        const val CLOSE_AFTER_NESTEDSCROLL = 8
     }
 
-    val slideFrom: Int
-    var isExpanded: Boolean = false
-        private set
-    var isMenuEnabled: Boolean = false
-    var scrollerDuration: Int = 0
-    private var scroll: Boolean = false
-    private var autoScroll: Boolean = false
-    private var pos: Float = 0.toFloat()
-    private var dPos: Int = 0
-    private val flags: Int
-    private var slideSize: Int = 0
-    private var slideHidingSize: Int = 0
-    private var slideVisibleSize: Int = 0
-    private val startScrollDistance: Float
-    private val scroller: Scroller
-    private var onExpandStateChangeListener: ((view: SlideMenuLayout, expanded: Boolean) -> Unit)? = null
-    private var onSlideChangeListener: ((view: SlideMenuLayout, value: Float) -> Unit)? = null
-    private var customScrollBehavior: ((sender: SlideMenuLayout, velocity: Float) -> Unit)? = null
+    private var onExpandStateChangeListener: ((view: SlideMenuLayout, target: View, expanded: Boolean) -> Unit)? = null
+
+    private var onSlideChangeListener: ((view: SlideMenuLayout, target: View, value: Float) -> Unit)? = null
 
     constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
-        scroller = Scroller(context)
-        scroll = false
-        autoScroll = false
-        //init params
-        val a = context.obtainStyledAttributes(attrs, R.styleable.SlideMenuLayout, 0, 0)
-        slideFrom = a.getInt(R.styleable.SlideMenuLayout_slideFrom, LEFT)
-        isExpanded = a.getBoolean(R.styleable.SlideMenuLayout_menuExpanded, false)
-        isMenuEnabled = a.getBoolean(R.styleable.SlideMenuLayout_menuEnabled, true)
-        slideHidingSize = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_menuHidingSize, 0)
-        slideVisibleSize = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_menuVisibleSize, 0)
-        startScrollDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_startScrollDistance, ViewConfiguration.get(context).scaledTouchSlop).toFloat()
-        scrollerDuration = a.getInt(R.styleable.SlideMenuLayout_scrollerDuration, 250)
-        flags = a.getInt(R.styleable.SlideMenuLayout_scrollBehavior, FLAG_ALWAYS_FINISH)
-        a.recycle()
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
+
+    private val View.lp: LayoutParams
+        get() = layoutParams as LayoutParams
+
+    private fun <T> View.getSlideValue(x: T, y: T) = if (isHorizontal()) x else y
+
+    private fun View.isHorizontal() = lp.slideDirection == SLIDE_FROM_LEFT || lp.slideDirection == SLIDE_FROM_RIGHT
+
+    private fun View.minSlide() = minOf(0f, lp.slideSize)
+
+    private fun View.maxSlide() = maxOf(0f, lp.slideSize)
+
+    private fun View.currentSlide() = getSlideValue(translationX, translationY)
+
+    private fun View.setCurrentSlide(value: Float) {
+        if (isHorizontal()) {
+            translationX = value
+        } else {
+            translationY = value
+        }
     }
+
+    private fun View.hasScrollFlag(flag: Int): Boolean = lp.scrollBehavior and flag == flag
+
+    private fun View.isInside(x: Float, y: Float): Boolean {
+        val cx = x - translationX
+        val cy = y - translationY
+        return cx >= left && cy >= top && cx <= right && cy <= bottom
+    }
+
+    private fun getActiveChild() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.isInScroll }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var dx = 0f
-        var dy = 0f
-        if (isHorizontal()) dx = clamp(scroller.currX.toFloat(), 0f, slideSize.toFloat())
-        else dy = clamp(scroller.currY.toFloat(), 0f, slideSize.toFloat())
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            if (child.visibility == View.GONE) continue
-            val lp = child.layoutParams as LayoutParams
-            if (lp.isMovable) {
-                child.translationX = dx
-                child.translationY = dy
+       /* forEachChildren {
+            if (it.lp.slideEnabled) {
+                var viewWidget = getViewWidget(it)
+                viewWidget.drawX += 100
+                viewWidget.drawY += 100
             }
-        }
+        }*/
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val oldSlideSize = slideSize
-        slideSize = 0
+
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
         val w = measuredWidth
         val h = measuredHeight
-        when (slideFrom) {
-            BOTTOM -> slideSize = if (slideHidingSize != 0) slideHidingSize else h - slideVisibleSize
-            TOP -> slideSize = if (slideHidingSize != 0) -slideHidingSize else slideVisibleSize - h
-            RIGHT -> slideSize = if (slideHidingSize != 0) slideHidingSize else w - slideVisibleSize
-            LEFT -> slideSize = if (slideHidingSize != 0) -slideHidingSize else slideVisibleSize - w
-        }
-        if (oldSlideSize != slideSize) {
-            if (isExpanded) expand(false)
-            else collapse(false)
+        forEachChildren {
+
+
+            if (it.lp.slideEnabled) {
+                val oldSize = it.lp.slideSize
+                it.lp.slideSize = when {
+                    it.lp.slideSizeAmount != 0 -> it.lp.slideSizeAmount * (if (it.lp.slideDirection == SLIDE_FROM_RIGHT || it.lp.slideDirection == SLIDE_FROM_BOTTOM) 1f else -1f)
+                    it.lp.slideDirection == SLIDE_FROM_LEFT -> -it.right.toFloat()
+                    it.lp.slideDirection == SLIDE_FROM_TOP -> -it.bottom.toFloat()
+                    it.lp.slideDirection == SLIDE_FROM_RIGHT -> w - it.left.toFloat()
+                    it.lp.slideDirection == SLIDE_FROM_BOTTOM -> h - it.top.toFloat()
+                    else -> 0f
+                }
+                if (oldSize != it.lp.slideSize) {
+                    if (it.lp.slided) {
+                        expand(it, false)
+                    } else {
+                        collapse(it, false)
+                    }
+                }
+            }
         }
     }
 
-    override fun invalidate() {
-        super.invalidate()
-        val scroll = if (isHorizontal()) scroller.currX else scroller.currY
-        val anim = scroller.computeScrollOffset()
-        val updatedScroll = if (isHorizontal()) scroller.currX else scroller.currY
-        if (onSlideChangeListener != null && scroll != updatedScroll) {
-            val value = 1 - Math.abs(1f * updatedScroll / (getMaxSlide() - getMinSlide()))
-            onSlideChangeListener!!.invoke(this@SlideMenuLayout, value)
-        }
-        if (anim) postInvalidate()
-        else {
-            val isExpanded: Boolean = if (isHorizontal()) scroller.currX == 0 else scroller.currY == 0
-            if (isExpanded != this@SlideMenuLayout.isExpanded && onExpandStateChangeListener != null)
-                onExpandStateChangeListener!!.invoke(this@SlideMenuLayout, isExpanded)
-            this@SlideMenuLayout.isExpanded = isExpanded
-            autoScroll = false
-        }
-        requestLayout()
-    }
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean = dispatchTouch(ev, true)
 
-    fun isHorizontal() = slideFrom == RIGHT || slideFrom == LEFT
-
-    fun isVertical() = !isHorizontal()
-
-    private fun isEventInsideChild(x: Float, y: Float): Boolean {
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            val lp = child.layoutParams as LayoutParams
-            if (!lp.isTouchable || child.visibility == View.GONE) continue
-            val cx = (x - child.translationX).toInt()
-            val cy = (y - child.translationY).toInt()
-            if (cx >= child.left && cy >= child.top && cx <= child.right && cy <= child.bottom) return true
-        }
-        return false
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        dispatchTouch(ev, false)
+        return true
     }
 
     private fun dispatchTouch(ev: MotionEvent, isIntercept: Boolean): Boolean {
         invalidate()
-        if (autoScroll) return false
-        val curPos = if (isHorizontal()) ev.x else ev.y
-        if (!scroll && !isEventInsideChild(ev.x, ev.y)) return false
+
+        val target = getActiveChild() ?: (0 until childCount).mapNotNull { getChildAt(it) }.mapNotNull { child ->
+            when {
+                child.visibility == View.GONE -> null
+                !child.isInside(ev.x, ev.y) -> null
+                child.lp.slideEnabled -> child
+                child.lp.slideZoneForId != 0 -> {
+                    val potentialTarget = (0 until childCount).filter { getChildAt(it).id == child.lp.slideZoneForId }.map { getChildAt(it) }.firstOrNull()
+                    if (potentialTarget != null && potentialTarget.lp.slideEnabled && potentialTarget.visibility != View.GONE) {
+                        potentialTarget
+                    } else {
+                        null
+                    }
+                }
+                else -> null
+            }
+        }.firstOrNull() ?: return false
+
+        val lp = target.lp
+
+        val curPos = target.getSlideValue(ev.x, ev.y)
+
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            scroll = false
-            pos = curPos
+            target.clearAnimation()
+            lp.isInScroll = false
+            lp.slideVelocity = 0f
+            lp.slideLastPoint = curPos
+            lp.slideLastPointTime = System.currentTimeMillis()
             return !isIntercept
         } else if (ev.action == MotionEvent.ACTION_MOVE) {
-            return if (scroll) {
-                dPos = (curPos - pos).toInt()
-                scrollMenuBy(dPos)
-                pos = curPos
+            return if (lp.isInScroll) {
+                scrollMenuBy(target, (curPos - lp.slideLastPoint).toInt())
+                lp.slideVelocity = 1f * (curPos - lp.slideLastPoint) / (System.currentTimeMillis() - lp.slideLastPointTime)
+                lp.slideLastPoint = curPos
+                lp.slideLastPointTime = System.currentTimeMillis()
                 true
             } else {
-                if (Math.abs(pos - curPos) > startScrollDistance) {
+                if (Math.abs(lp.slideLastPoint - curPos) > lp.slideMinDistance) {
                     parent?.requestDisallowInterceptTouchEvent(true)
-                    pos = curPos
-                    scroll = true
+                    lp.slideLastPoint = curPos
+                    lp.slideLastPointTime = System.currentTimeMillis()
+                    lp.isInScroll = true
                     true
                 } else false
             }
         } else if (ev.action == MotionEvent.ACTION_CANCEL || ev.action == MotionEvent.ACTION_UP)
-            if (scroll) finishMenuScroll()
+            if (lp.isInScroll) {
+                finishMenuScroll(target)
+            }
         return false
     }
 
-    fun scrollMenuBy(amount: Int): Int {
-        if (amount == 0) return 0
-        var scroll = amount
-        if (isHorizontal()) {
-            val fPos = (scroller.currX + amount).toFloat()
-            if (Math.abs(fPos) > Math.abs(slideSize)) scroll = slideSize - scroller.currX
-            if (fPos * (if (slideFrom == LEFT) -1 else 1) < 0) scroll = -scroller.currX
-            scroller.startScroll(scroller.currX, 0, scroll, 0, 0)
-        } else {
-            val fPos = (scroller.currY + amount).toFloat()
-            if (Math.abs(fPos) > Math.abs(slideSize)) scroll = slideSize - scroller.currY
-            if (fPos * (if (slideFrom == TOP) -1 else 1) < 0) scroll = -scroller.currY
-            scroller.startScroll(0, scroller.currY, 0, scroll, 0)
-        }
-        dPos = amount
-        invalidate()
-        return scroll
-    }
-
-    fun scrollMenuTo(value: Int, anim: Boolean) {
-        scroller.startScroll(scroller.currX, scroller.currY,
-                             (if (isHorizontal()) value else 0) - scroller.currX,
-                             (if (isHorizontal()) 0 else value) - scroller.currY,
-                             if (anim) scrollerDuration else 0)
-        autoScroll = true
-        invalidate()
-    }
-
-    fun flingMenuBy(velocity: Int) {
-        if (isHorizontal()) scroller.fling(scroller.currX, scroller.currY, velocity, 0, Math.min(0, slideSize), Math.max(0, slideSize), 0, 0)
-        else scroller.fling(scroller.currX, scroller.currY, 0, velocity, 0, 0, Math.min(0, slideSize), Math.max(0, slideSize))
-        invalidate()
-    }
-
-    fun finishMenuScroll() {
-        if (hasFlag(flags, FLAG_ALWAYS_FINISH)) { //finish scroll
-            if (getCurrentSlide() == getMinSlide() || getCurrentSlide() == getMaxSlide()) return
-            if (isHorizontal()) {
-                if (dPos > 0 && slideFrom == LEFT || dPos < 0 && slideFrom == RIGHT) expand()
-                else collapse()
+    private fun finishMenuScroll(target: View) {
+        val slideValue = target.currentSlide()
+        if (target.hasScrollFlag(BEHAVIOUR_AUTO)) { //finish scroll
+            if (slideValue.closeTo(target.maxSlide(), 0.001f) || slideValue.closeTo(target.minSlide(), 0.001f)) return
+            if (target.isHorizontal()) {
+                if (target.lp.slideVelocity > 0 && target.lp.slideDirection == SLIDE_FROM_LEFT || target.lp.slideVelocity < 0 && target.lp.slideDirection == SLIDE_FROM_RIGHT) {
+                    expand(target)
+                } else {
+                    collapse(target)
+                }
             } else {
-                if (dPos > 0 && slideFrom == TOP || dPos < 0 && slideFrom == BOTTOM) expand()
-                else collapse()
+                if (target.lp.slideVelocity > 0 && target.lp.slideDirection == SLIDE_FROM_TOP || target.lp.slideVelocity < 0 && target.lp.slideDirection == SLIDE_FROM_BOTTOM) {
+                    expand(target)
+                } else {
+                    collapse(target)
+                }
             }
-        } else if (hasFlag(flags, FLAG_CUSTOM)) {
-            if (customScrollBehavior == null) throw RuntimeException("SlideMenuLayout: U need to set customScrollBehavior to use flag 'custom'")
-            customScrollBehavior!!.invoke(this, (dPos * 50).toFloat())
-        } else { //do velocity scroll
-            val velocity = dPos * 50
-            flingMenuBy(velocity)
+        } else {
+            setScroll(target, true, (slideValue + target.lp.slideVelocity * 50).clamp(target.minSlide(), target.maxSlide()), DecelerateInterpolator())
         }
     }
 
-    fun hasFlag(what: Int, flag: Int): Boolean = what and flag == flag
+    fun scrollMenuTo(target: View, pos: Int) {
+        scrollMenuBy(target, pos - target.currentSlide().toInt())
+    }
 
-    fun expand(anim: Boolean = true) {
-        scroller.startScroll(scroller.currX, scroller.currY, -scroller.currX, -scroller.currY, if (anim) scrollerDuration else 0)
-        autoScroll = true
+    fun scrollMenuBy(target: View, amount: Int): Int {
+        if (amount == 0) return 0
+        val was = target.currentSlide()
+        val wasInScroll = target.lp.isInScroll
+        setScroll(target, false, was + amount)
+        target.lp.isInScroll = wasInScroll
+        return Math.abs(target.currentSlide() - was).toInt()
+    }
+
+    fun toggle(target: View, animate: Boolean = true) {
+        if (target.lp.slided) {
+            collapse(target, animate)
+        } else {
+            expand(target, animate)
+        }
+    }
+
+    fun expand(target: View, animate: Boolean = true) {
+        setScroll(target, animate, 0f)
+    }
+
+    fun collapse(target: View, animate: Boolean = true) {
+        setScroll(target, animate, target.lp.slideSize)
+    }
+
+    private fun setScroll(target: View, animate: Boolean, value: Float, interpolator: Interpolator? = null) {
+        target.clearAnimation()
+        val targetValue = value.clamp(target.minSlide(), target.maxSlide())
+
+        val wasSlided = target.lp.slided
+        target.lp.slided = targetValue.closeTo(0f, 0.001f)
+        if (wasSlided != target.lp.slided) {
+            notifySlideChanged(target)
+        }
+
+        if (animate) {
+            target.animate().let { if (target.isHorizontal()) it.translationX(targetValue) else it.translationY(targetValue) }
+                    .setInterpolator(interpolator).setDuration(target.lp.slideAutoFinishDuration.toLong()).setUpdateListener {
+                        notifySlideSizeChanged(target)
+                    }
+        } else {
+            target.setCurrentSlide(targetValue)
+            notifySlideSizeChanged(target)
+        }
         invalidate()
+        target.lp.isInScroll = false
     }
 
-    fun collapse(anim: Boolean = true) {
-        scroller.startScroll(scroller.currX, scroller.currY,
-                             (if (isHorizontal()) slideSize else 0) - scroller.currX,
-                             (if (isHorizontal()) 0 else slideSize) - scroller.currY,
-                             if (anim) scrollerDuration else 0)
-        autoScroll = true
-        invalidate()
+    private fun notifySlideSizeChanged(target: View) {
+        onSlideChangeListener?.invoke(this, target, target.currentSlide() / target.maxSlide())
     }
 
-    fun toggle(anim: Boolean = true) {
-        if (isExpanded) collapse(anim)
-        else expand(anim)
+    private fun notifySlideChanged(target: View) {
+        onExpandStateChangeListener?.invoke(this, target, target.lp.slided)
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean = isMenuEnabled && dispatchTouch(ev, true)
-
-    override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (isMenuEnabled) dispatchTouch(ev, false)
-        return true
+    fun setOnExpandStateChangeListener(onExpandStateChangeListener: ((view: SlideMenuLayout, target: View, expanded: Boolean) -> Unit)?) {
+        this.onExpandStateChangeListener = onExpandStateChangeListener
     }
 
-    fun getMinSlide() = Math.min(0, slideSize)
-
-    fun getMaxSlide() = Math.max(0, slideSize)
-
-    fun getCurrentSlide() = if (isHorizontal()) scroller.currX else scroller.currY
-
-    private fun clearSlideSizes() {
-        slideHidingSize = 0
-        slideVisibleSize = 0
-    }
-
-    fun setSlideHidingSize(slideHidingSize: Int) {
-        clearSlideSizes()
-        this.slideHidingSize = slideHidingSize
-        requestLayout()
-    }
-
-    fun setSlideVisibleSize(slideVisibleSize: Int) {
-        clearSlideSizes()
-        this.slideVisibleSize = slideVisibleSize
-        requestLayout()
+    fun setOnSlideChangeListener(onSlideChangeListener: ((view: SlideMenuLayout, target: View, value: Float) -> Unit)?) {
+        this.onSlideChangeListener = onSlideChangeListener
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
@@ -269,46 +271,46 @@ open class SlideMenuLayout : ExtendRelativeLayout {
         } else super.onApplyWindowInsets(insets)
     }
 
-    private fun clamp(value: Float, a: Float, b: Float): Float {
-        val max = Math.max(a, b)
-        val min = Math.min(a, b)
-        if (value < min) return min
-        if (value > max) return max
-        return value
-    }
-
     override fun generateLayoutParams(attrs: AttributeSet): LayoutParams = LayoutParams(context, attrs)
 
-    override fun generateDefaultLayoutParams(): LayoutParams = LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true, false)
+    override fun generateDefaultLayoutParams(): LayoutParams = LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
     override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 
-    fun setOnExpandStateChangeListener(onExpandStateChangeListener: ((view: SlideMenuLayout, expanded: Boolean) -> Unit)?) {
-        this.onExpandStateChangeListener = onExpandStateChangeListener
-    }
+    @Suppress("MemberVisibilityCanBePrivate")
+    class LayoutParams : ConstraintLayout.LayoutParams {
 
-    fun setOnSlideChangeListener(onSlideChangeListener: ((view: SlideMenuLayout, value: Float) -> Unit)?) {
-        this.onSlideChangeListener = onSlideChangeListener
-    }
+        internal var isInScroll = false
+        internal var slideLastPoint: Float = 0f
+        internal var slideLastPointTime: Long = 0
+        internal var slideVelocity: Float = 0f
+        internal var slideSize: Float = 0f
 
-    fun setScrollBehavior(scrollBehavior: ((sender: SlideMenuLayout, velocity: Float) -> Unit)?) {
-        this.customScrollBehavior = scrollBehavior
-    }
+        var slided: Boolean = true
+        var slideEnabled: Boolean = false
+        var slideSizeAmount: Int = 0
+        var slideMinDistance: Float = 0f
+        var slideAutoFinishDuration: Int = 250
+        var slideDirection: Int = 0
+        var scrollBehavior: Int = BEHAVIOUR_AUTO
+        var nestedScrollBehavior: Int = 0    //todo test
 
-    class LayoutParams : RelativeLayout.LayoutParams {
-        var isMovable: Boolean = false
-        var isTouchable: Boolean = false
+        var slideZoneForId: Int = 0
+
+        constructor(w: Int, h: Int) : super(w, h)
 
         constructor(c: Context, attrs: AttributeSet) : super(c, attrs) {
             val a = c.obtainStyledAttributes(attrs, R.styleable.SlideMenuLayout_Layout, 0, 0)
-            isMovable = a.getBoolean(R.styleable.SlideMenuLayout_Layout_applyScroll, true)
-            isTouchable = a.getBoolean(R.styleable.SlideMenuLayout_Layout_interceptTouches, true)
+            slided = a.getBoolean(R.styleable.SlideMenuLayout_Layout_slided, true)
+            slideEnabled = a.getBoolean(R.styleable.SlideMenuLayout_Layout_slideEnabled, false)
+            slideSizeAmount = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_Layout_slideSizeAmount, 0)
+            slideMinDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_Layout_slideMinDistance, ViewConfiguration.get(c).scaledTouchSlop).toFloat()
+            slideAutoFinishDuration = a.getInt(R.styleable.SlideMenuLayout_Layout_slideAutoFinishDuration, 250)
+            slideDirection = a.getInt(R.styleable.SlideMenuLayout_Layout_slideDirection, 0)
+            scrollBehavior = a.getInt(R.styleable.SlideMenuLayout_Layout_scrollBehavior, BEHAVIOUR_AUTO)
+            nestedScrollBehavior = a.getInt(R.styleable.SlideMenuLayout_Layout_nestedScrollBehavior, 0)
+            slideZoneForId = a.getResourceId(R.styleable.SlideMenuLayout_Layout_slideZoneForId, 0)
             a.recycle()
-        }
-
-        constructor(w: Int, h: Int, isMovable: Boolean, isTouchable: Boolean) : super(w, h) {
-            this.isMovable = isMovable
-            this.isTouchable = isTouchable
         }
     }
 }

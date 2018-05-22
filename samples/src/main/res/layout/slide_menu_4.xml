@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<by.vkatz.katzext.widgets.SlideMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<by.vkatz.katzext.widgets.SlideMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
-    app:menuExpanded="false"
-    app:slideFrom="left">
+    android:background="#fff">
 
+    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,4 +56,5 @@
             android:textColor="#000"
             android:textSize="30dp" />
     </by.vkatz.katzext.widgets.SlideMenuLayout>
+    -->
 </by.vkatz.katzext.widgets.SlideMenuLayout>

@@ -10,7 +10,7 @@ android {
     buildToolsVersion appBuildToolsVersion
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion appMinSdkVersion
         targetSdkVersion appTargetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -35,6 +35,7 @@ kotlin {
 dependencies {
     api "com.android.support:appcompat-v7:$appSupportVersion"
     api "com.android.support:recyclerview-v7:$appSupportVersion"
+    api 'com.android.support.constraint:constraint-layout:1.1.0'
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"

@@ -25,6 +25,22 @@ typealias ValueCallback<T> = (t: T) -> Unit
 @Suppress("unused")
 infix fun <T> Any?.so(t: T) = t
 
+fun <T : Comparable<T>> T.clamp(a: T, b: T): T {
+    val max = maxOf(a, b)
+    val min = minOf(a, b)
+    if (this < min) return min
+    if (this > max) return max
+    return this
+}
+
+fun Float.closeTo(value: Float, range: Float): Boolean {
+    return Math.abs(this - value) <= range
+}
+
+fun Double.closeTo(value: Double, range: Double): Boolean {
+    return Math.abs(this - value) <= range
+}
+
 fun <T> List<T>.toArrayList() = ArrayList(this)
 
 fun <T> LiveData<T>.observe(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {

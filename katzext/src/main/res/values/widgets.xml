@@ -94,27 +94,29 @@
         <attr name="extendActivated"/>
     </declare-styleable>
 
-    <declare-styleable name="SlideMenuLayout">
-        <attr name="slideFrom" format="enum">
-            <enum name="left" value="1"/>
-            <enum name="right" value="2"/>
-            <enum name="top" value="3"/>
-            <enum name="bottom" value="4"/>
+    <declare-styleable name="SlideMenuLayout_Layout">
+        <attr name="slided" format="boolean|reference"/>
+        <attr name="slideEnabled" format="boolean|reference"/>
+        <attr name="slideSizeAmount" format="dimension|reference"/>
+        <attr name="slideMinDistance" format="dimension|reference"/>
+        <attr name="slideAutoFinishDuration" format="integer|reference"/>
+        <attr name="slideDirection" format="enum">
+            <enum name="fromLeft" value="1"/>
+            <enum name="fromRight" value="2"/>
+            <enum name="fromTop" value="3"/>
+            <enum name="fromBottom" value="4"/>
         </attr>
         <attr name="scrollBehavior">
-            <flag name="neverFinish" value="0"/>
-            <flag name="alwaysFinish" value="1"/>
-            <flag name="custom" value="2"/>
+            <flag name="none" value="0"/>
+            <flag name="auto" value="1"/>
         </attr>
-        <attr name="menuHidingSize" format="dimension|reference"/>
-        <attr name="menuVisibleSize" format="dimension|reference"/>
-        <attr name="menuExpanded" format="boolean|reference"/>
-        <attr name="menuEnabled" format="boolean|reference"/>
-        <attr name="startScrollDistance" format="dimension|reference"/>
-        <attr name="scrollerDuration" format="integer|reference"/>
+        <attr name="nestedScrollBehavior">
+            <flag name="openBeforeNestedScroll" value="1"/>
+            <flag name="openAfterNestedScroll" value="2"/>
+            <flag name="closeBeforeNestedScroll" value="4"/>
+            <flag name="closeAfterNestedScroll" value="8"/>
+        </attr>
+        <attr name="slideZoneForId" format="reference"/>
     </declare-styleable>
-    <declare-styleable name="SlideMenuLayout_Layout">
-        <attr name="applyScroll" format="boolean|reference"/>
-        <attr name="interceptTouches" format="boolean|reference"/>
-    </declare-styleable>
+
 </resources>

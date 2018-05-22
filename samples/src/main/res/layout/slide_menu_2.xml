@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#fff">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#fff">
 
     <TextView
         android:layout_width="fill_parent"
@@ -12,14 +12,11 @@
         android:gravity="center"
         android:text="static view"
         android:textColor="#000"
-        android:textSize="30dp" />
+        android:textSize="30dp"/>
 
     <by.vkatz.katzext.widgets.SlideMenuLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:menuExpanded="true"
-        app:menuHidingSize="100dp"
-        app:slideFrom="top">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/menu"
@@ -30,28 +27,21 @@
             android:text="i am menu"
             android:textColor="#000"
             android:textSize="30dp"
-            app:interceptTouches="false" />
+            app:slideDirection="fromTop"
+            app:slideEnabled="true"
+            app:slided="true"/>
 
         <TextView
             android:id="@+id/menu1"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:layout_below="@id/menu"
             android:background="#0f0"
             android:gravity="center"
             android:text="i am movable slide zone"
             android:textColor="#000"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:layout_below="@id/menu1"
-            android:background="#ff5"
-            android:gravity="center"
-            android:text="i am unmovable slide zone"
-            android:textColor="#000"
             android:textSize="20dp"
-            app:applyScroll="false" />
+            app:layout_constraintTop_toBottomOf="@id/menu"
+            app:slideZoneForId="@id/menu"/>/>
     </by.vkatz.katzext.widgets.SlideMenuLayout>
+
 </RelativeLayout>
