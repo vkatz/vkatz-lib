@@ -97,6 +97,7 @@
     <declare-styleable name="SlideMenuLayout_Layout">
         <attr name="slided" format="boolean|reference"/>
         <attr name="slideEnabled" format="boolean|reference"/>
+        <attr name="slideSelfEnabled" format="boolean|reference"/>
         <attr name="slideSizeAmount" format="dimension|reference"/>
         <attr name="slideMinDistance" format="dimension|reference"/>
         <attr name="slideAutoFinishDuration" format="integer|reference"/>
@@ -117,6 +118,7 @@
             <flag name="closeAfterNestedScroll" value="8"/>
         </attr>
         <attr name="slideZoneForId" format="reference"/>
+        <attr name="slideAnchorForId" format="reference"/>
     </declare-styleable>
 
 </resources>
