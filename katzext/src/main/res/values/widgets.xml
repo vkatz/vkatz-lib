@@ -66,6 +66,10 @@
         <attr name="minZoom" format="float"/>
     </declare-styleable>
 
+    <declare-styleable name="ExtendProgressBar">
+        <attr name="extendTint" format="reference|color"/>
+    </declare-styleable>
+
     <declare-styleable name="ExtendSpinner">
         <attr name="extendPopupBackground" format="reference|color"/>
         <attr name="extendPopupElevation" format="reference|dimension"/>

@@ -15,6 +15,7 @@
               android:textColor="#000"
               android:textSize="30dp"
               app:nestedScrollBehavior="openAfterNestedScroll|closeBeforeNestedScroll"
+              app:scrollBehavior="none"
               app:slideDirection="fromTop"
               app:slideEnabled="true"
               app:slideSizeAmount="300dp"

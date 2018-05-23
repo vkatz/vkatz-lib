@@ -3,10 +3,10 @@ package by.vkatz.katzext.widgets
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.support.v4.view.NestedScrollingParent
-import android.support.v4.view.ViewCompat
+import android.support.v4.view.*
+import android.support.v4.widget.NestedScrollView
+import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
@@ -17,8 +17,9 @@ import by.vkatz.katzext.utils.clamp
 import by.vkatz.katzext.utils.closeTo
 import by.vkatz.katzext.utils.forEachChildren
 
+
 @Suppress("MemberVisibilityCanPrivate", "MemberVisibilityCanBePrivate", "unused")
-open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
+open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrollingChild2 {
     companion object {
         const val SLIDE_FROM_LEFT = 1
         const val SLIDE_FROM_RIGHT = 2
@@ -32,16 +33,27 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
         const val OPEN_AFTER_NESTED_SCROLL = 2
         const val CLOSE_BEFORE_NESTED_SCROLL = 4
         const val CLOSE_AFTER_NESTED_SCROLL = 8
+
+        const val VELOCITY_FRICTION = 0.1
     }
 
+    private val minVelocity: Int
+    private val maxVelocity: Int
+    private var mParentHelper: NestedScrollingParentHelper? = null
+    private var mChildHelper: NestedScrollingChildHelper? = null
+    private var velocityTracker: VelocityTracker? = null
     private var onExpandStateChangeListener: ((view: SlideMenuLayout, target: View, expanded: Boolean) -> Unit)? = null
     private var onSlideChangeListener: ((view: SlideMenuLayout, target: View, value: Float) -> Unit)? = null
 
     constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
+        val vc = ViewConfiguration.get(context)
+        minVelocity = vc.scaledMinimumFlingVelocity
+        maxVelocity = vc.scaledMaximumFlingVelocity
+    }
 
     private val View.lp: LayoutParams
         get() = layoutParams as LayoutParams
@@ -78,53 +90,159 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
 
     private fun getActiveChild() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.isInScroll }
 
+    //---------------------------Nested scroll part start -----------------------------------------
 
     private fun findNestedScrollTarget() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.nestedScrollBehavior != 0 && it.lp.slideEnabled }
 
-    override fun onStartNestedScroll(child: View, target: View, nestedScrollAxes: Int): Boolean {
+    private fun getNestedParentHelper(): NestedScrollingParentHelper {
+        if (mParentHelper == null) {
+            mParentHelper = NestedScrollingParentHelper(this)
+        }
+        return mParentHelper!!
+    }
+
+    private fun getNestedChildHelper(): NestedScrollingChildHelper {
+        if (mChildHelper == null) {
+            mChildHelper = NestedScrollingChildHelper(this)
+        }
+        return mChildHelper!!
+    }
+
+    override fun getNestedScrollAxes(): Int {
+        return getNestedParentHelper().nestedScrollAxes
+    }
+
+    override fun onStopNestedScroll(target: View, type: Int) {
+        getNestedParentHelper().onStopNestedScroll(target, type)
+        val nst = findNestedScrollTarget() ?: return
+        if (nst.lp.scrollBehavior != BEHAVIOUR_NONE) {
+            finishMenuScroll(nst)
+        }
+    }
+
+    override fun onStartNestedScroll(child: View, target: View, axes: Int, type: Int): Boolean {
         val nst = findNestedScrollTarget() ?: return false
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_HORIZONTAL && nst.isHorizontal() || nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL && !nst.isHorizontal()
+        isNestedScrollingEnabled = true
+        return axes == ViewCompat.SCROLL_AXIS_HORIZONTAL && nst.isHorizontal() || axes == ViewCompat.SCROLL_AXIS_VERTICAL && !nst.isHorizontal()
     }
 
-    override fun onNestedScrollAccepted(child: View, target: View, nestedScrollAxes: Int) {
+    override fun onNestedScrollAccepted(child: View, target: View, axes: Int, type: Int) {
+        getNestedParentHelper().onNestedScrollAccepted(child, target, axes, type)
     }
 
-    override fun onStopNestedScroll(target: View) {
-        finishMenuScroll(findNestedScrollTarget() ?: return)
-    }
-
-    override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int) {
-        val nst = findNestedScrollTarget() ?: return
-        val expandLast = nst.hasNestedScrollFlag(OPEN_AFTER_NESTED_SCROLL)
-        val collapseLast = nst.hasNestedScrollFlag(CLOSE_AFTER_NESTED_SCROLL)
-        if (nst.lp.slideDirection == SLIDE_FROM_TOP && (expandLast && dyUnconsumed < 0 || collapseLast && dyUnconsumed > 0)
-                || nst.lp.slideDirection == SLIDE_FROM_BOTTOM && (expandLast && dyUnconsumed > 0 || collapseLast && dyUnconsumed < 0)) {
-            val used = scrollMenuBy(nst, -dyUnconsumed)
-            nst.lp.slideVelocity = used.toFloat()
-            target.offsetTopAndBottom(used)
+    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
+        val nst = findNestedScrollTarget()
+        var usedX = 0
+        var usedY = 0
+        if (nst != null) {
+            val expandFirst = nst.hasNestedScrollFlag(OPEN_BEFORE_NESTED_SCROLL)
+            val collapseFirst = nst.hasNestedScrollFlag(CLOSE_BEFORE_NESTED_SCROLL)
+            if (nst.lp.slideDirection == SLIDE_FROM_TOP && (expandFirst && dy < 0 || collapseFirst && dy > 0)
+                    || nst.lp.slideDirection == SLIDE_FROM_BOTTOM && (expandFirst && dy > 0 || collapseFirst && dy < 0)) {
+                usedY = scrollMenuBy(nst, -dy)
+                target.offsetTopAndBottom(usedY)
+            }
+            if (nst.lp.slideDirection == SLIDE_FROM_LEFT && (expandFirst && dx < 0 || collapseFirst && dx > 0)
+                    || nst.lp.slideDirection == SLIDE_FROM_RIGHT && (expandFirst && dx > 0 || collapseFirst && dx < 0)) {
+                usedX = scrollMenuBy(nst, -dx)
+                target.offsetLeftAndRight(usedY)
+            }
         }
-        //todo horizontal
+        consumed[0] -= usedX
+        consumed[1] -= usedY
+        getNestedChildHelper().dispatchNestedPreScroll(dx, dy, consumed, null, type)
     }
 
-    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray) {
-        val nst = findNestedScrollTarget() ?: return
-        val expandFirst = nst.hasNestedScrollFlag(OPEN_BEFORE_NESTED_SCROLL)
-        val collapseFirst = nst.hasNestedScrollFlag(CLOSE_BEFORE_NESTED_SCROLL)
-        if (nst.lp.slideDirection == SLIDE_FROM_TOP && (expandFirst && dy < 0 || collapseFirst && dy > 0)
-                || nst.lp.slideDirection == SLIDE_FROM_BOTTOM && (expandFirst && dy > 0 || collapseFirst && dy < 0)) {
-            val used = scrollMenuBy(nst, -dy)
-            nst.lp.slideVelocity = used.toFloat()
-            consumed[1] = -used
-            Log.i("AAA", "A: $dy->$used")
-            target.offsetTopAndBottom(used)
+    override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, type: Int) {
+        val nst = findNestedScrollTarget()
+        var usedX = 0
+        var usedY = 0
+        if (nst != null) {
+            val expandLast = nst.hasNestedScrollFlag(OPEN_AFTER_NESTED_SCROLL)
+            val collapseLast = nst.hasNestedScrollFlag(CLOSE_AFTER_NESTED_SCROLL)
+            if (nst.lp.slideDirection == SLIDE_FROM_TOP && (expandLast && dyUnconsumed < 0 || collapseLast && dyUnconsumed > 0)
+                    || nst.lp.slideDirection == SLIDE_FROM_BOTTOM && (expandLast && dyUnconsumed > 0 || collapseLast && dyUnconsumed < 0)) {
+                usedY = scrollMenuBy(nst, -dyUnconsumed)
+                target.offsetTopAndBottom(usedY)
+            }
+            if (nst.lp.slideDirection == SLIDE_FROM_LEFT && (expandLast && dxUnconsumed < 0 || collapseLast && dxUnconsumed > 0)
+                    || nst.lp.slideDirection == SLIDE_FROM_RIGHT && (expandLast && dxUnconsumed > 0 || collapseLast && dxUnconsumed < 0)) {
+                usedX = scrollMenuBy(nst, -dxUnconsumed)
+                target.offsetLeftAndRight(usedX)
+            }
         }
-        //todo horizontal
+        getNestedChildHelper().dispatchNestedScroll(dxConsumed + usedX, dyConsumed + usedY, dxUnconsumed - usedX, dyUnconsumed - usedY, null, type)
+    }
+
+    override fun startNestedScroll(axes: Int, type: Int): Boolean {
+        return getNestedChildHelper().startNestedScroll(axes, type)
+    }
+
+    override fun stopNestedScroll(type: Int) {
+        getNestedChildHelper().stopNestedScroll(type)
+    }
+
+    override fun hasNestedScrollingParent(type: Int): Boolean {
+        return getNestedChildHelper().hasNestedScrollingParent(type)
+    }
+
+    override fun dispatchNestedScroll(dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, offsetInWindow: IntArray?, type: Int): Boolean {
+        return getNestedChildHelper().dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow)
+    }
+
+    override fun dispatchNestedPreScroll(dx: Int, dy: Int, consumed: IntArray?, offsetInWindow: IntArray?, type: Int): Boolean {
+        return getNestedChildHelper().dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+    }
+
+    override fun dispatchNestedFling(velocityX: Float, velocityY: Float, consumed: Boolean): Boolean {
+        return getNestedChildHelper().dispatchNestedFling(velocityX, velocityY, consumed)
     }
 
     override fun dispatchNestedPreFling(velocityX: Float, velocityY: Float): Boolean {
-        val nst = findNestedScrollTarget() ?: return false
-        return !(nst.currentSlide().closeTo(nst.minSlide(), 0.001f) || nst.currentSlide().closeTo(nst.maxSlide(), 0.001f))
+        return getNestedChildHelper().dispatchNestedPreFling(velocityX, velocityY)
     }
+
+    override fun setNestedScrollingEnabled(enabled: Boolean) {
+        getNestedChildHelper().isNestedScrollingEnabled = enabled
+    }
+
+    override fun isNestedScrollingEnabled(): Boolean {
+        return getNestedChildHelper().isNestedScrollingEnabled
+    }
+
+    override fun startNestedScroll(axes: Int): Boolean {
+        return getNestedChildHelper().startNestedScroll(axes)
+    }
+
+    override fun stopNestedScroll() {
+        getNestedChildHelper().stopNestedScroll()
+    }
+
+    override fun hasNestedScrollingParent(): Boolean {
+        return getNestedChildHelper().hasNestedScrollingParent()
+    }
+
+    override fun dispatchNestedScroll(dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, offsetInWindow: IntArray?): Boolean {
+        return getNestedChildHelper().dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow)
+    }
+
+    override fun dispatchNestedPreScroll(dx: Int, dy: Int, consumed: IntArray?, offsetInWindow: IntArray?): Boolean {
+        return getNestedChildHelper().dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow)
+    }
+
+    override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
+        return false
+    }
+
+    override fun onNestedFling(target: View, velocityX: Float, velocityY: Float, consumed: Boolean): Boolean {
+        if (!consumed) {
+            attemptNestedFling(velocityX, velocityY)
+            return true
+        }
+        return false
+    }
+
+    //---------------------------Nested scroll part end ------------------------------------------
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
@@ -185,30 +303,33 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
         val curPos = target.getSlideValue(ev.x, ev.y)
 
         if (ev.action == MotionEvent.ACTION_DOWN) {
+            velocityTracker?.recycle()
+            velocityTracker = VelocityTracker.obtain()
             target.clearAnimation()
             lp.isInScroll = false
-            lp.slideVelocity = 0f
+            lp.slideVelocity = 0
             lp.slideLastPoint = curPos
-            lp.slideLastPointTime = System.currentTimeMillis()
             return !isIntercept
         } else if (ev.action == MotionEvent.ACTION_MOVE) {
+            velocityTracker?.addMovement(ev)
             return if (lp.isInScroll) {
                 scrollMenuBy(target, (curPos - lp.slideLastPoint).toInt())
-                lp.slideVelocity = 1f * (curPos - lp.slideLastPoint) / (System.currentTimeMillis() - lp.slideLastPointTime)
                 lp.slideLastPoint = curPos
-                lp.slideLastPointTime = System.currentTimeMillis()
                 true
             } else {
                 if (Math.abs(lp.slideLastPoint - curPos) > lp.slideMinDistance) {
                     parent?.requestDisallowInterceptTouchEvent(true)
                     lp.slideLastPoint = curPos
-                    lp.slideLastPointTime = System.currentTimeMillis()
                     lp.isInScroll = true
                     true
                 } else false
             }
         } else if (ev.action == MotionEvent.ACTION_CANCEL || ev.action == MotionEvent.ACTION_UP)
             if (lp.isInScroll) {
+                velocityTracker?.computeCurrentVelocity(1000, maxVelocity.toFloat())
+                lp.slideVelocity = target.getSlideValue(velocityTracker?.xVelocity, velocityTracker?.yVelocity)?.toInt() ?: 0
+                velocityTracker?.recycle()
+                velocityTracker = null
                 finishMenuScroll(target)
             }
         return false
@@ -217,7 +338,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
     private fun finishMenuScroll(target: View) {
         val slideValue = target.currentSlide()
         if (target.hasScrollFlag(BEHAVIOUR_AUTO)) { //finish scroll
-            if (slideValue.closeTo(target.maxSlide(), 0.001f) || slideValue.closeTo(target.minSlide(), 0.001f)) return
+            if (slideValue.closeTo(target.maxSlide()) || slideValue.closeTo(target.minSlide())) return
             if (target.isHorizontal()) {
                 if (target.lp.slideVelocity > 0 && target.lp.slideDirection == SLIDE_FROM_LEFT || target.lp.slideVelocity < 0 && target.lp.slideDirection == SLIDE_FROM_RIGHT) {
                     expand(target)
@@ -232,7 +353,24 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
                 }
             }
         } else {
-            setScroll(target, true, (slideValue + target.lp.slideVelocity * 50).clamp(target.minSlide(), target.maxSlide()))
+            val velocityX = if (target.isHorizontal()) target.lp.slideVelocity.toFloat() else 0f
+            val velocityY = if (target.isHorizontal()) 0f else target.lp.slideVelocity.toFloat()
+            attemptNestedFling(velocityX, velocityY)
+        }
+    }
+
+    private fun attemptNestedFling(velocityX: Float, velocityY: Float) {
+        forEachChildren {
+            when (it) {
+                is RecyclerView -> {
+                    it.fling(-velocityX.toInt(), -velocityY.toInt())
+                    return@forEachChildren
+                }
+                is NestedScrollView -> {
+                    it.fling(-velocityY.toInt())
+                    return@forEachChildren
+                }
+            }
         }
     }
 
@@ -244,7 +382,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
         if (amount == 0) return 0
         val was = target.currentSlide()
         val wasInScroll = target.lp.isInScroll
-        setScroll(target, false, was + amount)
+        setScroll(target, false, was + amount, 0)
         target.lp.isInScroll = wasInScroll
         return (target.currentSlide() - was).toInt()
     }
@@ -258,26 +396,28 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
     }
 
     fun expand(target: View, animate: Boolean = true) {
-        setScroll(target, animate, 0f)
+        setScroll(target, animate, 0f, target.lp.slideAutoFinishDuration)
     }
 
     fun collapse(target: View, animate: Boolean = true) {
-        setScroll(target, animate, target.lp.slideSize)
+        setScroll(target, animate, target.lp.slideSize, target.lp.slideAutoFinishDuration)
     }
 
-    private fun setScroll(target: View, animate: Boolean, value: Float, interpolator: Interpolator? = DecelerateInterpolator()) {
+    private fun setScroll(target: View, animate: Boolean, value: Float, duration: Long, interpolator: Interpolator? = DecelerateInterpolator()) {
+        if (target.lp.slideSize.closeTo(0f)) return
+
         target.animate().cancel()
         val targetValue = value.clamp(target.minSlide(), target.maxSlide())
 
         val wasSlided = target.lp.slided
-        target.lp.slided = targetValue.closeTo(0f, 0.001f)
+        target.lp.slided = targetValue.closeTo(0f)
         if (wasSlided != target.lp.slided) {
             notifySlideChanged(target)
         }
 
         if (animate) {
             target.animate().let { if (target.isHorizontal()) it.translationX(targetValue) else it.translationY(targetValue) }
-                    .setInterpolator(interpolator).setDuration(target.lp.slideAutoFinishDuration.toLong()).setUpdateListener {
+                    .setInterpolator(interpolator).setDuration(duration).setUpdateListener {
                         notifySlideSizeChanged(target)
                     }
         } else {
@@ -324,6 +464,8 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
         this.onSlideChangeListener = onSlideChangeListener
     }
 
+    fun getMenuParams(target: View) = target.lp
+
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             forEachChildren { it.dispatchApplyWindowInsets(WindowInsets(insets)) }
@@ -342,8 +484,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
 
         internal var isInScroll = false
         internal var slideLastPoint: Float = 0f
-        internal var slideLastPointTime: Long = 0
-        internal var slideVelocity: Float = 0f
+        internal var slideVelocity: Int = 0
         internal var slideSize: Float = 0f
 
         var slided: Boolean = true
@@ -351,7 +492,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
         var slideSelfEnabled: Boolean = true
         var slideSizeAmount: Int = 0
         var slideMinDistance: Float = 0f
-        var slideAutoFinishDuration: Int = 250
+        var slideAutoFinishDuration: Long = 250
         var slideDirection: Int = 0
         var scrollBehavior: Int = BEHAVIOUR_AUTO
         var nestedScrollBehavior: Int = 0
@@ -368,7 +509,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent {
             slideSelfEnabled = a.getBoolean(R.styleable.SlideMenuLayout_Layout_slideSelfEnabled, true)
             slideSizeAmount = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_Layout_slideSizeAmount, 0)
             slideMinDistance = a.getDimensionPixelSize(R.styleable.SlideMenuLayout_Layout_slideMinDistance, ViewConfiguration.get(c).scaledTouchSlop).toFloat()
-            slideAutoFinishDuration = a.getInt(R.styleable.SlideMenuLayout_Layout_slideAutoFinishDuration, 250)
+            slideAutoFinishDuration = a.getInt(R.styleable.SlideMenuLayout_Layout_slideAutoFinishDuration, 250).toLong()
             slideDirection = a.getInt(R.styleable.SlideMenuLayout_Layout_slideDirection, 0)
             scrollBehavior = a.getInt(R.styleable.SlideMenuLayout_Layout_scrollBehavior, BEHAVIOUR_AUTO)
             nestedScrollBehavior = a.getInt(R.styleable.SlideMenuLayout_Layout_nestedScrollBehavior, 0)

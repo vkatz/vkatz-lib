@@ -33,7 +33,7 @@ fun <T : Comparable<T>> T.clamp(a: T, b: T): T {
     return this
 }
 
-fun Float.closeTo(value: Float, range: Float): Boolean {
+fun Float.closeTo(value: Float, range: Float = 0.001f): Boolean {
     return Math.abs(this - value) <= range
 }
 
