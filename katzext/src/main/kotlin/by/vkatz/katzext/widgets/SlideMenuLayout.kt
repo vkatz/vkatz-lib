@@ -3,24 +3,29 @@ package by.vkatz.katzext.widgets
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.support.v4.view.*
-import android.support.v4.widget.NestedScrollView
-import android.support.v7.widget.RecyclerView
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.core.view.*
+import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
 import by.vkatz.katzext.R
+import by.vkatz.katzext.utils.ParcelableViewSavedState
 import by.vkatz.katzext.utils.clamp
 import by.vkatz.katzext.utils.closeTo
 import by.vkatz.katzext.utils.forEachChildren
+import kotlinx.android.parcel.Parcelize
 
 
 @Suppress("MemberVisibilityCanPrivate", "MemberVisibilityCanBePrivate", "unused")
 open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrollingChild2 {
     companion object {
+        const val SAVED_STATE_KEY = "by.vkatz.katzext.widgets.SlideMenuLayout"
+
         const val SLIDE_FROM_LEFT = 1
         const val SLIDE_FROM_RIGHT = 2
         const val SLIDE_FROM_TOP = 3
@@ -115,7 +120,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
     override fun onStopNestedScroll(target: View, type: Int) {
         getNestedParentHelper().onStopNestedScroll(target, type)
         val nst = findNestedScrollTarget() ?: return
-        if (nst.lp.scrollBehavior != BEHAVIOUR_NONE) {
+        if (nst.lp.scrollBehavior == BEHAVIOUR_AUTO) {
             finishMenuScroll(nst)
         }
     }
@@ -141,11 +146,17 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
                     || nst.lp.slideDirection == SLIDE_FROM_BOTTOM && (expandFirst && dy > 0 || collapseFirst && dy < 0)) {
                 usedY = scrollMenuBy(nst, -dy)
                 target.offsetTopAndBottom(usedY)
+                if (nst.lp.scrollBehavior == BEHAVIOUR_AUTO) {
+                    nst.lp.slideVelocity = -dy
+                }
             }
             if (nst.lp.slideDirection == SLIDE_FROM_LEFT && (expandFirst && dx < 0 || collapseFirst && dx > 0)
                     || nst.lp.slideDirection == SLIDE_FROM_RIGHT && (expandFirst && dx > 0 || collapseFirst && dx < 0)) {
                 usedX = scrollMenuBy(nst, -dx)
                 target.offsetLeftAndRight(usedY)
+                if (nst.lp.scrollBehavior == BEHAVIOUR_AUTO) {
+                    nst.lp.slideVelocity = -dx
+                }
             }
         }
         consumed[0] -= usedX
@@ -164,11 +175,17 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
                     || nst.lp.slideDirection == SLIDE_FROM_BOTTOM && (expandLast && dyUnconsumed > 0 || collapseLast && dyUnconsumed < 0)) {
                 usedY = scrollMenuBy(nst, -dyUnconsumed)
                 target.offsetTopAndBottom(usedY)
+                if (nst.lp.scrollBehavior == BEHAVIOUR_AUTO) {
+                    nst.lp.slideVelocity = -dyUnconsumed
+                }
             }
             if (nst.lp.slideDirection == SLIDE_FROM_LEFT && (expandLast && dxUnconsumed < 0 || collapseLast && dxUnconsumed > 0)
                     || nst.lp.slideDirection == SLIDE_FROM_RIGHT && (expandLast && dxUnconsumed > 0 || collapseLast && dxUnconsumed < 0)) {
                 usedX = scrollMenuBy(nst, -dxUnconsumed)
                 target.offsetLeftAndRight(usedX)
+                if (nst.lp.scrollBehavior == BEHAVIOUR_AUTO) {
+                    nst.lp.slideVelocity = -dxUnconsumed
+                }
             }
         }
         getNestedChildHelper().dispatchNestedScroll(dxConsumed + usedX, dyConsumed + usedY, dxUnconsumed - usedX, dyUnconsumed - usedY, null, type)
@@ -412,38 +429,34 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
         val wasSlided = target.lp.slided
         target.lp.slided = targetValue.closeTo(0f)
         if (wasSlided != target.lp.slided) {
-            notifySlideChanged(target)
+            onSlideChanged(target)
         }
 
         if (animate) {
             target.animate().let { if (target.isHorizontal()) it.translationX(targetValue) else it.translationY(targetValue) }
                     .setInterpolator(interpolator).setDuration(duration).setUpdateListener {
-                        notifySlideSizeChanged(target)
+                        onSlideSizeChanged(target)
                     }
         } else {
             target.setCurrentSlide(targetValue)
-            notifySlideSizeChanged(target)
+            onSlideSizeChanged(target)
         }
         invalidate()
         target.lp.isInScroll = false
     }
 
-    private fun notifySlideSizeChanged(target: View) {
+    private fun onSlideSizeChanged(target: View) {
         onSlideChangeListener?.invoke(this, target, target.currentSlide() / target.maxSlide())
+        updateAnchors(target)
+    }
+
+    private fun updateAnchors(target: View) {
         var needLayout = false
         forEachChildren {
             if (it.lp.slideAnchorForId == target.id) {
                 val dx = target.translationX.toInt()
                 val dy = target.translationY.toInt()
-                if (it.layoutParams !is AnchorLayoutParams) {
-                    it.layoutParams = AnchorLayoutParams(it.lp.slideAnchorForId)
-                }
-                it.lp.apply {
-                    leftMargin = target.left + dx
-                    topMargin = target.top + dy
-                    width = target.measuredWidth
-                    height = target.measuredHeight
-                }
+                updateAnchor(it, target.left + dx, target.top + dy, target.measuredWidth, target.measuredHeight)
                 needLayout = true
             }
         }
@@ -452,7 +465,19 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
         }
     }
 
-    private fun notifySlideChanged(target: View) {
+    private fun updateAnchor(target: View, left: Int, top: Int, w: Int, h: Int) {
+        if (target.layoutParams !is AnchorLayoutParams) {
+            target.layoutParams = AnchorLayoutParams(target.lp.slideAnchorForId)
+        }
+        target.lp.apply {
+            leftMargin = left
+            topMargin = top
+            width = w
+            height = h
+        }
+    }
+
+    private fun onSlideChanged(target: View) {
         onExpandStateChangeListener?.invoke(this, target, target.lp.slided)
     }
 
@@ -478,6 +503,45 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
     override fun generateDefaultLayoutParams(): LayoutParams = LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
     override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val data = SaveStateData(ArrayList(), ArrayList())
+        forEachChildren {
+            if (it.id != 0) {
+                if (it.lp.slideEnabled) {
+                    data.states.add(ViewStateData(it.id, it.currentSlide(), it.lp.slideSize))
+                }
+                if (it.lp.slideAnchorForId != 0) {
+                    data.anchors.add(AnchorStateData(it.id, it.lp.leftMargin, it.lp.topMargin, it.lp.width, it.lp.height))
+                }
+            }
+
+        }
+        return ParcelableViewSavedState(SAVED_STATE_KEY, data, super.onSaveInstanceState())
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is ParcelableViewSavedState && state.key == SAVED_STATE_KEY) {
+            val data = state.state as SaveStateData
+            data.states.forEach {
+                getChildById(it.id)?.apply {
+                    lp.slideSize = it.slideSize
+                    setCurrentSlide(it.slide)
+                    if (lp.scrollBehavior == BEHAVIOUR_AUTO) {
+                        post { finishMenuScroll(this) }
+                    }
+                }
+            }
+            data.anchors.forEach {
+                getChildById(it.id)?.apply {
+                    updateAnchor(this, it.left, it.top, it.w, it.h)
+                }
+            }
+            super.onRestoreInstanceState(state.superState)
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
 
     @Suppress("MemberVisibilityCanBePrivate")
     open class LayoutParams : RelativeLayout.LayoutParams {
@@ -524,4 +588,13 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
             slideAnchorForId = anchor
         }
     }
+
+    @Parcelize
+    data class ViewStateData(var id: Int, var slide: Float, var slideSize: Float) : Parcelable
+
+    @Parcelize
+    data class AnchorStateData(var id: Int, var left: Int, var top: Int, var w: Int, var h: Int) : Parcelable
+
+    @Parcelize
+    data class SaveStateData(var states: ArrayList<ViewStateData>, var anchors: ArrayList<AnchorStateData>) : Parcelable
 }

@@ -32,6 +32,6 @@ androidExtensions {
 }
 
 dependencies {
-    api "com.android.support:appcompat-v7:$appSupportVersion"
+    api "androidx.appcompat:appcompat:$appAndroidXVersion"
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
 }

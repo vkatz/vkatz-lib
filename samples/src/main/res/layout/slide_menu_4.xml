@@ -27,7 +27,7 @@
           android:layout_below="@id/header"
           app:slideAnchorForId="@id/header"/>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header_anchor"
@@ -42,5 +42,5 @@
                       android:textSize="100dp"/>
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </by.vkatz.katzext.widgets.SlideMenuLayout>

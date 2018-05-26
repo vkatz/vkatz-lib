@@ -1,7 +1,7 @@
 package by.vkatz.katzext.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by V on 26.04.2018.

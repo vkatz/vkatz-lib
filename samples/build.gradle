@@ -41,7 +41,4 @@ androidExtensions {
 dependencies {
     implementation project(':katzext')
     implementation project(':katzilla')
-    implementation "com.android.support:support-compat:$appSupportVersion"
-    implementation "com.android.support:support-core-ui:$appSupportVersion"
-    implementation "android.arch.paging:runtime:1.0.0-rc1"
 }

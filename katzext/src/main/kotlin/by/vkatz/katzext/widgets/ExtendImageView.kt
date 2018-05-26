@@ -4,13 +4,13 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import by.vkatz.katzext.R
 import by.vkatz.katzext.utils.LibExtension
 

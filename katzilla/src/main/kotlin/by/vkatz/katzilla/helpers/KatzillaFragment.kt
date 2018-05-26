@@ -5,10 +5,10 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.pm.PackageManager
 import android.os.Build
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.transition.Slide
 import android.view.Gravity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import by.vkatz.katzilla.FragmentBackStack
 import by.vkatz.katzilla.FragmentScreen
 

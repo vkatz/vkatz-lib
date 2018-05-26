@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v4.widget.ContentLoadingProgressBar
 import android.util.AttributeSet
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.widget.ContentLoadingProgressBar
 import by.vkatz.katzext.R
 
 

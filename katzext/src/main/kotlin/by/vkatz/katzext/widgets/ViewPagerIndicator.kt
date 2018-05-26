@@ -2,17 +2,17 @@ package by.vkatz.katzext.widgets
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.annotation.LayoutRes
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearSmoothScroller
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 
 class ViewPagerIndicator : RecyclerView {
 

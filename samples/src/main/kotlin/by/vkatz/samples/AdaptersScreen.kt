@@ -2,12 +2,12 @@ package by.vkatz.samples
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import by.vkatz.katzext.adapters.*
 import by.vkatz.katzext.utils.asTextView
 import by.vkatz.katzext.utils.asyncUI

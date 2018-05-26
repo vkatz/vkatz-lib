@@ -1,18 +1,18 @@
 package by.vkatz.katzext.utils
 
 import android.app.Activity
-import android.app.Fragment
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Handler
-import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import by.vkatz.katzext.widgets.ExtendEditText
 import by.vkatz.katzext.widgets.ExtendImageView
 import by.vkatz.katzext.widgets.ExtendTextView

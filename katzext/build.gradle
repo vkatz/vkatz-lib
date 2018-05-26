@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 repositories {
     jcenter()
@@ -32,9 +33,13 @@ kotlin {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
-    api "com.android.support:appcompat-v7:$appSupportVersion"
-    api "com.android.support:recyclerview-v7:$appSupportVersion"
+    api "androidx.appcompat:appcompat:$appAndroidXVersion"
+    api "androidx.recyclerview:recyclerview:$appAndroidXVersion"
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"

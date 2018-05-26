@@ -2,8 +2,8 @@ package by.vkatz.katzext.widgets
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.AppCompatRadioButton
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatRadioButton
 import by.vkatz.katzext.R
 import by.vkatz.katzext.utils.LibExtension
 

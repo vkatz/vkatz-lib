@@ -1,9 +1,9 @@
 package by.vkatz.katzilla
 
-import android.support.annotation.IdRes
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import kotlin.reflect.KClass
 
 /**

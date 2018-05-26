@@ -2,8 +2,8 @@ package by.vkatz.katzext.widgets
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.AppCompatCheckBox
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatCheckBox
 import by.vkatz.katzext.R
 import by.vkatz.katzext.utils.LibExtension
 

@@ -1,8 +1,8 @@
 package by.vkatz.katzext.adapters
 
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 
 open class SimpleRecyclerViewAdapter<T>(var data: List<T>,
                                         private val idProvider: (T.() -> Long)? = null,

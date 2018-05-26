@@ -1,9 +1,9 @@
 package by.vkatz.katzext.adapters
 
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import by.vkatz.katzext.utils.Callback
 import by.vkatz.katzext.utils.ValueCallback
 import by.vkatz.katzext.utils.inflate
@@ -15,7 +15,7 @@ typealias ViewBinder<T> = SimpleViewHolder<T>.(data: T) -> Unit
 
 typealias SimpleViewHolderProvider<T> = (parent: ViewGroup) -> SimpleViewHolder<T>
 
-open class SimpleViewHolder<T>(itemView: View?, private val binder: ViewBinder<T>? = null) : RecyclerView.ViewHolder(itemView) {
+open class SimpleViewHolder<T>(itemView: View, private val binder: ViewBinder<T>? = null) : RecyclerView.ViewHolder(itemView) {
     constructor(@LayoutRes layoutRid: Int, parent: ViewGroup, binder: ViewBinder<T>? = null) : this(parent.inflate(layoutRid, parent, false), binder)
 
     open fun bind(data: T) {

@@ -1,10 +1,10 @@
 package by.vkatz.samples
 
 import android.os.Bundle
-import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzilla.FragmentScreen
 import by.vkatz.katzilla.helpers.KatzillaFragment

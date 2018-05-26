@@ -1,8 +1,8 @@
 package by.vkatz.katzext.adapters
 
-import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 
 class SimpleViewPagerAdapter<T>(var data: List<T>,
                                 private val titleProvider: (T.() -> String?)? = null,
