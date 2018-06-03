@@ -4,10 +4,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 
-class SimpleViewPagerAdapter<T>(var data: List<T>,
-                                private val titleProvider: (T.() -> String?)? = null,
-                                private val viewProvider: (parent: ViewGroup, data: T, position: Int) -> View
-                               ) : PagerAdapter() {
+open class SimpleViewPagerAdapter<T>(var data: List<T>,
+                                     private val titleProvider: (T.() -> String?)? = null,
+                                     private val viewProvider: (parent: ViewGroup, data: T, position: Int) -> View
+                                    ) : PagerAdapter() {
 
     override fun getCount(): Int = data.size
 

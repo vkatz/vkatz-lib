@@ -13,6 +13,7 @@ import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.suspendCoroutine
 
 
 /*fun foo() {
@@ -75,3 +76,8 @@ fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T)
 fun <T> asyncResult(data: T) = async { data }
 
 fun <T> asyncUIResult(data: T) = asyncUI { data }
+
+fun <T> suspendAsync(coroutineContext: CoroutineContext = CommonPool, action: ((T) -> Unit) -> Unit): AsyncResult<T?> =
+        async(null, coroutineContext) { suspendCoroutine<T> { out -> action(out::resume) } }
+
+fun <T> suspendAsyncUI(action: ((T) -> Unit) -> Unit): AsyncResult<T?> = suspendAsync(UI, action)

@@ -3,29 +3,27 @@ package by.vkatz.katzext.widgets
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.*
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import by.vkatz.katzext.R
-import by.vkatz.katzext.utils.ParcelableViewSavedState
 import by.vkatz.katzext.utils.clamp
 import by.vkatz.katzext.utils.closeTo
 import by.vkatz.katzext.utils.forEachChildren
+import by.vkatz.katzext.utils.makeVisibleOrGone
 import kotlinx.android.parcel.Parcelize
 
 
 @Suppress("MemberVisibilityCanPrivate", "MemberVisibilityCanBePrivate", "unused")
-open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrollingChild2 {
+open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScrollingChild2 {
     companion object {
-        const val SAVED_STATE_KEY = "by.vkatz.katzext.widgets.SlideMenuLayout"
-
         const val SLIDE_FROM_LEFT = 1
         const val SLIDE_FROM_RIGHT = 2
         const val SLIDE_FROM_TOP = 3
@@ -465,15 +463,16 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
         }
     }
 
-    private fun updateAnchor(target: View, left: Int, top: Int, w: Int, h: Int) {
+    private fun updateAnchor(target: View, left: Int, top: Int, w: Int, h: Int, clamp: Boolean = true) {
         if (target.layoutParams !is AnchorLayoutParams) {
             target.layoutParams = AnchorLayoutParams(target.lp.slideAnchorForId)
         }
         target.lp.apply {
-            leftMargin = left
-            topMargin = top
-            width = w
-            height = h
+            leftMargin = if (clamp) left.clamp(0, measuredWidth) else left
+            topMargin = if (clamp) top.clamp(0, measuredHeight) else top
+            width = if (clamp) (w + (left - leftMargin)).clamp(0, measuredWidth) else w
+            height = if (clamp) (h + (top - topMargin)).clamp(0, measuredHeight) else h
+            target.makeVisibleOrGone(height != 0 && width != 0)
         }
     }
 
@@ -491,6 +490,8 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
 
     fun getMenuParams(target: View) = target.lp
 
+    fun isExpanded(target: View) = target.lp.slided
+
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             forEachChildren { it.dispatchApplyWindowInsets(WindowInsets(insets)) }
@@ -500,7 +501,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
 
     override fun generateLayoutParams(attrs: AttributeSet): LayoutParams = LayoutParams(context, attrs)
 
-    override fun generateDefaultLayoutParams(): LayoutParams = LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+    override fun generateDefaultLayoutParams(): LayoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
     override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 
@@ -517,12 +518,12 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
             }
 
         }
-        return ParcelableViewSavedState(SAVED_STATE_KEY, data, super.onSaveInstanceState())
+        return SavedState(data, super.onSaveInstanceState())
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        if (state is ParcelableViewSavedState && state.key == SAVED_STATE_KEY) {
-            val data = state.state as SaveStateData
+        if (state is SavedState) {
+            val data = state.state
             data.states.forEach {
                 getChildById(it.id)?.apply {
                     lp.slideSize = it.slideSize
@@ -534,7 +535,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
             }
             data.anchors.forEach {
                 getChildById(it.id)?.apply {
-                    updateAnchor(this, it.left, it.top, it.w, it.h)
+                    updateAnchor(this, it.left, it.top, it.w, it.h, false)
                 }
             }
             super.onRestoreInstanceState(state.superState)
@@ -544,7 +545,7 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    open class LayoutParams : RelativeLayout.LayoutParams {
+    open class LayoutParams : ConstraintLayout.LayoutParams {
 
         internal var isInScroll = false
         internal var slideLastPoint: Float = 0f
@@ -597,4 +598,35 @@ open class SlideMenuLayout : RelativeLayout, NestedScrollingParent2, NestedScrol
 
     @Parcelize
     data class SaveStateData(var states: ArrayList<ViewStateData>, var anchors: ArrayList<AnchorStateData>) : Parcelable
+
+    class SavedState : View.BaseSavedState {
+        val state: SaveStateData
+
+        constructor(state: SaveStateData, superState: Parcelable) : super(superState) {
+            this.state = state
+        }
+
+        constructor(parcel: Parcel) : super(parcel) {
+            state = parcel.readParcelable(javaClass.classLoader)
+        }
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            super.writeToParcel(parcel, flags)
+            parcel.writeParcelable(state, 0)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel): SavedState {
+                return SavedState(parcel)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 }

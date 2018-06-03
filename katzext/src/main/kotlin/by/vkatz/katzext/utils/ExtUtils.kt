@@ -3,16 +3,15 @@ package by.vkatz.katzext.utils
 import android.app.Activity
 import android.content.Context
 import android.os.Handler
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.AttrRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import by.vkatz.katzext.widgets.ExtendEditText
 import by.vkatz.katzext.widgets.ExtendImageView
 import by.vkatz.katzext.widgets.ExtendTextView
@@ -24,6 +23,8 @@ typealias ValueCallback<T> = (t: T) -> Unit
 
 @Suppress("unused")
 infix fun <T> Any?.so(t: T) = t
+
+infix fun <T> Any?.ifnn(t: T) = if (this == null) null else t
 
 fun <T : Comparable<T>> T.clamp(a: T, b: T): T {
     val max = maxOf(a, b)
@@ -43,46 +44,6 @@ fun Double.closeTo(value: Double, range: Double): Boolean {
 
 fun <T> List<T>.toArrayList() = ArrayList(this)
 
-fun <T> LiveData<T>.observe(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {
-    observe(lifecycle, Observer { observer(it) })
-}
-
-fun <T> LiveData<T>.observeOnce(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {
-    observe(lifecycle, object : Observer<T> {
-        override fun onChanged(t: T?) {
-            observer(t)
-            removeObserver(this)
-        }
-    })
-}
-
-fun <T> LiveData<T>.observeLater(lifecycle: LifecycleOwner, observer: (T?) -> Unit) {
-    observe(lifecycle, object : Observer<T> {
-        var skipped = false
-
-        override fun onChanged(t: T?) {
-            if (!skipped) {
-                skipped = true
-            } else {
-                observer(t)
-            }
-        }
-    })
-}
-
-fun <T> LiveData<T>.observeNotNull(lifecycle: LifecycleOwner, observer: (T) -> Unit) {
-    observe(lifecycle, Observer { observer(it!!) })
-}
-
-fun <T> LiveData<T>.observeNotNullOnce(lifecycle: LifecycleOwner, observer: (T) -> Unit) {
-    observe(lifecycle, object : Observer<T> {
-        override fun onChanged(t: T?) {
-            observer(t!!)
-            removeObserver(this)
-        }
-    })
-}
-
 fun Handler.postDelayed(delay: Long, action: () -> Unit) = postDelayed(action, delay)
 
 fun Context?.toast(resId: Int, duration: Int = Toast.LENGTH_SHORT) {
@@ -94,6 +55,12 @@ fun Context?.toast(text: String, duration: Int = Toast.LENGTH_SHORT) {
 }
 
 fun Context.dp(amount: Float) = amount * resources.displayMetrics.density
+
+fun Context.getThemeColor(@AttrRes attr: Int, defaultColor: Int = 0): Int {
+    val outValue = TypedValue()
+    val wasResolved = theme.resolveAttribute(attr, outValue, true)
+    return if (wasResolved) outValue.data else defaultColor
+}
 
 fun Context.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false): View = LayoutInflater.from(this).inflate(rId, parent, attachToParent)
 
@@ -149,6 +116,25 @@ fun <T : View> T.makeVisibleOrInvisible(visible: Boolean): T {
 
 fun ViewGroup.forEachChildren(action: (view: View) -> Unit) {
     for (i in 0 until childCount) action(getChildAt(i))
+}
+
+fun ViewGroup.forEachChildrenRecursive(action: (view: View) -> Unit) {
+    for (i in 0 until childCount) {
+        val view = getChildAt(i)
+        action(view)
+        if (view is ViewGroup) {
+            view.forEachChildrenRecursive(action)
+        }
+    }
+}
+
+fun ViewGroup.forEachChildrenRecursiveConditional(action: (view: View) -> Boolean) {
+    for (i in 0 until childCount) {
+        val view = getChildAt(i)
+        if (action(view) && view is ViewGroup) {
+            view.forEachChildrenRecursiveConditional(action)
+        }
+    }
 }
 
 fun ViewGroup.forEachChildrenIndexed(action: (view: View, pos: Int) -> Unit) {

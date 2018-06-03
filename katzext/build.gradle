@@ -40,6 +40,7 @@ androidExtensions {
 dependencies {
     api "androidx.appcompat:appcompat:$appAndroidXVersion"
     api "androidx.recyclerview:recyclerview:$appAndroidXVersion"
+    api 'androidx.constraintlayout:constraintlayout:1.1.0'
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"

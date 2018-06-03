@@ -70,6 +70,10 @@
         <attr name="extendTint" format="reference|color"/>
     </declare-styleable>
 
+    <declare-styleable name="ViewPagerIndicator">
+        <attr name="extendForceCenterMode" format="reference|boolean"/>
+    </declare-styleable>
+
     <declare-styleable name="ExtendSpinner">
         <attr name="extendPopupBackground" format="reference|color"/>
         <attr name="extendPopupElevation" format="reference|dimension"/>
@@ -78,6 +82,11 @@
         <attr name="extendPopupVerticalOffset" format="reference|dimension"/>
         <attr name="extendPopupHorizontalOffset" format="reference|dimension"/>
         <attr name="toolsItem" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExtendConstraintLayout">
+        <attr name="extendIgnoreVerticalBounds" format="reference|boolean"/>
+        <attr name="extendIgnoreHorizontalBounds" format="reference|boolean"/>
     </declare-styleable>
 
     <declare-styleable name="FlowLayout">
