@@ -22,17 +22,19 @@
               app:slided="true"/>
 
     <View android:id="@+id/header_anchor"
-          android:layout_width="0dp"
+          android:layout_width="match_parent"
           android:layout_height="0dp"
-          android:layout_below="@id/header"
+          app:layout_constraintBottom_toBottomOf="@id/header"
+          app:layout_constraintTop_toTopOf="@id/header"
           app:slideAnchorForId="@id/header"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header_anchor"
+        android:layout_height="0dp"
         android:background="#200f"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_anchor">
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:orientation="vertical">
