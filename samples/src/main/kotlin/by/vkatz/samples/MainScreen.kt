@@ -61,6 +61,12 @@ class MainScreen : KatzillaFragment<MainScreenModel>() {
         flowLayout.setOnClickListener {
             parent?.go(ResViewScreen::class, ResViewScreen.Model(R.layout.flow_layout))
         }
+        pagerIndicator.setOnClickListener {
+            parent?.go(PagerIndicator::class)
+        }
+        utils.setOnClickListener {
+            parent?.go(UtilsScreen::class)
+        }
     }
 
     override fun onBackPressed(): Boolean {

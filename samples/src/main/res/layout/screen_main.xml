@@ -96,5 +96,17 @@
             android:layout_height="wrap_content"
             android:text="Flow layout"/>
 
+        <Button
+            android:id="@+id/pagerIndicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Pager indicator"/>
+
+        <Button
+            android:id="@+id/utils"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Utils"/>
+
     </LinearLayout>
 </ScrollView>
