@@ -33,5 +33,6 @@ androidExtensions {
 
 dependencies {
     api "androidx.appcompat:appcompat:$appAndroidXVersion"
+    api "androidx.transition:transition:$appAndroidXVersion"
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
 }

@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import by.vkatz.katzext.utils.SharedPrefsIntDelegate
 import by.vkatz.katzext.utils.XmlParser
 import by.vkatz.katzext.utils.asyncUI
