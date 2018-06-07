@@ -1,21 +1,20 @@
 package by.vkatz.samples
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import by.vkatz.katzext.utils.SharedPrefsIntDelegate
-import by.vkatz.katzext.utils.XmlParser
-import by.vkatz.katzext.utils.asyncUI
-import by.vkatz.katzext.utils.inflate
+import by.vkatz.katzext.utils.*
 import by.vkatz.katzilla.FragmentScreen
 import by.vkatz.katzilla.helpers.KatzillaFragment
 import kotlinx.android.synthetic.main.utils.*
 import kotlinx.coroutines.experimental.delay
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by V on 24.04.2018.
@@ -35,6 +34,7 @@ class UtilsScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: FragmentScreen.SimpleModel, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.utils)
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, model: FragmentScreen.SimpleModel, savedInstanceState: Bundle?) {
         super.onViewCreated(view, model, savedInstanceState)
 
@@ -78,7 +78,33 @@ class UtilsScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
                 }
             }
         }
-        xml.text = "ParsedXml:\n$foods".replace("),",")\n")
+        xml.text = "ParsedXml:\n$foods".replace("),", ")\n")
+
+        //livedatas
+
+        val timeFormatter = SimpleDateFormat("HH:mm.ss", Locale.getDefault())
+        fun now() = timeFormatter.format(Date(System.currentTimeMillis()))
+        val t1 = LoadableLiveData("asd")
+        t1.observe {
+            task1state.text = "${if (it.isLoading) "loading" else "ready"} at [${now()}] ->${it.data}"
+        }
+        task1.setOnClickListener {
+            t1.load(true) {
+                delay(5000)
+                "Task1 finished at ${now()}"
+            }
+        }
+
+        val t2 = LoadableLiveData("asd")
+        t2.observe {
+            task2state.text = "${if (it.isLoading) "loading" else "ready"} at[${now()}]->${it.data}"
+        }
+        task2.setOnClickListener {
+            t2.load(false) {
+                delay(5000)
+                "Task2 finished at ${now()}"
+            }
+        }
 
     }
 

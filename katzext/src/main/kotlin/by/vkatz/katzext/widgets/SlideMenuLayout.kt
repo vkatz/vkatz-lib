@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.ConstraintLayout
 import androidx.core.view.*
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
@@ -296,22 +296,23 @@ open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScr
     private fun dispatchTouch(ev: MotionEvent, isIntercept: Boolean): Boolean {
         invalidate()
 
-        val target = getActiveChild() ?: (0 until childCount).mapNotNull { getChildAt(it) }.mapNotNull { child ->
-            when {
-                child.visibility == View.GONE -> null
-                !child.isInside(ev.x, ev.y) -> null
-                child.lp.slideEnabled && child.lp.slideSelfEnabled -> child
-                child.lp.slideZoneForId != 0 -> {
-                    val potentialTarget = getChildById(child.lp.slideZoneForId)
-                    if (potentialTarget != null && potentialTarget.lp.slideEnabled && potentialTarget.visibility != View.GONE) {
-                        potentialTarget
-                    } else {
-                        null
+        val target = getActiveChild()
+                ?: (0 until childCount).mapNotNull { getChildAt(it) }.mapNotNull { child ->
+                    when {
+                        child.visibility == View.GONE -> null
+                        !child.isInside(ev.x, ev.y) -> null
+                        child.lp.slideEnabled && child.lp.slideSelfEnabled -> child
+                        child.lp.slideZoneForId != 0 -> {
+                            val potentialTarget = getChildById(child.lp.slideZoneForId)
+                            if (potentialTarget != null && potentialTarget.lp.slideEnabled && potentialTarget.visibility != View.GONE) {
+                                potentialTarget
+                            } else {
+                                null
+                            }
+                        }
+                        else -> null
                     }
-                }
-                else -> null
-            }
-        }.firstOrNull() ?: return false
+                }.firstOrNull() ?: return false
 
         val lp = target.lp
 

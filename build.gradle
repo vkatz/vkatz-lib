@@ -2,10 +2,11 @@ buildscript {
     ext.appKotlinVersion = '1.2.41'
     ext.appKotlinCorutines = '0.22.5'
     ext.appAndroidXVersion = '1.0.0-alpha1'
+    ext.appConstraintVersion = '1.1.1'
 
     ext.appMinSdkVersion = 19
-    ext.appTargetSdkVersion = 27
-    ext.appCompileSdkVersion = 'android-P'
+    ext.appTargetSdkVersion = 28
+    ext.appCompileSdkVersion = 28
     ext.appBuildToolsVersion = '27.0.3'
 
     repositories {

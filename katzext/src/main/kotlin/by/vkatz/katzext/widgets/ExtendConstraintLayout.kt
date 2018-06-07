@@ -2,7 +2,7 @@ package by.vkatz.katzext.widgets
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.ConstraintLayout
 import by.vkatz.katzext.R
 
 open class ExtendConstraintLayout : ConstraintLayout {
