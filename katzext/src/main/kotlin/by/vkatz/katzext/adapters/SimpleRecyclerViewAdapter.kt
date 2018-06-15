@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 
-open class SimpleRecyclerViewAdapter<T>(var data: List<T>,
+open class SimpleRecyclerViewAdapter<T>(open var data: List<T>,
                                         private val idProvider: (T.() -> Long)? = null,
                                         private val viewHolderProvider: SimpleViewHolderProvider<T>
                                        ) : RecyclerView.Adapter<SimpleViewHolder<T>>() {
@@ -20,13 +20,15 @@ open class SimpleRecyclerViewAdapter<T>(var data: List<T>,
         setHasStableIds(idProvider != null)
     }
 
-    override fun getItemId(position: Int): Long = idProvider?.invoke(data[position]) ?: super.getItemId(position)
+    open fun getItemAt(pos: Int): T = data[pos]
+
+    override fun getItemId(position: Int): Long = idProvider?.invoke(getItemAt(position)) ?: super.getItemId(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, type: Int): SimpleViewHolder<T> = viewHolderProvider(parent)
 
     override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: SimpleViewHolder<T>, position: Int) {
-        holder.bind(data[position])
+        holder.bind(getItemAt(position))
     }
 }

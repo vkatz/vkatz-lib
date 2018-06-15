@@ -17,9 +17,11 @@ open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
         setHasStableIds(idProvider != null)
     }
 
+    open fun getItemAt(pos: Int): T = data[pos]
+
     override fun getItemViewType(position: Int): Int {
         typeHandlers.forEachIndexed { index, viewTypeHandler ->
-            if (viewTypeHandler.typeValidator(data[position])) {
+            if (viewTypeHandler.typeValidator(getItemAt(position))) {
                 return index
             }
         }
@@ -27,7 +29,7 @@ open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
     }
 
     override fun getItemId(position: Int): Long =
-            idProvider?.invoke(data[position]) ?: super.getItemId(position)
+            idProvider?.invoke(getItemAt(position)) ?: super.getItemId(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, type: Int): SimpleViewHolder<*> =
             typeHandlers[type].viewHolderProvider(parent)
@@ -36,6 +38,6 @@ open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
 
     @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: SimpleViewHolder<*>, position: Int) {
-        (holder as SimpleViewHolder<T>).bind(data[position])
+        (holder as SimpleViewHolder<T>).bind(getItemAt(position))
     }
 }

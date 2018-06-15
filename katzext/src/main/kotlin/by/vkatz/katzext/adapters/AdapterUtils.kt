@@ -47,13 +47,13 @@ open class PaginationList<T>(private val pageSize: Int, private val loader: (fro
             return
         }
         isLoading = true
-        loader(size, pageSize, { data ->
+        loader(size, pageSize) { data ->
             addAll(data)
             hasMorePages = data.size == pageSize
             isLoading = false
             pageLoaded?.invoke()
             onPageLoaded?.invoke()
-        })
+        }
     }
 
     fun setOnPageLoadedListener(listener: Callback?) {

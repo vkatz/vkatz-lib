@@ -13,8 +13,6 @@ import by.vkatz.katzilla.FragmentScreen
  * Created by V on 24.04.2018.
  */
 open class KatzillaFragment<Model : FragmentScreen.ScreenModel> : FragmentScreen<Model>() {
-    private var isForwardNavigationState = true
-
     fun isPermissionNeedExplanation(permission: String): Boolean =
             if (ContextCompat.checkSelfPermission(context!!, permission) != PackageManager.PERMISSION_GRANTED)
                 ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permission)

@@ -173,6 +173,10 @@ open class LoadableLiveData<T>(initialValue: T) : AppLiveData<LoadableData<T>>(L
         super.observeForever(obs)
         return obs
     }
+
+    fun postValue(value: T, loaded: Boolean = true) {
+        super.postValue(LoadableData(value, loaded))
+    }
 }
 
 open class AppObserver<T>(private val obsFunc: (sender: AppObserver<T>, version: Int, data: T) -> Unit) : Observer<T> {

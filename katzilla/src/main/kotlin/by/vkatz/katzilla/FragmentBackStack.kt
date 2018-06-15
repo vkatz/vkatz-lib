@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 /**
  * Created by V on 22.04.2018.
  */
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 open class FragmentBackStack {
 
     companion object {
@@ -20,7 +20,7 @@ open class FragmentBackStack {
         const val NAVIGATION_RESTORE = -5
     }
 
-    val backStackEntries: ArrayList<BackStackEntry> = ArrayList()
+    private val backStackEntries: ArrayList<BackStackEntry> = ArrayList()
 
     private var customEnterState: Int? = null
     private var customExitState: Int? = null
@@ -98,7 +98,9 @@ open class FragmentBackStack {
 
         currentScreen?.apply {
             if (screenOptions.storeInBackStack) {
-                backStackEntries.add(BackStackEntry(this::class, internalModel, fragmentManager!!.saveFragmentInstanceState(this)))
+                backStackEntries.add(BackStackEntry(this::class, internalModel!!, fragmentManager!!.saveFragmentInstanceState(this)))
+            } else {
+                internalModel!!.release()
             }
             internalModel = null
             internalParent = null
@@ -120,6 +122,7 @@ open class FragmentBackStack {
         checkNavigationPossibility()
 
         currentScreen?.apply {
+            internalModel?.release()
             internalModel = null
             internalParent = null
             setNavigationState(customExitState ?: NAVIGATION_BACK_EXIT)
@@ -138,25 +141,42 @@ open class FragmentBackStack {
         screenChanged(pendingScreen)
     }
 
-    fun hasScreen(screen: KClass<out FragmentScreen<*>>): Boolean {
-        return backStackEntries.any { it.screen == screen }
-    }
-
     fun backTo(screen: KClass<out FragmentScreen<*>>, transactionConfig: (FragmentTransaction.() -> Unit)? = null) {
         val index = backStackEntries.indexOfLast { it.screen == screen }
         if (index >= 0) {
             while (backStackEntries.size != index + 1) {
-                backStackEntries.removeAt(index + 1)
+                removeFromBackStack(backStackEntries[index + 1])
             }
             back(transactionConfig)
         }
     }
 
+    fun hasScreen(screen: KClass<out FragmentScreen<*>>): Boolean {
+        return backStackEntries.any { it.screen == screen }
+    }
+
+    fun getBackStackEntries() = ArrayList(backStackEntries)
+
+    fun addToBackStack(entry: BackStackEntry) {
+        backStackEntries.add(entry)
+    }
+
+    fun addToBackStack(index: Int, entry: BackStackEntry) {
+        backStackEntries.add(index, entry)
+    }
+
+    fun removeFromBackStack(entry: BackStackEntry) {
+        if (backStackEntries.remove(entry)) {
+            entry.data.release()
+        }
+    }
+
     fun clearBackStack() {
+        backStackEntries.forEach { it.data.release() }
         backStackEntries.clear()
     }
 
     fun isBackPossible() = backStackEntries.size > 0
 
-    data class BackStackEntry(var screen: KClass<out FragmentScreen<*>>, var data: FragmentScreen.ScreenModel?, var state: Fragment.SavedState?)
+    data class BackStackEntry(var screen: KClass<out FragmentScreen<*>>, var data: FragmentScreen.ScreenModel, var state: Fragment.SavedState?)
 }

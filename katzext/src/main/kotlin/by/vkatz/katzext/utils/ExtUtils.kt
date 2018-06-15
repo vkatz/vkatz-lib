@@ -12,10 +12,13 @@ import android.widget.*
 import androidx.annotation.AttrRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import by.vkatz.katzext.widgets.ExtendEditText
 import by.vkatz.katzext.widgets.ExtendImageView
 import by.vkatz.katzext.widgets.ExtendTextView
 import by.vkatz.katzext.widgets.SlideMenuLayout
+import kotlin.reflect.KClass
 
 typealias Callback = () -> Unit
 
@@ -25,6 +28,9 @@ typealias ValueCallback<T> = (t: T) -> Unit
 infix fun <T> Any?.so(t: T) = t
 
 infix fun <T> Any?.ifnn(t: T) = if (this == null) null else t
+
+operator fun <T> Boolean.get(onTrue: T, onFalse: T) = if (this) onTrue else onFalse
+operator fun <T> Boolean.get(onTrue: T) = if (this) onTrue else null
 
 fun <T : Comparable<T>> T.clamp(a: T, b: T): T {
     val max = maxOf(a, b)
@@ -41,6 +47,16 @@ fun Float.closeTo(value: Float, range: Float = 0.001f): Boolean {
 fun Double.closeTo(value: Double, range: Double): Boolean {
     return Math.abs(this - value) <= range
 }
+
+infix fun Long.hasFlag(flag: Long): Boolean = (this and flag) == flag
+
+infix fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag
+
+infix fun Long.unOr(flag: Long): Long = this and flag.inv()
+
+infix fun Int.unOr(flag: Int): Int = this and flag.inv()
+
+fun <T : ViewModel> ViewModelProvider.get(clazz: KClass<T>) = get(clazz.java)
 
 fun <T> List<T>.toArrayList() = ArrayList(this)
 
