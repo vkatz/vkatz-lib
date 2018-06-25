@@ -93,9 +93,11 @@ open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScr
 
     private fun getActiveChild() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.isInScroll }
 
-    //---------------------------Nested scroll part start -----------------------------------------
-
     private fun findNestedScrollTarget() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.nestedScrollBehavior != 0 && it.lp.slideEnabled }
+
+    private fun findDefaultScrollTarget() = (0 until childCount).map { getChildAt(it) }.firstOrNull { it.lp.slideEnabled }
+
+    //---------------------------Nested scroll part start -----------------------------------------
 
     private fun getNestedParentHelper(): NestedScrollingParentHelper {
         if (mParentHelper == null) {
@@ -390,35 +392,6 @@ open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScr
         }
     }
 
-    fun scrollMenuTo(target: View, pos: Int) {
-        scrollMenuBy(target, pos - target.currentSlide().toInt())
-    }
-
-    fun scrollMenuBy(target: View, amount: Int): Int {
-        if (amount == 0) return 0
-        val was = target.currentSlide()
-        val wasInScroll = target.lp.isInScroll
-        setScroll(target, false, was + amount, 0)
-        target.lp.isInScroll = wasInScroll
-        return (target.currentSlide() - was).toInt()
-    }
-
-    fun toggle(target: View, animate: Boolean = true) {
-        if (target.lp.slided) {
-            collapse(target, animate)
-        } else {
-            expand(target, animate)
-        }
-    }
-
-    fun expand(target: View, animate: Boolean = true) {
-        setScroll(target, animate, 0f, target.lp.slideAutoFinishDuration)
-    }
-
-    fun collapse(target: View, animate: Boolean = true) {
-        setScroll(target, animate, target.lp.slideSize, target.lp.slideAutoFinishDuration)
-    }
-
     private fun setScroll(target: View, animate: Boolean, value: Float, duration: Long, interpolator: Interpolator? = DecelerateInterpolator()) {
         if (target.lp.slideSize.closeTo(0f)) return
 
@@ -481,6 +454,42 @@ open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScr
         onExpandStateChangeListener?.invoke(this, target, target.lp.slided)
     }
 
+    fun scrollMenuTo(target: View? = findDefaultScrollTarget(), pos: Int) {
+        target ?: return
+        scrollMenuBy(target, pos - target.currentSlide().toInt())
+    }
+
+    fun scrollMenuBy(target: View? = findDefaultScrollTarget(), amount: Int): Int {
+        target ?: return 0
+        if (amount == 0) return 0
+        val was = target.currentSlide()
+        val wasInScroll = target.lp.isInScroll
+        setScroll(target, false, was + amount, 0)
+        target.lp.isInScroll = wasInScroll
+        return (target.currentSlide() - was).toInt()
+    }
+
+    fun toggle(target: View? = findDefaultScrollTarget(), animate: Boolean = true) {
+        target ?: return
+        if (target.lp.slided) {
+            collapse(target, animate)
+        } else {
+            expand(target, animate)
+        }
+    }
+
+    fun expand(target: View? = findDefaultScrollTarget(), animate: Boolean = true) {
+        target ?: return
+        setScroll(target, animate, 0f, target.lp.slideAutoFinishDuration)
+    }
+
+    fun collapse(target: View? = findDefaultScrollTarget(), animate: Boolean = true) {
+        target ?: return
+        setScroll(target, animate, target.lp.slideSize, target.lp.slideAutoFinishDuration)
+    }
+
+    fun isExpanded(target: View? = findDefaultScrollTarget()) = target?.lp?.slided ?: false
+
     fun setOnExpandStateChangeListener(onExpandStateChangeListener: ((view: SlideMenuLayout, target: View, expanded: Boolean) -> Unit)?) {
         this.onExpandStateChangeListener = onExpandStateChangeListener
     }
@@ -488,10 +497,6 @@ open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScr
     fun setOnSlideChangeListener(onSlideChangeListener: ((view: SlideMenuLayout, target: View, value: Float) -> Unit)?) {
         this.onSlideChangeListener = onSlideChangeListener
     }
-
-    fun getMenuParams(target: View) = target.lp
-
-    fun isExpanded(target: View) = target.lp.slided
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

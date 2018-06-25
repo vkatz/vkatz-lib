@@ -49,8 +49,14 @@ class ViewPagerIndicator : RecyclerView {
         val mh = measuredHeight
         super.onMeasure(widthSpec, heightSpec)
         if (mw != measuredWidth || mh != measuredHeight) {
-            lastIndex = -1
-            flush()
+            flush(true)
+        }
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
+        if(changed){
+            flush(true)
         }
     }
 
@@ -82,19 +88,20 @@ class ViewPagerIndicator : RecyclerView {
             }
         }
         bindTarget!!.addOnPageChangeListener(pageChangeListener!!)
+
     }
 
     fun setDataProvider(dataProvider: IndicatorDataProvider) {
         indicatorDataProvider = dataProvider
     }
 
-    fun flush() {
+    fun flush(reset: Boolean = false) {
         indicatorsAdapter ?: return
         indicatorsAdapter!!.data = arrayOfNulls<Unit?>(indicatorDataProvider?.getCount() ?: 0).toList()
         indicatorsAdapter!!.notifyDataSetChanged()
         val index = (indicatorDataProvider?.getCurrent() ?: 0) + getOffset()
         stopScroll()
-        layoutManager?.startSmoothScroll(SmoothLinearCenterScroller(context, index, Math.abs(index - lastIndex) > 1))
+        layoutManager?.startSmoothScroll(SmoothLinearCenterScroller(context, index, reset || Math.abs(index - lastIndex) > 1))
         lastIndex = index
     }
 

@@ -29,6 +29,7 @@ open class ExtendTextView : AppCompatTextView, LibExtension.TextInterface, LibEx
         setComplexBackground(a.getDrawable(R.styleable.ExtendTextView_extendBackground1), a.getDrawable(R.styleable.ExtendTextView_extendBackground2))
         isEnabled = a.getBoolean(R.styleable.ExtendTextView_extendEnabled, isEnabled)
         isActivated = a.getBoolean(R.styleable.ExtendTextView_extendActivated, isActivated)
+        isSelected = a.getBoolean(R.styleable.ExtendTextView_extendSelected, isSelected)
         a.recycle()
     }
 
