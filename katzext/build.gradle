@@ -5,6 +5,7 @@ apply plugin: 'maven'
 
 def libGroup = "by.vkatz"
 def libArtifact = "katzext"
+def libUrl = "'https://github.com/vkatz/vkatz-lib'"
 def libVersion = "1.0"
 def libVersionCode = 1
 
@@ -56,6 +57,7 @@ uploadArchives {
         pom.version = libVersion
         pom.project {
             inceptionYear '2018'
+            url = libUrl
             developers {
                 developer {
                     id 'vkatz'
