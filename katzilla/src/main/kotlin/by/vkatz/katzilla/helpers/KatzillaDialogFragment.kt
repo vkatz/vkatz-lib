@@ -12,6 +12,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import by.vkatz.katzilla.FragmentScreen
 
+/**
+ * [FragmentScreen] based dialog, will provide model
+ *
+ * Use [show] to provide data for dialog + override [onCreateView] to use it
+ */
 open class KatzillaDialogFragment<Model : FragmentScreen.ScreenModel> : DialogFragment() {
     private var internalModel: Model? = null
     val model: Model

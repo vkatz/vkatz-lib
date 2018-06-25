@@ -7,6 +7,10 @@ import by.vkatz.katzilla.FragmentBackStack
 
 /**
  * Created by V on 24.04.2018.
+ *
+ * Base impl of [FragmentBackStack] based activity
+ *
+ * implement [initContent] fun by calling [FragmentBackStack.bind] fun to start using it
  */
 abstract class KatzillaActivity : AppCompatActivity() {
     companion object {
@@ -26,12 +30,12 @@ abstract class KatzillaActivity : AppCompatActivity() {
 
     private lateinit var backStack: FragmentBackStack
 
-    abstract fun initContent(backStack: FragmentBackStack)
+    abstract fun initContent(backStack: FragmentBackStack, savedInstanceState: Bundle?)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         backStack = getBackStackFor(this)
-        initContent(backStack)
+        initContent(backStack, savedInstanceState)
     }
 
     override fun onDestroy() {

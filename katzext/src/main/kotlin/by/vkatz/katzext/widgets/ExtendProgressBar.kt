@@ -9,7 +9,9 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.ContentLoadingProgressBar
 import by.vkatz.katzext.R
 
-
+/**
+ * Allow to apply compat tint via xml
+ */
 class ExtendProgressBar : ContentLoadingProgressBar {
 
     constructor(context: Context) : this(context, null)

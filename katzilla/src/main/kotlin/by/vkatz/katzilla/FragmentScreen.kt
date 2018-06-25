@@ -9,6 +9,10 @@ import androidx.lifecycle.ViewModel
 
 /**
  * Created by V on 23.04.2018.
+ *
+ * Use [parent] to access back stack of the activity and perform any navigation, this param will be 'null' in case screen is not active(shown)
+ *
+ * [onCreateView] & [onViewCreated] will provide current mode as param, model also available throng [model] property
  */
 open class FragmentScreen<Model : FragmentScreen.ScreenModel> : Fragment() {
 
@@ -29,6 +33,9 @@ open class FragmentScreen<Model : FragmentScreen.ScreenModel> : Fragment() {
 
     var screenOptions = ScreenOptions()
 
+    /**
+     * Override/instantiate navigation state (default values is: [FragmentBackStack].NAVIGATION_*), used to create fragment transitions
+     */
     open fun setNavigationState(state: Int) {}
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -45,12 +52,22 @@ open class FragmentScreen<Model : FragmentScreen.ScreenModel> : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    /**
+     * Base screen model
+     */
     abstract class ScreenModel : ViewModel() {
         internal fun release() {
             onCleared()
         }
     }
 
+    /**
+     * Simple model without any params, useful for no-data screens
+     */
     class SimpleModel : ScreenModel()
+
+    /**
+     * Screen state params
+     */
     data class ScreenOptions(var storeInBackStack: Boolean = true)
 }

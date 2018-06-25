@@ -1,8 +1,8 @@
 buildscript {
     ext.appKotlinVersion = '1.2.50'
     ext.appKotlinCorutines = '0.22.5'
-    ext.appAndroidXVersion = '1.0.0-alpha1'
-    ext.appConstraintVersion = '1.1.1'
+    ext.appAndroidXVersion = '1.0.0-alpha3'
+    ext.appConstraintVersion = '1.1.2'
 
     ext.appMinSdkVersion = 19
     ext.appTargetSdkVersion = 28

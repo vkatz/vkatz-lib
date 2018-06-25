@@ -11,6 +11,12 @@ import androidx.lifecycle.Observer
 @Suppress("UNCHECKED_CAST", "unused")
 open class AppLiveData<T>(initialValue: T) : MutableLiveData<T>() {
 
+    private var accessToken: Any? = null
+
+    constructor(accessToken: Any?, initialValue: T) : this(initialValue) {
+        this.accessToken = accessToken
+    }
+
     init {
         value = initialValue
     }
@@ -111,7 +117,15 @@ open class AppLiveData<T>(initialValue: T) : MutableLiveData<T>() {
 
     @Suppress("RedundantOverride")
     override fun postValue(value: T) {
-        super.postValue(value)
+        postValue(null, value)
+    }
+
+    fun postValue(token: Any?, value: T) {
+        if (accessToken == null || accessToken == token) {
+            super.postValue(value)
+        } else {
+            throw RuntimeException("You can only acces this object with follow access token: $accessToken")
+        }
     }
 }
 
@@ -174,8 +188,10 @@ open class LoadableLiveData<T>(initialValue: T) : AppLiveData<LoadableData<T>>(L
         return obs
     }
 
-    fun postValue(value: T, loaded: Boolean = true) {
-        super.postValue(LoadableData(value, loaded))
+    fun postValue(value: T, loaded: Boolean = true) = postValue(null, value, loaded)
+
+    fun postValue(token: Any?, value: T, loaded: Boolean = true) {
+        super.postValue(token, LoadableData(value, loaded))
     }
 }
 

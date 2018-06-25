@@ -17,6 +17,9 @@ import by.vkatz.katzext.utils.dp
 typealias OnPopupShownListener = (popup: PopupWindow) -> Unit
 typealias OnItemSelectedListener = (item: Any, sender: ExtendSpinner) -> Unit
 
+/**
+ * Allow to use custom views for current item / selected item / no item
+ */
 open class ExtendSpinner : ExtendRelativeLayout {
 
     var adapter: ExtendSpinnerAdapter<*>? = null

@@ -11,6 +11,12 @@ import by.vkatz.katzilla.FragmentScreen
 
 /**
  * Created by V on 24.04.2018.
+ *
+ * [FragmentScreen] realization with useful improvements
+ *
+ * + permission helper via [isPermissionNeedExplanation], [requestPermissions], [onRequestPermissionsResult]
+ *
+ * + predefined transitions (see [setNavigationState])
  */
 open class KatzillaFragment<Model : FragmentScreen.ScreenModel> : FragmentScreen<Model>() {
     fun isPermissionNeedExplanation(permission: String): Boolean =

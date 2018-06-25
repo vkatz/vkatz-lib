@@ -8,6 +8,10 @@ import kotlin.reflect.KClass
 
 /**
  * Created by V on 22.04.2018.
+ *
+ * Back stack store for [FragmentScreen]'s based application
+ *
+ * Call [onActivityDestroyed] upon [Activity.onDestroy][android.app.Activity.onDestroy] - it will cleanup unused memory and prevent memory leaks
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 open class FragmentBackStack {
@@ -35,11 +39,17 @@ open class FragmentBackStack {
     private var fragmentManager: FragmentManager? = null
     private var containerId = 0
 
+    /**
+     * Bind current back stack to activity back stack, restore current [FragmentScreen] if possible, will install default on failure
+     */
     inline fun <reified ScreenModel : FragmentScreen.ScreenModel, ScreenClazz : FragmentScreen<ScreenModel>>
             bind(fragmentManager: FragmentManager, @IdRes containerId: Int, defaultScreen: KClass<ScreenClazz>) {
         bind(fragmentManager, containerId, defaultScreen, ScreenModel::class.java.newInstance())
     }
 
+    /**
+     * Bind current back stack to activity back stack, restore current [FragmentScreen] if possible, will install default on failure
+     */
     @Suppress("UNCHECKED_CAST")
     fun <ScreenModel : FragmentScreen.ScreenModel, ScreenClazz : FragmentScreen<ScreenModel>>
             bind(fragmentManager: FragmentManager, @IdRes containerId: Int, defaultScreen: KClass<ScreenClazz>, defaultScreenModel: ScreenModel) {

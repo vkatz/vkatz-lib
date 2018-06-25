@@ -1,5 +1,6 @@
 package by.vkatz.samples
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.vkatz.katzext.adapters.*
+import by.vkatz.katzext.utils.PaginationList
 import by.vkatz.katzext.utils.asTextView
 import by.vkatz.katzext.utils.asyncUI
 import by.vkatz.katzext.utils.inflate
@@ -35,6 +37,8 @@ class AdaptersScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
     }
 
+    @SuppressLint("SetTextI18n")
+    @Suppress("MoveLambdaOutsideParentheses")
     private fun setAdapter(index: Int) {
         val adapter = when (index) {
         // usual recycler without direct creation of VH

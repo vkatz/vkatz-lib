@@ -1,10 +1,12 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven'
 
-repositories {
-    jcenter()
-}
+def libGroup = "by.vkatz"
+def libArtifact = "katzext"
+def libVersion = "1.0"
+def libVersionCode = 1
 
 android {
     compileSdkVersion appCompileSdkVersion
@@ -13,8 +15,8 @@ android {
     defaultConfig {
         minSdkVersion appMinSdkVersion
         targetSdkVersion appTargetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionName libVersion
+        versionCode libVersionCode
     }
     buildTypes {
         release {
@@ -44,4 +46,32 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.groupId = libGroup
+        pom.artifactId = libArtifact
+        pom.version = libVersion
+        pom.project {
+            inceptionYear '2018'
+            developers {
+                developer {
+                    id 'vkatz'
+                    name 'Viachaslau Katsuba'
+                    email 'vkatsubo@gmail.com'
+                }
+            }
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+        // Add other pom properties here if you want (developer details / licenses)
+        repository(url: "file:./maven/")
+    }
 }

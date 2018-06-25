@@ -2,9 +2,12 @@ package by.vkatz.katzext.widgets
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.constraintlayout.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import by.vkatz.katzext.R
 
+/**
+ * Allow child views to be measured outside of parent bounds
+ */
 open class ExtendConstraintLayout : ConstraintLayout {
 
     private var ignoreVerticalBounds = false

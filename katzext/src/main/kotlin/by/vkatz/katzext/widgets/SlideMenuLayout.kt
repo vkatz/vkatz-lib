@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
-import androidx.constraintlayout.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.*
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +20,9 @@ import by.vkatz.katzext.utils.forEachChildren
 import by.vkatz.katzext.utils.makeVisibleOrGone
 import kotlinx.android.parcel.Parcelize
 
-
+/**
+ * Slide menu that might appears from any direction
+ */
 @Suppress("MemberVisibilityCanPrivate", "MemberVisibilityCanBePrivate", "unused")
 open class SlideMenuLayout : ConstraintLayout, NestedScrollingParent2, NestedScrollingChild2 {
     companion object {
