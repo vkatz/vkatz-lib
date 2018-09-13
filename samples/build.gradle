@@ -40,5 +40,4 @@ androidExtensions {
 
 dependencies {
     implementation project(':katzext')
-    implementation project(':katzilla')
 }

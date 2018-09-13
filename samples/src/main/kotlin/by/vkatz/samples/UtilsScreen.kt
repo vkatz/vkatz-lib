@@ -1,6 +1,5 @@
 package by.vkatz.samples
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences

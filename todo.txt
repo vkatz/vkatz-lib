@@ -1,2 +1,0 @@
-- test new activity
-- make simplier work with LiveData

@@ -1,6 +1,0 @@
-copy content of this folder (no need to copy this file) into Idea/AndroidStudio /config folder 
-or content of this folders in the same folders inside /config
-
-restart ide
-
-Windows: C:\User\<User>\<idea/studion name>\config

@@ -1,13 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'maven'
-
-def libGroup = "by.vkatz"
-def libArtifact = "katzext"
-def libUrl = "'https://github.com/vkatz/vkatz-lib'"
-def libVersion = "1.0"
-def libVersionCode = 1
 
 android {
     compileSdkVersion appCompileSdkVersion
@@ -16,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion appMinSdkVersion
         targetSdkVersion appTargetSdkVersion
-        versionName libVersion
-        versionCode libVersionCode
+        versionName "2.0"
+        versionCode 15
     }
     buildTypes {
         release {
@@ -41,39 +34,10 @@ androidExtensions {
 }
 
 dependencies {
-    api "androidx.appcompat:appcompat:$appAndroidXVersion"
-    api "androidx.recyclerview:recyclerview:$appAndroidXVersion"
-    api "androidx.constraintlayout:constraintlayout:$appConstraintVersion"
-    api "org.jetbrains.kotlin:kotlin-stdlib:$appKotlinVersion"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$appKotlinCorutines"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$appKotlinCorutines"
-}
-
-
-uploadArchives {
-    repositories.mavenDeployer {
-        pom.groupId = libGroup
-        pom.artifactId = libArtifact
-        pom.version = libVersion
-        pom.project {
-            inceptionYear '2018'
-            url = libUrl
-            developers {
-                developer {
-                    id 'vkatz'
-                    name 'Viachaslau Katsuba'
-                    email 'vkatsubo@gmail.com'
-                }
-            }
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-        }
-        // Add other pom properties here if you want (developer details / licenses)
-        repository(url: "file:./maven/")
-    }
+    api "androidx.appcompat:appcompat:1.0.0-rc02"
+    api "androidx.recyclerview:recyclerview:1.0.0-rc02"
+    api "androidx.constraintlayout:constraintlayout:1.1.3"
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.2.70"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.0"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.26.0"
 }
