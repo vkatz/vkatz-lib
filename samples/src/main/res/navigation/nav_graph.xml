@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainScreen">
+
+    <fragment android:id="@+id/adaptersScreen"
+              android:name="by.vkatz.samples.screens.AdaptersScreen"
+              android:label="AdaptersScreen"/>
+    <fragment android:id="@+id/dataPassScreen"
+              android:name="by.vkatz.samples.screens.DataPassScreen"
+              android:label="DataPassScreen"/>
+    <fragment android:id="@+id/mainScreen"
+              android:name="by.vkatz.samples.screens.MainScreen"
+              android:label="MainScreen">
+        <action android:id="@+id/action_mainScreen_to_dataPassScreen"
+                app:destination="@id/dataPassScreen"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action android:id="@+id/action_mainScreen_to_pagerIndicator"
+                app:destination="@id/pagerIndicator"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action android:id="@+id/action_mainScreen_to_resViewScreen"
+                app:destination="@id/resViewScreen"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action android:id="@+id/action_mainScreen_to_utilsScreen"
+                app:destination="@id/utilsScreen"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action android:id="@+id/action_mainScreen_to_spinnerScreen"
+                app:destination="@id/spinnerScreen"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action android:id="@+id/action_mainScreen_to_adaptersScreen"
+                app:destination="@id/adaptersScreen"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    </fragment>
+    <fragment android:id="@+id/pagerIndicator"
+              android:name="by.vkatz.samples.screens.PagerIndicator"
+              android:label="PagerIndicator"/>
+    <fragment android:id="@+id/resViewScreen"
+              android:name="by.vkatz.samples.screens.ResViewScreen"
+              android:label="ResViewScreen"/>
+    <fragment android:id="@+id/spinnerScreen"
+              android:name="by.vkatz.samples.screens.SpinnerScreen"
+              android:label="SpinnerScreen"/>
+    <fragment android:id="@+id/utilsScreen"
+              android:name="by.vkatz.samples.screens.UtilsScreen"
+              android:label="UtilsScreen"/>
+</navigation>

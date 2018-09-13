@@ -4,10 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import by.vkatz.katzext.R
 import java.util.*
 
-open class FlowLayout : ExtendRelativeLayout {
+open class FlowLayout : RelativeLayout {
 
     private var offsetVertical: Int = 0
     private var offsetHorizontal: Int = 0

@@ -1,13 +1,18 @@
 package by.vkatz.samples
 
 import android.os.Bundle
-import by.vkatz.katzilla.FragmentBackStack
-import by.vkatz.katzilla.helpers.KatzillaActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 
-class MainUI : KatzillaActivity() {
+class MainUI : AppCompatActivity() {
+    private lateinit var navController: NavController
 
-    override fun initContent(backStack: FragmentBackStack, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
-        backStack.bind(supportFragmentManager, R.id.screen_layout, MainScreen::class)
+        navController = findNavController(R.id.mainNavFragment)
     }
+
+    override fun onSupportNavigateUp() = navController.navigateUp()
 }

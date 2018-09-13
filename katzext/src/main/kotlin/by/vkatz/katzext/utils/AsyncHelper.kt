@@ -2,7 +2,7 @@ package by.vkatz.katzext.utils
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -15,21 +15,11 @@ import kotlinx.coroutines.experimental.async
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.suspendCoroutine
 
-
-/*fun foo() {
-    asyncUI {
-        val t1 = async { 1 }.await()   //Int? - ? due to task might be canceled
-        val t2 = async { 1 }.await()!! //Int
-        val t3 = AsyncHelper(null, newSingleThreadContext("WorkThread"), { 1 }).start().await()
-    }
-}*/
-
-
 typealias AsyncResult<T> = Deferred<T>
 
 open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private val context: CoroutineContext, private val action: suspend () -> T) : LifecycleObserver {
     companion object {
-        var DEFAULT_ERROR_HANDLER: suspend (Throwable) -> Unit? = { if (it !is JobCancellationException) Log.e("AsyncHelper", "async::", it) }
+        var DEFAULT_ERROR_HANDLER: suspend (Throwable) -> Unit? = { if (it !is JobCancellationException) LogUtils.fe("AsyncHelper", "async::", it) }
         var DETACH_HANDLER = Handler(Looper.getMainLooper())
     }
 
@@ -61,6 +51,7 @@ open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private 
         }
     }
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
         if (asyncAction?.isActive == true)
@@ -68,16 +59,17 @@ open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private 
     }
 }
 
+fun <T> async(fragment: Fragment, coroutineContext: CoroutineContext = CommonPool, action: suspend () -> T) =
+        async(fragment.viewLifecycleOwner, coroutineContext, action)
+
 fun <T> async(lifecycleOwner: LifecycleOwner? = null, coroutineContext: CoroutineContext = CommonPool, action: suspend () -> T): AsyncResult<T?> =
         AsyncHelper<T?>(lifecycleOwner?.lifecycle, coroutineContext, action).start()
 
+fun <T> asyncUI(fragment: Fragment, action: suspend () -> T) = asyncUI(fragment.viewLifecycleOwner, action)
+
 fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> = async(lifecycleOwner, UI, action)
 
-fun <T> asyncResult(data: T) = async { data }
+fun <T> suspendAsync(coroutineContext: CoroutineContext = CommonPool, resume: ((T) -> Unit) -> Unit): AsyncResult<T?> =
+        async(null as LifecycleOwner?, coroutineContext) { suspendCoroutine<T> { out -> resume(out::resume) } }
 
-fun <T> asyncUIResult(data: T) = asyncUI { data }
-
-fun <T> suspendAsync(coroutineContext: CoroutineContext = CommonPool, action: ((T) -> Unit) -> Unit): AsyncResult<T?> =
-        async(null, coroutineContext) { suspendCoroutine<T> { out -> action(out::resume) } }
-
-fun <T> suspendAsyncUI(action: ((T) -> Unit) -> Unit): AsyncResult<T?> = suspendAsync(UI, action)
+fun <T> suspendAsyncUI(resume: ((T) -> Unit) -> Unit): AsyncResult<T?> = suspendAsync(UI, resume)

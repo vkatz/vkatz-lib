@@ -1,24 +1,24 @@
-package by.vkatz.samples
+package by.vkatz.samples.screens
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import by.vkatz.katzext.adapters.SimpleExtendSpinnerAdapter
 import by.vkatz.katzext.adapters.SimpleExtendSpinnerArrayAdapter
 import by.vkatz.katzext.utils.asTextView
 import by.vkatz.katzext.utils.get
 import by.vkatz.katzext.utils.inflate
 import by.vkatz.katzext.widgets.ExtendSpinner
-import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KatzillaFragment
+import by.vkatz.samples.R
 
 /**
  * Created by vKatz on 28.10.2017.
  */
-class SpinnerScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: SimpleModel, savedInstanceState: Bundle?): View? {
+class SpinnerScreen : Fragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.spinners)
         (view[R.id.spinner1] as ExtendSpinner).apply {
             adapter = SimpleExtendSpinnerArrayAdapter(context, R.array.spinner_items, R.layout.spinner_item)

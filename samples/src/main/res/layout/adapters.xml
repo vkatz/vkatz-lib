@@ -23,10 +23,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="HeaderFooter"/>
-        <Button android:id="@+id/pagination"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pagination"/>
     </by.vkatz.katzext.widgets.FlowLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"

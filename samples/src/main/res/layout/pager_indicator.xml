@@ -5,7 +5,7 @@
               android:layout_height="match_parent"
               android:background="#fff"
               android:orientation="vertical">
-    <androidx.viewpager.widget.ViewPager
+    <by.vkatz.katzext.widgets.RecyclerViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="150dp"/>
@@ -14,7 +14,7 @@
           android:layout_marginTop="4dp"
           android:layout_marginBottom="4dp"
           android:background="#8000"/>
-    <by.vkatz.katzext.widgets.ViewPagerIndicator
+    <by.vkatz.katzext.widgets.RecyclerViewPagerIndicator
         android:id="@+id/pagerIndicator1"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
@@ -24,7 +24,7 @@
           android:layout_marginTop="4dp"
           android:layout_marginBottom="4dp"
           android:background="#8000"/>
-    <by.vkatz.katzext.widgets.ViewPagerIndicator
+    <by.vkatz.katzext.widgets.RecyclerViewPagerIndicator
         android:id="@+id/pagerIndicator2"
         android:layout_width="match_parent"
         android:layout_height="36dp"/>
@@ -33,7 +33,7 @@
           android:layout_marginTop="4dp"
           android:layout_marginBottom="4dp"
           android:background="#8000"/>
-    <by.vkatz.katzext.widgets.ViewPagerIndicator
+    <by.vkatz.katzext.widgets.RecyclerViewPagerIndicator
         android:id="@+id/pagerIndicator3"
         android:layout_width="match_parent"
         android:layout_height="36dp"/>
@@ -42,7 +42,7 @@
           android:layout_marginTop="4dp"
           android:layout_marginBottom="4dp"
           android:background="#8000"/>
-    <by.vkatz.katzext.widgets.ViewPagerIndicator
+    <by.vkatz.katzext.widgets.RecyclerViewPagerIndicator
         android:id="@+id/pagerIndicator4"
         android:layout_width="match_parent"
         android:layout_height="36dp"
@@ -52,7 +52,7 @@
           android:layout_marginTop="4dp"
           android:layout_marginBottom="4dp"
           android:background="#8000"/>
-    <by.vkatz.katzext.widgets.ViewPagerIndicator
+    <by.vkatz.katzext.widgets.RecyclerViewPagerIndicator
         android:id="@+id/pagerIndicator5"
         android:layout_width="match_parent"
         android:layout_height="36dp"

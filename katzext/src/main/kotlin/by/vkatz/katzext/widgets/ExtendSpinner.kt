@@ -18,9 +18,9 @@ typealias OnPopupShownListener = (popup: PopupWindow) -> Unit
 typealias OnItemSelectedListener = (item: Any, sender: ExtendSpinner) -> Unit
 
 /**
- * Allow to use custom views for current item / selected item / no item
+ * Custom spinner that allow to use custom views for current item / selected item / no item
  */
-open class ExtendSpinner : ExtendRelativeLayout {
+open class ExtendSpinner : RelativeLayout {
 
     var adapter: ExtendSpinnerAdapter<*>? = null
     var popupBackground: Drawable? = null

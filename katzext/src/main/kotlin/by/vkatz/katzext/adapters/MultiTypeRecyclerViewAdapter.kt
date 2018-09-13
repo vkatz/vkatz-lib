@@ -3,9 +3,6 @@ package by.vkatz.katzext.adapters
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-/**
- * Created by V on 26.04.2018.
- */
 open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
                                            private val idProvider: (T.() -> Long)? = null,
                                            private vararg var typeHandlers: ViewTypeHandler<T>
@@ -21,9 +18,7 @@ open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
 
     override fun getItemViewType(position: Int): Int {
         typeHandlers.forEachIndexed { index, viewTypeHandler ->
-            if (viewTypeHandler.typeValidator(getItemAt(position))) {
-                return index
-            }
+            if (viewTypeHandler.typeValidator(getItemAt(position))) return index
         }
         throw Exception("Unregistered type for item at index: $position")
     }
@@ -38,6 +33,6 @@ open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
 
     @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: SimpleViewHolder<*>, position: Int) {
-        (holder as SimpleViewHolder<T>).bind(getItemAt(position))
+        (holder as SimpleViewHolder<T>).bindHolder(getItemAt(position))
     }
 }

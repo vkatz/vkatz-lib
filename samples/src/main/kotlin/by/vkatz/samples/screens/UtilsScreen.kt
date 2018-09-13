@@ -1,4 +1,4 @@
-package by.vkatz.samples
+package by.vkatz.samples.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,35 +7,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import by.vkatz.katzext.utils.*
-import by.vkatz.katzilla.FragmentScreen
-import by.vkatz.katzilla.helpers.KatzillaFragment
+import by.vkatz.samples.R
 import kotlinx.android.synthetic.main.utils.*
 import kotlinx.coroutines.experimental.delay
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Created by V on 24.04.2018.
- */
+class UtilsViewModel(private val prefs: SharedPreferences) : ViewModel() {
+    var delegateCounter by SharedPrefsDelegate({ prefs }, "key", 0)
+}
 
-class UtilsScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
+class UtilsScreen : Fragment() {
+    private val model by lazyViewModel(UtilsViewModel::class, object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+                UtilsViewModel(context!!.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)) as T
+    })
 
-    private lateinit var prefs: SharedPreferences
-    private var delegateCounter by SharedPrefsIntDelegate({ prefs }, 0)
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        prefs = context!!.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, model: FragmentScreen.SimpleModel, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.utils)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.utils)
 
     @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, model: FragmentScreen.SimpleModel, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, model, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         //AsyncHelper
         asyncUI(this) {
@@ -63,28 +60,15 @@ class UtilsScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
             asyncT3.text = "Task1 and Task2 finished"
         }
         //Delegates
-        delegates.text = "Delegate read count=$delegateCounter"
-        delegateCounter += 1
-        //xml
-        val foods = ArrayList<FoodItem>()
-        XmlParser.parse(context!!.resources.openRawResource(R.raw.test)) {
-            item("menu") {
-                item("food") { params ->
-                    val item = FoodItem(params["id"]?.toInt() ?: 0, "", "")
-                    itemValue("name", { item.name = it ?: "" })
-                    itemValue("price", { item.price = it ?: "" })
-                    foods.add(item)
-                }
-            }
-        }
-        xml.text = "ParsedXml:\n$foods".replace("),", ")\n")
+        delegates.text = "Delegate read count=${model.delegateCounter}"
+        model.delegateCounter += 1
 
         //livedatas
 
         val timeFormatter = SimpleDateFormat("HH:mm.ss", Locale.getDefault())
         fun now() = timeFormatter.format(Date(System.currentTimeMillis()))
         val t1 = LoadableLiveData("asd")
-        t1.observe {
+        t1.observe(this) {
             task1state.text = "${if (it.isLoading) "loading" else "ready"} at [${now()}] ->${it.data}"
         }
         task1.setOnClickListener {
@@ -95,7 +79,7 @@ class UtilsScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
         }
 
         val t2 = LoadableLiveData("asd")
-        t2.observe {
+        t2.observe(this) {
             task2state.text = "${if (it.isLoading) "loading" else "ready"} at[${now()}]->${it.data}"
         }
         task2.setOnClickListener {
@@ -106,6 +90,4 @@ class UtilsScreen : KatzillaFragment<FragmentScreen.SimpleModel>() {
         }
 
     }
-
-    data class FoodItem(var id: Int, var name: String, var price: String)
 }

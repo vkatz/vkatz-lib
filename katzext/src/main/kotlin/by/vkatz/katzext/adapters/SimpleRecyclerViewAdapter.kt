@@ -29,6 +29,6 @@ open class SimpleRecyclerViewAdapter<T>(open var data: List<T>,
     override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: SimpleViewHolder<T>, position: Int) {
-        holder.bind(getItemAt(position))
+        holder.bindHolder(getItemAt(position))
     }
 }

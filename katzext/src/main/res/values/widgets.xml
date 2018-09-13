@@ -1,77 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="compoundDrawableWidth" format="dimension|reference"/>
-    <attr name="compoundDrawableHeight" format="dimension|reference"/>
-    <attr name="extendBackground1" format="reference|color"/>
-    <attr name="extendBackground2" format="reference|color"/>
-    <attr name="extendEnabled" format="boolean"/>
-    <attr name="extendActivated" format="boolean"/>
 
-    <declare-styleable name="ExtendCheckBox">
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-    </declare-styleable>
-    <declare-styleable name="ExtendEditText">
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-        <attr name="extendInputMask" format="string|reference"/>
-        <attr name="extendMaskChar" format="string|reference"/>
-    </declare-styleable>
-    <declare-styleable name="ExtendRadioButton">
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-    </declare-styleable>
-    <declare-styleable name="ExtendTextView">
-        <attr name="compoundDrawableWidth"/>
-        <attr name="compoundDrawableHeight"/>
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-        <attr name="extendSelected"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendFrameLayout">
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendLinearLayout">
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendImageView">
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
-        <attr name="touchZoom" format="boolean"/>
-        <attr name="maxZoom" format="float"/>
-        <attr name="minZoom" format="float"/>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendProgressBar">
-        <attr name="extendTint" format="reference|color"/>
-    </declare-styleable>
-
-    <declare-styleable name="ViewPagerIndicator">
+    <declare-styleable name="RecyclerViewPagerIndicator">
         <attr name="extendForceCenterMode" format="reference|boolean"/>
     </declare-styleable>
 
@@ -99,13 +29,6 @@
             <enum name="top" value="1"/>
             <enum name="bot" value="2"/>
         </attr>
-    </declare-styleable>
-
-    <declare-styleable name="ExtendRelativeLayout">
-        <attr name="extendBackground1"/>
-        <attr name="extendBackground2"/>
-        <attr name="extendEnabled"/>
-        <attr name="extendActivated"/>
     </declare-styleable>
 
     <declare-styleable name="SlideMenuLayout_Layout">

@@ -2,6 +2,8 @@ package by.vkatz.katzext.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -14,23 +16,11 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import by.vkatz.katzext.widgets.ExtendEditText
-import by.vkatz.katzext.widgets.ExtendImageView
-import by.vkatz.katzext.widgets.ExtendTextView
-import by.vkatz.katzext.widgets.SlideMenuLayout
+import java.util.*
 import kotlin.reflect.KClass
-
-typealias Callback = () -> Unit
-
-typealias ValueCallback<T> = (t: T) -> Unit
 
 @Suppress("unused")
 infix fun <T> Any?.so(t: T) = t
-
-infix fun <T> Any?.ifnn(t: T) = if (this == null) null else t
-
-operator fun <T> Boolean.get(onTrue: T, onFalse: T) = if (this) onTrue else onFalse
-operator fun <T> Boolean.get(onTrue: T) = if (this) onTrue else null
 
 fun <T : Comparable<T>> T.clamp(a: T, b: T): T {
     val max = maxOf(a, b)
@@ -56,9 +46,15 @@ infix fun Long.unOr(flag: Long): Long = this and flag.inv()
 
 infix fun Int.unOr(flag: Int): Int = this and flag.inv()
 
+fun Int.times(action: () -> Unit) {
+    for (i in 0 until this) action()
+}
+
 fun <T : ViewModel> ViewModelProvider.get(clazz: KClass<T>) = get(clazz.java)
 
-fun <T> List<T>.toArrayList() = ArrayList(this)
+fun <T> Iterable<T>.toArrayList() = ArrayList<T>().apply { addAll(this@toArrayList) }
+
+fun <T> List<T>?.isNullOrEmpty() = this?.isEmpty() ?: true
 
 fun Handler.postDelayed(delay: Long, action: () -> Unit) = postDelayed(action, delay)
 
@@ -82,7 +78,7 @@ fun Context.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToPare
 
 fun Fragment.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = activity!!.inflate(rId, parent, attachToParent)
 
-fun LayoutInflater.inflate(@LayoutRes rId: Int) = inflate(rId, null, false)
+fun LayoutInflater.inflate(@LayoutRes rId: Int): View = inflate(rId, null, false)
 
 fun View.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = context.inflate(rId, parent, attachToParent)
 
@@ -99,9 +95,40 @@ fun Activity.showKeyboard(focus: View) {
     imm.showSoftInput(focus, 0)
 }
 
+fun Context.launchGeoIntent(lat: Double, lng: Double) {
+    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lng")))
+}
+
+fun Context.launchPhoneIntent(phone: String) {
+    startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
+}
+
+fun Context.launchShareIntent(title: String, subject: String? = null, extra: String? = null) {
+    startActivity(Intent().apply {
+        type = "text/plain"
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TITLE, title)
+        if (subject != null) putExtra(Intent.EXTRA_SUBJECT, subject)
+        if (extra != null) putExtra(Intent.EXTRA_TEXT, extra)
+    })
+}
+
 operator fun View.get(id: Int): View = findViewById<View>(id)
 
 fun View.setAsyncOnClickListener(listener: suspend (view: View) -> Unit) = setOnClickListener { view -> asyncUI { listener(view) } }
+
+fun View.setLockableOnClickListener(lockTime: Long = 500, listener: (View) -> Unit) {
+    setOnClickListener(object : View.OnClickListener {
+        var lockTimer = 0L
+
+        override fun onClick(sender: View) {
+            if (System.currentTimeMillis() > lockTimer) {
+                listener(sender)
+                lockTimer = System.currentTimeMillis() + lockTime
+            }
+        }
+    })
+}
 
 fun View.postRequestLayout() = post { requestLayout() }
 
@@ -138,9 +165,7 @@ fun ViewGroup.forEachChildrenRecursive(action: (view: View) -> Unit) {
     for (i in 0 until childCount) {
         val view = getChildAt(i)
         action(view)
-        if (view is ViewGroup) {
-            view.forEachChildrenRecursive(action)
-        }
+        (view as? ViewGroup)?.forEachChildrenRecursive(action)
     }
 }
 
@@ -157,15 +182,11 @@ fun ViewGroup.forEachChildrenIndexed(action: (view: View, pos: Int) -> Unit) {
     for (i in 0 until childCount) action(getChildAt(i), i)
 }
 
+fun <T> T?.or(compute: () -> T): T = this ?: compute()
+
 fun View.asViewGroup() = this as ViewGroup
 fun View.asLinearLayout() = this as LinearLayout
 fun View.asRelativeLayout() = this as RelativeLayout
 fun View.asTextView() = this as TextView
 fun View.asEditText() = this as EditText
 fun View.asImageView() = this as ImageView
-fun View.asExtTextView() = this as ExtendTextView
-fun View.asExtEditText() = this as ExtendEditText
-fun View.asExtImageView() = this as ExtendImageView
-fun View.asSlideMenu() = this as SlideMenuLayout
-
-

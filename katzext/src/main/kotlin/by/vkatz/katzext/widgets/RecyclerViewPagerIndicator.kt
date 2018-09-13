@@ -9,28 +9,30 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
 import by.vkatz.katzext.R
 import by.vkatz.katzext.adapters.HeaderFooterRecyclerViewAdapter
 import by.vkatz.katzext.adapters.SimpleViewHolder
 import by.vkatz.katzext.adapters.ViewTypeHandler
+import by.vkatz.katzext.utils.clamp
+import com.axs.android.utils.adapters.CircularRecyclerViewAdapter
 
-class ViewPagerIndicator : RecyclerView {
+typealias ViewPagerIndicatorBinder = (view: View, position: Int, selected: Boolean) -> Unit
 
-    private var bindTarget: ViewPager? = null
-    private var pageChangeListener: ViewPager.SimpleOnPageChangeListener? = null
+class RecyclerViewPagerIndicator : RecyclerView {
+
+    private var bindTarget: RecyclerViewPager? = null
+    private var onPageChangedListener: RecyclerViewPager.OnPageChangedListener? = null
     private var indicatorsAdapter: IndicatorAdapter? = null
     private var indicatorDataProvider: IndicatorDataProvider? = null
     private var lastIndex = -1
     private var forceCenter = false
 
     constructor(context: Context) : this(context, null)
-
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
-        val a = context.obtainStyledAttributes(attrs, R.styleable.ViewPagerIndicator, defStyle, 0)
-        forceCenter = a.getBoolean(R.styleable.ViewPagerIndicator_extendForceCenterMode, false)
+        val a = context.obtainStyledAttributes(attrs, R.styleable.RecyclerViewPagerIndicator, defStyle, 0)
+        forceCenter = a.getBoolean(R.styleable.RecyclerViewPagerIndicator_extendForceCenterMode, false)
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         a.recycle()
     }
 
@@ -41,54 +43,54 @@ class ViewPagerIndicator : RecyclerView {
 
     @Deprecated("do not use it", ReplaceWith("bind"), DeprecationLevel.ERROR)
     override fun setAdapter(adapter: Adapter<*>?) {
-        throw RuntimeException("Use bind/unbind instead")
+        if (isInEditMode) super.setAdapter(adapter)
+        else throw RuntimeException("Use bind/unbind instead")
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         val mw = measuredWidth
         val mh = measuredHeight
         super.onMeasure(widthSpec, heightSpec)
-        if (mw != measuredWidth || mh != measuredHeight) {
-            flush(true)
-        }
+        if (mw != measuredWidth || mh != measuredHeight) flush(true)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
-        if(changed){
-            flush(true)
-        }
+        if (changed) flush(true)
     }
 
     fun unbind() {
-        if (bindTarget != null && pageChangeListener != null) {
-            bindTarget!!.removeOnPageChangeListener(pageChangeListener!!)
+        if (bindTarget != null && onPageChangedListener != null) {
+            bindTarget!!.removeOnPageChangedListener(onPageChangedListener!!)
             bindTarget = null
-            pageChangeListener = null
+            onPageChangedListener = null
         }
     }
 
-    fun getOffset() = (if (forceCenter) 1 else 0)
+    fun getOffset() = if (forceCenter) 1 else 0
 
-    fun bind(viewPager: ViewPager, @LayoutRes indicatorLayout: Int, indicatorBinder: IndicatorBinder) {
-        this.bindTarget = viewPager
-        indicatorDataProvider = object : IndicatorDataProvider {
-            override fun getCount(): Int = bindTarget?.adapter?.count ?: 0
-            override fun getCurrent(): Int = bindTarget?.currentItem ?: 0
+    fun bind(target: RecyclerViewPager, @LayoutRes indicatorLayout: Int, indicatorBinder: ViewPagerIndicatorBinder) {
+        this.bindTarget = target
+        val targetAdapter = target.adapter
+        indicatorDataProvider = if (targetAdapter is CircularRecyclerViewAdapter<*>) {
+            object : IndicatorDataProvider {
+                override fun getCount(): Int = targetAdapter.data.size
+                override fun getCurrent(): Int = target.currentPage % targetAdapter.data.size
+            }
+        } else {
+            object : IndicatorDataProvider {
+                override fun getCount(): Int = bindTarget?.adapter?.itemCount ?: 0
+                override fun getCurrent(): Int = target.currentPage
+            }
         }
-        layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         indicatorsAdapter = IndicatorAdapter(indicatorLayout, indicatorBinder)
         indicatorsAdapter!!.headerVisible = forceCenter
         indicatorsAdapter!!.footerVisible = forceCenter
         super.setAdapter(indicatorsAdapter)
-        pageChangeListener = object : ViewPager.SimpleOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                flush()
-            }
+        onPageChangedListener = object : RecyclerViewPager.OnPageChangedListener {
+            override fun onPageChanged(sender: RecyclerViewPager, page: Int) = flush()
         }
-        bindTarget!!.addOnPageChangeListener(pageChangeListener!!)
-
+        target.addOnPageChangedListener(onPageChangedListener!!)
     }
 
     fun setDataProvider(dataProvider: IndicatorDataProvider) {
@@ -97,16 +99,15 @@ class ViewPagerIndicator : RecyclerView {
 
     fun flush(reset: Boolean = false) {
         indicatorsAdapter ?: return
-        indicatorsAdapter!!.data = arrayOfNulls<Unit?>(indicatorDataProvider?.getCount() ?: 0).toList()
-        indicatorsAdapter!!.notifyDataSetChanged()
-        val index = (indicatorDataProvider?.getCurrent() ?: 0) + getOffset()
-        stopScroll()
-        layoutManager?.startSmoothScroll(SmoothLinearCenterScroller(context, index, reset || Math.abs(index - lastIndex) > 1))
-        lastIndex = index
-    }
-
-    interface IndicatorBinder {
-        fun bind(view: View, position: Int, selected: Boolean)
+        val count = indicatorDataProvider?.getCount() ?: 0
+        val index = (indicatorDataProvider?.getCurrent() ?: 0).clamp(0, count) + getOffset()
+        if (reset || index != lastIndex) {
+            indicatorsAdapter!!.data = arrayOfNulls<Unit?>(count).toList()
+            indicatorsAdapter!!.notifyDataSetChanged()
+            stopScroll()
+            layoutManager?.startSmoothScroll(SmoothLinearCenterScroller(context, index, reset || Math.abs(index - lastIndex) > 1))
+            lastIndex = index
+        }
     }
 
     interface IndicatorDataProvider {
@@ -129,20 +130,17 @@ class ViewPagerIndicator : RecyclerView {
         }
 
         override fun updateActionForInterimTarget(action: Action) {
-            if (instant) {
-                action.jumpTo(targetPosition)
-            } else {
-                super.updateActionForInterimTarget(action)
-            }
+            if (instant) action.jumpTo(targetPosition)
+            else super.updateActionForInterimTarget(action)
         }
     }
 
-    private inner class IndicatorAdapter(@LayoutRes private val indicatorLayout: Int, private val indicatorBinder: IndicatorBinder)
+    private inner class IndicatorAdapter(@LayoutRes private val indicatorLayout: Int, private val indicatorBinder: ViewPagerIndicatorBinder)
         : HeaderFooterRecyclerViewAdapter<Unit?>(
             ArrayList(), null,
-            { SimpleViewHolder(View(it.context).apply { layoutParams = RecyclerView.LayoutParams(-1, 0) }, null) },
+            { SimpleViewHolder(View(it.context).apply { layoutParams = LayoutParams(-1, 0) }, null) },
             { SimpleViewHolder(View(it.context).apply { layoutParams = RecyclerView.LayoutParams(-1, 0) }, null) },
             ViewTypeHandler({ true }, indicatorLayout, {
-                indicatorBinder.bind(itemView, layoutPosition - getOffset(), layoutPosition - getOffset() == indicatorDataProvider?.getCurrent() ?: 0)
+                indicatorBinder(itemView, layoutPosition - getOffset(), layoutPosition - getOffset() == indicatorDataProvider?.getCurrent() ?: 0)
             }))
 }
