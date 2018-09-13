@@ -22,8 +22,6 @@
 
 ## Widgets
 
-**Extend** elements have a bunch of buffs
-
 #### FlowLayout
 
 Allow to place items one by one, in case there is no space in line - item placed at next line. Allow to set horizontal gaps and vertical per line align
@@ -66,7 +64,7 @@ Examples:
 
 ![](https://raw.githubusercontent.com/vkatz/vkatz-lib/master/.doc/slide_menu_4.gif)
 
-####RecyclerViewPager
+#### RecyclerViewPager
 
 ViewPager realization based on RecyclerView - much easier & better performance
 
