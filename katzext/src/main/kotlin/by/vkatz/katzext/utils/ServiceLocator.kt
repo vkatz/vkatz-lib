@@ -22,6 +22,11 @@ class ServiceDelegate<T : Any>(name: String? = null,
     }
 }
 
+/**
+ * Service locator base class
+ *
+ * Usage: 1) extend from it, 2) create fields using [service] fields
+ */
 open class BaseServiceLocator {
     protected val sync = Object()
     protected val services = HashMap<ServiceLocatorKey, Any>()

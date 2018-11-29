@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package by.vkatz.katzext.utils
 
 import android.os.Handler
@@ -7,27 +9,28 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.JobCancellationException
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 typealias AsyncResult<T> = Deferred<T>
+typealias SuspendFun<T> = suspend CoroutineScope.() -> T
 
-open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private val context: CoroutineContext, private val action: suspend () -> T) : LifecycleObserver {
+open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private val context: CoroutineContext, private val action: SuspendFun<T>) : LifecycleObserver {
     companion object {
-        var DEFAULT_ERROR_HANDLER: suspend (Throwable) -> Unit? = { if (it !is JobCancellationException) LogUtils.fe("AsyncHelper", "async::", it) }
+        var DEFAULT_ERROR_HANDLER = { e: Throwable -> if (e !is CancellationException) LogUtils.fe("AsyncHelper", "async::", e) }
         var DETACH_HANDLER = Handler(Looper.getMainLooper())
+
+        fun <T> run(lifecycleOwner: LifecycleOwner?, context: CoroutineContext, block: SuspendFun<T>) =
+                AsyncHelper(lifecycleOwner?.lifecycle, context, block).start()
     }
 
     private var asyncAction: AsyncResult<T?>? = null
 
     fun start(): AsyncResult<T?> {
         lifecycle?.addObserver(this)
-        asyncAction = async(context) {
+        asyncAction = GlobalScope.async(context) {
             try {
                 action()
             } catch (t: Throwable) {
@@ -59,17 +62,27 @@ open class AsyncHelper<out T>(private var lifecycle: Lifecycle? = null, private 
     }
 }
 
-fun <T> async(fragment: Fragment, coroutineContext: CoroutineContext = CommonPool, action: suspend () -> T) =
-        async(fragment.viewLifecycleOwner, coroutineContext, action)
+fun <T> runAsync(lifecycleOwner: LifecycleOwner? = null, block: SuspendFun<T>) = AsyncHelper.run(lifecycleOwner, Dispatchers.Default, block)
+fun <T> runAsync(fragment: Fragment, block: SuspendFun<T>) = runAsync(fragment.viewLifecycleOwner, block)
 
-fun <T> async(lifecycleOwner: LifecycleOwner? = null, coroutineContext: CoroutineContext = CommonPool, action: suspend () -> T): AsyncResult<T?> =
-        AsyncHelper<T?>(lifecycleOwner?.lifecycle, coroutineContext, action).start()
+fun <T> runAsyncUI(lifecycleOwner: LifecycleOwner? = null, block: SuspendFun<T>) = AsyncHelper.run(lifecycleOwner, Dispatchers.Main, block)
+fun <T> runAsyncUI(fragment: Fragment, block: SuspendFun<T>) = runAsyncUI(fragment.viewLifecycleOwner, block)
 
-fun <T> asyncUI(fragment: Fragment, action: suspend () -> T) = asyncUI(fragment.viewLifecycleOwner, action)
+fun launchAsync(lifecycleOwner: LifecycleOwner? = null, block: SuspendFun<Unit>) = runAsync(lifecycleOwner, block) as Job
+fun launchAsync(fragment: Fragment, block: SuspendFun<Unit>) = launchAsync(fragment.viewLifecycleOwner, block)
 
-fun <T> asyncUI(lifecycleOwner: LifecycleOwner? = null, action: suspend () -> T): AsyncResult<T?> = async(lifecycleOwner, UI, action)
+fun launchAsyncUI(lifecycleOwner: LifecycleOwner? = null, block: SuspendFun<Unit>) = runAsyncUI(lifecycleOwner, block) as Job
+fun launchAsyncUI(fragment: Fragment, block: SuspendFun<Unit>) = launchAsyncUI(fragment.viewLifecycleOwner, block)
 
-fun <T> suspendAsync(coroutineContext: CoroutineContext = CommonPool, resume: ((T) -> Unit) -> Unit): AsyncResult<T?> =
-        async(null as LifecycleOwner?, coroutineContext) { suspendCoroutine<T> { out -> resume(out::resume) } }
+fun CoroutineScope.bg(block: SuspendFun<Unit>) = launch(Dispatchers.Default, block = block)
+fun CoroutineScope.ui(block: SuspendFun<Unit>) = launch(Dispatchers.Main, block = block)
 
-fun <T> suspendAsyncUI(resume: ((T) -> Unit) -> Unit): AsyncResult<T?> = suspendAsync(UI, resume)
+fun <T> CoroutineScope.bgTask(block: SuspendFun<T>) = async(Dispatchers.Default, block = block)
+fun <T> CoroutineScope.uiTask(block: SuspendFun<T>) = async(Dispatchers.Main, block = block)
+
+suspend fun <T> suspendAsync(timeout: Long = -1, resume: ((T) -> Unit) -> Unit): AsyncResult<T?> = coroutineScope {
+    async {
+        if (timeout > 0) withTimeoutOrNull(timeout) { suspendCancellableCoroutine<T> { out -> resume(out::resume) } }
+        else suspendCoroutine<T> { out -> resume(out::resume) }
+    }
+}

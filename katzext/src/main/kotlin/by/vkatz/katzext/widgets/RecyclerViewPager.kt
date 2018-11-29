@@ -13,9 +13,7 @@ class RecyclerViewPager : RecyclerView {
     private val snapHelper = PagerSnapHelper()
     private var onPageChangedListeners = HashSet<OnPageChangedListener>()
 
-    var currentPage: Int
-        get() = snapHelper.findSnapView(layoutManager)?.let { getChildAdapterPosition(it) } ?: 0
-        set(value) = scrollToPosition(value)
+    val currentPage: Int get() = snapHelper.findSnapView(layoutManager)?.let { getChildAdapterPosition(it) } ?: 0
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -32,9 +30,20 @@ class RecyclerViewPager : RecyclerView {
                     it.onPageChanged(this@RecyclerViewPager, page)
                 }
                 lastPage = page
-
             }
         })
+    }
+
+    override fun scrollToPosition(position: Int) {
+        //------------DO NOT REMOVE----------------------------
+        //we need to reset adapter and clan existing ViewHolders
+        //this line will call RecyclerView to cleanup view hierarchy
+        //and setup same adapter after this on appropriate position
+        //without this we may get stuck on mid-animation during
+        //setVisibility + setPosition combo because of layout called twice
+        adapter = adapter
+        //------------DO NOT REMOVE----------------------------
+        super.scrollToPosition(position)
     }
 
     @Deprecated("Don't use it", level = DeprecationLevel.ERROR)

@@ -3,15 +3,24 @@ package by.vkatz.katzext.adapters
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * Created by V on 26.04.2018.
+ */
 open class MultiTypeRecyclerViewAdapter<T>(open var data: List<T>,
                                            private val idProvider: (T.() -> Long)? = null,
                                            private vararg var typeHandlers: ViewTypeHandler<T>
                                           ) : RecyclerView.Adapter<SimpleViewHolder<*>>() {
 
-
     init {
         @Suppress("LeakingThis")
         setHasStableIds(idProvider != null)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        typeHandlers.forEachIndexed { index, handler ->
+            handler.holdersPoolSize?.let { recyclerView.recycledViewPool.setMaxRecycledViews(index, it) }
+        }
     }
 
     open fun getItemAt(pos: Int): T = data[pos]

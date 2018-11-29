@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:extendPopupBackground="#f00"
-        app:extendPopupMinHeight="100dp"
         app:toolsItem="@layout/spinner_item"/>
     <by.vkatz.katzext.widgets.ExtendSpinner
         android:id="@+id/spinner2"

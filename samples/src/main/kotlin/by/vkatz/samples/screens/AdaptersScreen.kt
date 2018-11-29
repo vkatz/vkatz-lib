@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.vkatz.katzext.adapters.*
-import by.vkatz.katzext.utils.asTextView
-import by.vkatz.katzext.utils.inflate
+import by.vkatz.katzext.utils.ext.asTextView
+import by.vkatz.katzext.utils.ext.inflate
 import by.vkatz.samples.R
 import kotlinx.android.synthetic.main.adapters.*
 
@@ -21,8 +21,7 @@ import kotlinx.android.synthetic.main.adapters.*
  */
 class AdaptersScreen : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.adapters)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflate(R.layout.adapters)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

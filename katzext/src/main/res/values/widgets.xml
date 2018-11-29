@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <declare-styleable name="DoubleTextLayout">
+        <attr name="extendTextMargin" format="dimension|reference"/>
+        <attr name="extendPrimaryText" format="string|reference"/>
+        <attr name="extendPrimaryTextStyle" format="reference"/>
+        <attr name="extendPrimaryTextColor" format="color|reference"/>
+        <attr name="extendPrimaryTextSize" format="dimension|reference"/>
+        <attr name="extendSecondaryText" format="string|reference"/>
+        <attr name="extendSecondaryTextStyle" format="reference"/>
+        <attr name="extendSecondaryTextColor" format="color|reference"/>
+        <attr name="extendSecondaryTextSize" format="dimension|reference"/>
+    </declare-styleable>
+
     <declare-styleable name="RecyclerViewPagerIndicator">
         <attr name="extendForceCenterMode" format="reference|boolean"/>
+        <attr name="extendFillViewport" format="reference|boolean"/>
     </declare-styleable>
 
     <declare-styleable name="ExtendSpinner">
         <attr name="extendPopupBackground" format="reference|color"/>
         <attr name="extendPopupElevation" format="reference|dimension"/>
-        <attr name="extendPopupMinHeight" format="reference|dimension"/>
         <attr name="extendPopupAdditionWidth" format="reference|dimension"/>
         <attr name="extendPopupVerticalOffset" format="reference|dimension"/>
         <attr name="extendPopupHorizontalOffset" format="reference|dimension"/>

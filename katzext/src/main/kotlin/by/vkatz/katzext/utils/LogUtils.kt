@@ -13,7 +13,7 @@ object LogUtils {
     private val ENABLED = BuildConfig.DEBUG
 
     fun i(message: String, error: Throwable? = null) {
-        logTaggedMessage(message, error, LogUtils::i)
+        logTaggedMessage(message, error, ::i)
     }
 
     fun i(tag: String, message: String, error: Throwable? = null) {
@@ -22,7 +22,7 @@ object LogUtils {
     }
 
     fun e(message: String, error: Throwable? = null) {
-        logTaggedMessage(message, error, LogUtils::e)
+        logTaggedMessage(message, error, ::e)
     }
 
     fun e(tag: String, message: String, error: Throwable? = null) {
@@ -31,7 +31,7 @@ object LogUtils {
     }
 
     fun fi(message: String, error: Throwable? = null) {
-        logTaggedMessage(message, error, LogUtils::fi)
+        logTaggedMessage(message, error, ::fi)
     }
 
     fun fi(tag: String, message: String, error: Throwable? = null) {
@@ -40,7 +40,7 @@ object LogUtils {
     }
 
     fun fe(message: String, error: Throwable? = null) {
-        logTaggedMessage(message, error, LogUtils::fe)
+        logTaggedMessage(message, error, ::fe)
     }
 
     fun fe(tag: String, message: String, error: Throwable? = null) {
@@ -50,7 +50,7 @@ object LogUtils {
     }
 
     fun wtf(message: String, error: Throwable? = null) {
-        logTaggedMessage(message, error, LogUtils::wtf)
+        logTaggedMessage(message, error, ::wtf)
     }
 
     fun wtf(tag: String, message: String, error: Throwable? = null) {

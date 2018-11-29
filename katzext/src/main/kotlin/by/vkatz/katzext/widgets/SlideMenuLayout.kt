@@ -14,10 +14,10 @@ import androidx.core.view.*
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import by.vkatz.katzext.R
-import by.vkatz.katzext.utils.clamp
-import by.vkatz.katzext.utils.closeTo
-import by.vkatz.katzext.utils.forEachChildren
-import by.vkatz.katzext.utils.makeVisibleOrGone
+import by.vkatz.katzext.utils.ext.clamp
+import by.vkatz.katzext.utils.ext.closeTo
+import by.vkatz.katzext.utils.ext.forEachChildren
+import by.vkatz.katzext.utils.ext.makeVisibleOrGone
 import kotlinx.android.parcel.Parcelize
 
 /**

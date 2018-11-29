@@ -1,10 +1,13 @@
-package by.vkatz.katzext.utils
+package by.vkatz.katzext.utils.ext
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,49 +17,6 @@ import android.widget.*
 import androidx.annotation.AttrRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import java.util.*
-import kotlin.reflect.KClass
-
-@Suppress("unused")
-infix fun <T> Any?.so(t: T) = t
-
-fun <T : Comparable<T>> T.clamp(a: T, b: T): T {
-    val max = maxOf(a, b)
-    val min = minOf(a, b)
-    if (this < min) return min
-    if (this > max) return max
-    return this
-}
-
-fun Float.closeTo(value: Float, range: Float = 0.001f): Boolean {
-    return Math.abs(this - value) <= range
-}
-
-fun Double.closeTo(value: Double, range: Double): Boolean {
-    return Math.abs(this - value) <= range
-}
-
-infix fun Long.hasFlag(flag: Long): Boolean = (this and flag) == flag
-
-infix fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag
-
-infix fun Long.unOr(flag: Long): Long = this and flag.inv()
-
-infix fun Int.unOr(flag: Int): Int = this and flag.inv()
-
-fun Int.times(action: () -> Unit) {
-    for (i in 0 until this) action()
-}
-
-fun <T : ViewModel> ViewModelProvider.get(clazz: KClass<T>) = get(clazz.java)
-
-fun <T> Iterable<T>.toArrayList() = ArrayList<T>().apply { addAll(this@toArrayList) }
-
-fun <T> List<T>?.isNullOrEmpty() = this?.isEmpty() ?: true
-
-fun Handler.postDelayed(delay: Long, action: () -> Unit) = postDelayed(action, delay)
 
 fun Context?.toast(resId: Int, duration: Int = Toast.LENGTH_SHORT) {
     if (this != null) Toast.makeText(this, resId, duration).show()
@@ -66,6 +26,8 @@ fun Context?.toast(text: String, duration: Int = Toast.LENGTH_SHORT) {
     if (this != null) Toast.makeText(this, text, duration).show()
 }
 
+fun Handler.postDelayed(delay: Long, action: () -> Unit) = postDelayed(action, delay)
+
 fun Context.dp(amount: Float) = amount * resources.displayMetrics.density
 
 fun Context.getThemeColor(@AttrRes attr: Int, defaultColor: Int = 0): Int {
@@ -74,33 +36,36 @@ fun Context.getThemeColor(@AttrRes attr: Int, defaultColor: Int = 0): Int {
     return if (wasResolved) outValue.data else defaultColor
 }
 
+fun View.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = context.inflate(rId, parent, attachToParent)
 fun Context.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false): View = LayoutInflater.from(this).inflate(rId, parent, attachToParent)
-
 fun Fragment.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = activity!!.inflate(rId, parent, attachToParent)
 
-fun LayoutInflater.inflate(@LayoutRes rId: Int): View = inflate(rId, null, false)
-
-fun View.inflate(@LayoutRes rId: Int, parent: ViewGroup? = null, attachToParent: Boolean = false) = context.inflate(rId, parent, attachToParent)
-
 fun Activity.hideKeyboard(focus: View? = null) {
-    val view = focus ?: this.currentFocus
-    if (view != null) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
+    (focus ?: currentFocus)?.hideKeyboard()
 }
 
-fun Activity.showKeyboard(focus: View) {
-    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.showSoftInput(focus, 0)
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
-fun Context.launchGeoIntent(lat: Double, lng: Double) {
-    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lng")))
+fun View.showKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(this, 0)
 }
 
-fun Context.launchPhoneIntent(phone: String) {
+fun Context.launchGeo(lat: Double, lng: Double, query: String = "") {
+    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lng?q=${if (query.isBlank()) "$lat,$lng" else query}")))
+}
+
+fun Context.launchPhone(phone: String) {
     startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
+}
+
+fun Context.launchAppSettings() {
+    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+                          .addCategory(Intent.CATEGORY_DEFAULT)
+                          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
 fun Context.launchShareIntent(title: String, subject: String? = null, extra: String? = null) {
@@ -114,21 +79,6 @@ fun Context.launchShareIntent(title: String, subject: String? = null, extra: Str
 }
 
 operator fun View.get(id: Int): View = findViewById<View>(id)
-
-fun View.setAsyncOnClickListener(listener: suspend (view: View) -> Unit) = setOnClickListener { view -> asyncUI { listener(view) } }
-
-fun View.setLockableOnClickListener(lockTime: Long = 500, listener: (View) -> Unit) {
-    setOnClickListener(object : View.OnClickListener {
-        var lockTimer = 0L
-
-        override fun onClick(sender: View) {
-            if (System.currentTimeMillis() > lockTimer) {
-                listener(sender)
-                lockTimer = System.currentTimeMillis() + lockTime
-            }
-        }
-    })
-}
 
 fun View.postRequestLayout() = post { requestLayout() }
 
@@ -157,6 +107,31 @@ fun <T : View> T.makeVisibleOrInvisible(visible: Boolean): T {
     return this
 }
 
+fun View.setLockableOnClickListener(lockTime: Long = 500, listener: (View) -> Unit) {
+    setOnClickListener(object : View.OnClickListener {
+        var lockTimer = 0L
+
+        override fun onClick(sender: View) {
+            if (System.currentTimeMillis() > lockTimer) {
+                listener(sender)
+                lockTimer = System.currentTimeMillis() + lockTime
+            }
+        }
+    })
+}
+
+fun EditText.addOnTextChangedListener(listener: (String) -> Unit): TextWatcher {
+    val watcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) = Unit
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            listener(s?.toString() ?: "")
+        }
+    }
+    this.addTextChangedListener(watcher)
+    return watcher
+}
+
 fun ViewGroup.forEachChildren(action: (view: View) -> Unit) {
     for (i in 0 until childCount) action(getChildAt(i))
 }
@@ -181,8 +156,6 @@ fun ViewGroup.forEachChildrenRecursiveConditional(action: (view: View) -> Boolea
 fun ViewGroup.forEachChildrenIndexed(action: (view: View, pos: Int) -> Unit) {
     for (i in 0 until childCount) action(getChildAt(i), i)
 }
-
-fun <T> T?.or(compute: () -> T): T = this ?: compute()
 
 fun View.asViewGroup() = this as ViewGroup
 fun View.asLinearLayout() = this as LinearLayout

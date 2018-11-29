@@ -3,6 +3,9 @@ package by.vkatz.katzext.adapters
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 
+/**
+ * Created by V on 27.04.2018.
+ */
 open class HeaderFooterRecyclerViewAdapter<T>(data: List<T>,
                                               idProvider: (T.() -> Long)?,
                                               private val headerProvider: SimpleViewHolderProvider<Unit>? = null,

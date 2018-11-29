@@ -1,8 +1,4 @@
-package com.axs.android.utils.adapters
-
-import by.vkatz.katzext.adapters.SimpleRecyclerViewAdapter
-import by.vkatz.katzext.adapters.SimpleViewHolderProvider
-import by.vkatz.katzext.adapters.ViewBinder
+package by.vkatz.katzext.adapters
 
 open class CircularRecyclerViewAdapter<T> : SimpleRecyclerViewAdapter<T> {
     constructor(data: List<T>, idProvider: (T.() -> Long)?, viewHolderProvider: SimpleViewHolderProvider<T>) : super(data, idProvider, viewHolderProvider)
